@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>block系列之block的存储域 | 孙金帅的技术博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在 Objective-C 语言中，根据Block对象创建时所处数据区不同而进行区别，一共有 3 种类型的 block：  _NSConcreteGlobalBlock 全局的静态 block，不会访问任何外部变量，它是设置在程序的数据区域（.data区）中。 _NSConcreteStackBlock 保存在栈中的 block，当函数返回时会被销毁，超出变量作用域，栈上的Block以及  __b">
+<meta property="og:type" content="article">
+<meta property="og:title" content="block系列之block的存储域">
+<meta property="og:url" content="https://sunjinshuai.github.io/2014/07/07/block系列之block的存储域/index.html">
+<meta property="og:site_name" content="孙金帅的技术博客">
+<meta property="og:description" content="在 Objective-C 语言中，根据Block对象创建时所处数据区不同而进行区别，一共有 3 种类型的 block：  _NSConcreteGlobalBlock 全局的静态 block，不会访问任何外部变量，它是设置在程序的数据区域（.data区）中。 _NSConcreteStackBlock 保存在栈中的 block，当函数返回时会被销毁，超出变量作用域，栈上的Block以及  __b">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/588630-8ef4fee05adf7961.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/588630-f9ba1bdcc5db00f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-07-05T08:05:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="block系列之block的存储域">
+<meta name="twitter:description" content="在 Objective-C 语言中，根据Block对象创建时所处数据区不同而进行区别，一共有 3 种类型的 block：  _NSConcreteGlobalBlock 全局的静态 block，不会访问任何外部变量，它是设置在程序的数据区域（.data区）中。 _NSConcreteStackBlock 保存在栈中的 block，当函数返回时会被销毁，超出变量作用域，栈上的Block以及  __b">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/588630-8ef4fee05adf7961.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+  
+    <link rel="alternate" href="/atom.xml" title="孙金帅的技术博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">孙金帅的技术博客</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://sunjinshuai.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-block系列之block的存储域" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/07/block系列之block的存储域/" class="article-date">
+  <time datetime="2014-07-07T13:03:50.000Z" itemprop="datePublished">2014-07-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      block系列之block的存储域
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 Objective-C 语言中，根据Block对象创建时所处数据区不同而进行区别，一共有 3 种类型的 block：</p>
+<ul>
+<li><code>_NSConcreteGlobalBlock</code> 全局的静态 block，不会访问任何外部变量，它是设置在程序的数据区域（.data区）中。</li>
+<li><code>_NSConcreteStackBlock</code> 保存在栈中的 block，当函数返回时会被销毁，超出变量作用域，栈上的Block以及  __block变量都被销毁。</li>
+<li><code>_NSConcreteMallocBlock</code> 保存在堆中的 block，当引用计数为 0 时会被销毁，在变量作用域结束时不受影响。</li>
+</ul>
+<p>在ARC的环境下，block默认是从栈区copy到堆区。<br>栈上的block，如果其所属的变量作用域结束，该block就被废弃，如同一般的自动变量。当然，block中的__block变量也同时被废弃。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-8ef4fee05adf7961.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图示"></p>
+<p>在ARC的环境下，为了解决栈块在其变量作用域结束之后被废弃（释放）的问题，我们需要把block复制到堆中，延长其生命周期。大多数情况下编译器会恰当地进行判断是否有需要将block从栈复制到堆，如果有，自动生成将block从栈上复制到堆上的代码。block的复制操作执行的是copy实例方法。Block只要调用了copy方法，栈块就会变成堆块。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-f9ba1bdcc5db00f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图示"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://sunjinshuai.github.io/2014/07/07/block系列之block的存储域/" data-id="cj58z0ppc0007jkfymjp6xrfs" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/07/10/block系列之block的实现原理/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          block系列之block的实现原理
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/07/06/block系列之避免循环引用-weak与-strong的区别/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">block系列之避免循环引用__weak与__strong的区别</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">十月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">七月 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/10/06/AutoreleasePool的实现原理/">AutoreleasePool的实现原理</a>
+          </li>
+        
+          <li>
+            <a href="/2015/05/05/Object-C编码规范/">Object-C编码规范</a>
+          </li>
+        
+          <li>
+            <a href="/2014/07/10/block系列之block的实现原理/">block系列之block的实现原理</a>
+          </li>
+        
+          <li>
+            <a href="/2014/07/07/block系列之block的存储域/">block系列之block的存储域</a>
+          </li>
+        
+          <li>
+            <a href="/2014/07/06/block系列之避免循环引用-weak与-strong的区别/">block系列之避免循环引用__weak与__strong的区别</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 sunjinshuai<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

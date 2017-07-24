@@ -155,6 +155,41 @@
   </entry>
   
   <entry>
+    <title>iOS学习笔记 第2期(2016.03.03)</title>
+    <link href="https://sunjinshuai.github.io/2016/03/03/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC2%E6%9C%9F-2016-03-03/"/>
+    <id>https://sunjinshuai.github.io/2016/03/03/iOS学习笔记-第2期-2016-03-03/</id>
+    <published>2016-03-03T10:05:30.000Z</published>
+    <updated>2017-07-24T10:10:30.000Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="本期主要记录了以下几个问题："><a href="#本期主要记录了以下几个问题：" class="headerlink" title="本期主要记录了以下几个问题："></a>本期主要记录了以下几个问题：</h4><ul>
+<li>删除git中的.DS_Store</li>
+</ul>
+<h5 id="DS-Store-是什么"><a href="#DS-Store-是什么" class="headerlink" title=".DS_Store 是什么"></a>.DS_Store 是什么</h5><p>使用<code>Mac</code>的用户可能会注意到，系统经常会自动在每个目录生成一个隐藏的<code>.DS_Store</code>文件。<code>.DS_Store</code>(英文全称<code>Desktop Services Store</code>)是一种由苹果公司的<code>Mac OS X</code>操作系统所创造的隐藏文件，目的在于存贮目录的自定义属性，例如文件们的图标位置或者是背景色的选择。相当于<code>Windows</code>下的 <code>desktop.ini</code>。</p>
+<h5 id="DS-Store"><a href="#DS-Store" class="headerlink" title=".DS_Store"></a>.DS_Store</h5><p>如果你的项目中还没有自动生成的<code>.DS_Store</code> 文件，那么直接将<code>.DS_Store</code>加入到 <code>.gitignore</code>文件就可以了。如果你的项目中已经存在<code>.DS_Store 文件</code>，那就需要先从项目中将其删除，再将它加入到<code>.gitignore</code>。如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"># 删除项目中的所有.DS_Store。这会跳过不在项目中的 .DS_Store</div><div class="line">find . -name .DS_Store -print0 | xargs -0 git rm -f --ignore-unmatch</div><div class="line"># 将 .DS_Store 加入到 .gitignore</div><div class="line">echo .DS_Store &gt;&gt; ~/.gitignore</div><div class="line"># 更新项目</div><div class="line">git add --all</div><div class="line">git commit -m &apos;.DS_Store banished!&apos;</div></pre></td></tr></table></figure>
+<p>如果你只需要删除磁盘上的<code>.DS_Store</code>，可以使用下面的命令来删除当前目录及其子目录下的所有<code>.DS_Store</code>文件:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">find . -name &apos;*.DS_Store&apos; -type f -delete</div></pre></td></tr></table></figure>
+<h5 id="禁用或启用自动生成"><a href="#禁用或启用自动生成" class="headerlink" title="禁用或启用自动生成"></a>禁用或启用自动生成</h5><ul>
+<li><p>禁止.DS_store生成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE</div></pre></td></tr></table></figure>
+</li>
+<li><p>恢复.DS_store生成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">defaults delete com.apple.desktopservices DSDontWriteNetworkStores</div></pre></td></tr></table></figure>
+</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h4 id=&quot;本期主要记录了以下几个问题：&quot;&gt;&lt;a href=&quot;#本期主要记录了以下几个问题：&quot; class=&quot;headerlink&quot; title=&quot;本期主要记录了以下几个问题：&quot;&gt;&lt;/a&gt;本期主要记录了以下几个问题：&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;删除git中的.DS_Store
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>iOS学习笔记 第1期(2015.10.05)</title>
     <link href="https://sunjinshuai.github.io/2015/10/05/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC1%E6%9C%9F-2015-10-05/"/>
     <id>https://sunjinshuai.github.io/2015/10/05/iOS学习笔记-第1期-2015-10-05/</id>

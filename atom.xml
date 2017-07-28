@@ -159,11 +159,12 @@
     <link href="https://sunjinshuai.github.io/2016/03/03/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC2%E6%9C%9F-2016-03-03/"/>
     <id>https://sunjinshuai.github.io/2016/03/03/iOS学习笔记-第2期-2016-03-03/</id>
     <published>2016-03-03T10:05:30.000Z</published>
-    <updated>2017-07-25T09:04:35.000Z</updated>
+    <updated>2017-07-28T03:29:20.000Z</updated>
     
     <content type="html"><![CDATA[<h4 id="本期主要记录了以下几个问题："><a href="#本期主要记录了以下几个问题：" class="headerlink" title="本期主要记录了以下几个问题："></a>本期主要记录了以下几个问题：</h4><ul>
 <li>删除git中的.DS_Store</li>
 <li>git关于忽略Xcode工程中UserInterfaceState.xcuserstate文件的问题</li>
+<li>bitcode适配指南</li>
 </ul>
 <h4 id="删除git中的-DS-Store"><a href="#删除git中的-DS-Store" class="headerlink" title="删除git中的.DS_Store"></a>删除git中的.DS_Store</h4><h5 id="DS-Store-是什么"><a href="#DS-Store-是什么" class="headerlink" title=".DS_Store 是什么"></a>.DS_Store 是什么</h5><p>使用<code>Mac</code>的用户可能会注意到，系统经常会自动在每个目录生成一个隐藏的<code>.DS_Store</code>文件。<code>.DS_Store</code>(英文全称<code>Desktop Services Store</code>)是一种由苹果公司的<code>Mac OS X</code>操作系统所创造的隐藏文件，目的在于存贮目录的自定义属性，例如文件们的图标位置或者是背景色的选择。相当于<code>Windows</code>下的 <code>desktop.ini</code>。</p>
 <h5 id="DS-Store"><a href="#DS-Store" class="headerlink" title=".DS_Store"></a>.DS_Store</h5><p>如果你的项目中还没有自动生成的<code>.DS_Store</code> 文件，那么直接将<code>.DS_Store</code>加入到 <code>.gitignore</code>文件就可以了。如果你的项目中已经存在<code>.DS_Store 文件</code>，那就需要先从项目中将其删除，再将它加入到<code>.gitignore</code>。如下：</p>
@@ -183,6 +184,42 @@
 <p>然后输入<code>git status</code>时你忽略的文件已经没有了。</p>
 <p>如果按照上述方法定义后发现并未生效，原因是<code>.gitignore</code>只能忽略那些原来没有被track的文件，如果某些文件已经被纳入了版本管理中，则修改.gitignore是无效的。那么解决方法就是先把本地缓存删除（改变成未track状态），我一般都是删除所有缓存，不用单个删除，然后再提交：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git rm -r --cached .</div><div class="line">git add .</div><div class="line">git commit -m ‘update .gitignore‘</div></pre></td></tr></table></figure>
+<h4 id="bitcode适配指南"><a href="#bitcode适配指南" class="headerlink" title="bitcode适配指南"></a>bitcode适配指南</h4><p>随着Xcode7的发布，Apple提供了一项新的技术来支持App瘦身功能，那就是<code>bitcode</code>。本文章将会结合自己在支持<code>bitcode</code>过程中遇到的问题，来阐述支持<code>bitcode</code>的过程。</p>
+<p>#####bitCode是什么</p>
+<blockquote>
+<p>Bitcode is an intermediate representation of a compiled program. Apps you upload to iTunes Connect that contain bitcode will be compiled and linked on the store. Including bitcode will allow Apple to re-optimize your app binary in the future without the need to submit a new version of your app to the store.<br>Xcode hides symbols generated during build time by default, so they are not readable by Apple. Only if you choose to include symbols when uploading your app to iTunes Connect would the symbols be sent to Apple. You must include symbols to receive crash reports from Apple.</p>
+</blockquote>
+<p>其大概意思是<code>bitcode</code>类似于一个中间码，被上传到<code>AppleStore</code>之后，苹果会根据下载应用的用户的手机指令集类型生成只有该指令集的二进制，进行下发。从而达到精简安装包体积的目的。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-e10707ed99066a9b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>#####打开bitcode设置</p>
+<p>实际上在Xcode 7中，我们新建一个iOS程序时，<code>bitcode</code>选项默认是设置为YES的。我们可以在<code>&quot;Build Settings&quot;-&gt;&quot;Enable Bitcode&quot;</code>选项中看到这个设置。</p>
+<p>如果我们开启了<code>bitcode</code>，在提交包时，下面这个界面也会有个<code>bitcode</code>选项：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-f2609c8ef569d059.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>但是如果其中包含第三方库，不支持<code>bitcode</code>时候。需要将<code>&quot;Enable BitCode&quot;</code>设置成NO。而且这个选项是，只要有一个第三方库不支持，就不能开的。否则连接错误。</p>
+<p>确保打包的时候使用的是<code>fembed-bitcode</code>, 而不是<code>fembed-bitcode-maker</code></p>
+<blockquote>
+<p>You should be aware that a normal build with the -fembed-bitcode-marker option will produce minimal size embedded bitcode sections without any real content. This is done as a way of testing the bitcode-related aspects of your build without slowing down the build process. The actual bitcode content is included when you do an Archive build.</p>
+</blockquote>
+<ul>
+<li><code>fembed-bitcode-maker</code>:只是简单的标记一下在<code>archive</code>出来的二进制中<code>bitcdoe</code>所在的位置。</li>
+<li><code>fembed-bitcode</code>: 真的会生成<code>bitcode</code>指令，并且嵌入到二进制中，这个设置不止要在app中设置，同样你也必须在编译静态链接库的时候使用。而且需要主题的是该参数系统只默认在<code>archive</code>模式下会添加。</li>
+</ul>
+<p>需要注意的是bitcode只默认在archive下编译。在debug和release下并不会。</p>
+<p>#####检测是否打开Bitcode</p>
+<p>当打开<code>bitcdoe</code>选项之后，我们可以使用<code>otool</code>工具来检查二进制文件中是否包含<code>bitcode</code>段。</p>
+<p>针对于静态链接库.a文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">otool -arch armv7 -l xxxx.a | grep __bitcode | wc -l</div></pre></td></tr></table></figure></p>
+<p>如果是当前库支持.a文件则会输出一个数字</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-1d4181684959122b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>如果不支持<code>bitcode</code>则不会出现该数字。</p>
+<p>上述命令只检查了<code>armv7</code>架构，同时，也必须使用改指令检查其他的指令集是否包含<code>bitcode</code>如：<code>arm64</code>，<code>armv7s</code>等等</p>
+<p>检查app或者<code>framework</code>中是否包含<code>bitcode</code></p>
+<p>由于app中二进制和<code>framework</code>中二进制文件与.a文件存在差异，因为需要检查的是<code>__LLVM</code>段，当出现该段的时候，则表示支持<code>bitcdoe</code>，否则不支持。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">otool -l xxxx | grep __LLVM | wc -l</div></pre></td></tr></table></figure>
+<p>这里<code>otool</code>有个bug，当你的<code>framework</code>使用过lipo命令，进行拆解和合并之后，需要指定指令集进行检查才可以。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">otool -arch armv7 -l xxxx | grep __LLVM | wc -l</div></pre></td></tr></table></figure></p>
+<p><strong>注意, 上述检查过了之后，也不一定是真的支持bitcode，在实际的测试中，发现上述检测命令通过之后，某个使用的第三方库，依然报错不支持bitcode。因而最终结果，还是需要以是否能够连接成功为准。重要事情说三遍，上述网上流传的检测方法只做参考，最终还是要以实际效果为准。</strong></p>
+<p>#####最终结果检查</p>
+<p>在真实项目中，可以直接进行<code>Archive</code>打包，如果出现下图这种情况，说明项目不支持<code>bitcode</code>。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-42081e18b5507b02.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 ]]></content>
     
     <summary type="html">

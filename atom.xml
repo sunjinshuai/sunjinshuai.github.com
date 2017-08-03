@@ -155,6 +155,210 @@
   </entry>
   
   <entry>
+    <title>源码管理工具之git的使用</title>
+    <link href="https://sunjinshuai.github.io/2016/05/02/%E6%BA%90%E7%A0%81%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E4%B9%8Bgit%E7%9A%84%E4%BD%BF%E7%94%A8/"/>
+    <id>https://sunjinshuai.github.io/2016/05/02/源码管理工具之git的使用/</id>
+    <published>2016-05-02T03:03:24.000Z</published>
+    <updated>2017-08-03T10:00:10.000Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="一、git简介"><a href="#一、git简介" class="headerlink" title="一、git简介"></a>一、git简介</h4><p><code>git</code>是目前世界上被最广泛使用的现代软件版本管理系统。<code>git</code>本身亦是一个成熟并处于活跃开发状态的开源项目，它最初是由Linux操作系统内核的创造者Linus Torvalds在2005年创造。</p>
+<h4 id="二、在Mac-OS-X上安装git"><a href="#二、在Mac-OS-X上安装git" class="headerlink" title="二、在Mac OS X上安装git"></a>二、在Mac OS X上安装git</h4><p>如果你正在使用Mac做开发，有两种安装<code>git</code>的方法。</p>
+<ul>
+<li>安装<code>homebrew</code>，然后通过<code>homebrew</code>安装<code>git</code>，具体方法请参考<code>homebrew</code>的文档：<a href="http://brew.sh/。" target="_blank" rel="external">http://brew.sh/。</a></li>
+<li>直接从<code>AppStore</code>安装<code>Xcode</code>，<code>Xcode</code>集成了<code>git</code>。不过默认没有安装，你需要运行<code>Xcode</code>，选择菜单<code>“Xcode”-&gt;“Preferences”</code>，在弹出窗口中找到<code>“Downloads”</code>，选择<code>“Command Line Tools”</code>，点“Install”就可以完成安装了。</li>
+</ul>
+<h4 id="三、创建本地仓库"><a href="#三、创建本地仓库" class="headerlink" title="三、创建本地仓库"></a>三、创建本地仓库</h4><p>仓库：英文名<code>repository</code>，可以简单理解成一个目录，这个目录里面的所有文件都可以被<code>git</code>管理起来，每个文件的修改、删除，<code>git</code>都能记录，以便任何时刻都可以查找历史记录，或者在回滚到以前修改的状态。</p>
+<p>1、首先，选择一个合适的地方，创建一个空目录，执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git init</div></pre></td></tr></table></figure>
+<p>创建新的<code>git</code>仓库，会发下在当前的创建的目录下面多了一个<code>.git</code>的目录，这个目录是<code>git</code>来管理仓库的。<br>注意：<br><strong>没事千万不要手动修改这个目录里面的文件，不然就把会<code>git</code>仓库给破坏了。</strong></p>
+<p>2、添加文件到git仓库</p>
+<p>把文件添加到仓库：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git add &lt;filename&gt;</div><div class="line">git add .</div></pre></td></tr></table></figure>
+<p>注意：<br><code>git add &lt;filename&gt;</code>是把某一个文件添加到<code>git</code>的缓存区里面。<br><code>git add .</code>是把所有的文件添加到<code>git</code>的缓存区里面。</p>
+<p>3、把文件提交到本地仓库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git commit -m &quot;代码提交信息&quot;</div></pre></td></tr></table></figure>
+<p>注意：</p>
+<ul>
+<li><code>git commit</code>命令，一般会在后面加上<code>-m</code>表示本次提交到本地仓库的记录。</li>
+<li><code>commit message</code>言简意赅，不要写无用信息，这样让别人不能看懂这次提交的意义。</li>
+<li>在开发时，良好的习惯是根据工作进度及时<code>commit</code>，并务必注意附上有意义的<code>commit message</code>。创建完项目目录后，第一次提交的<code>commit message</code>一般为<code>Initial commit.</code>。</li>
+<li>添加一个新的<code>Pod</code>库或<code>pod update</code>后，要单独提交一个<code>commit</code>，统一<code>commit message</code>为<code>pod add xxx</code>或<code>pod update xxx</code>。</li>
+</ul>
+<h4 id="四、远程仓库"><a href="#四、远程仓库" class="headerlink" title="四、远程仓库"></a>四、远程仓库</h4><p>一般使用<code>git</code>的公司都会有自己的<code>git</code>服务器或者使用第三方<code>git</code>服务器，比如<code>coding.net</code>、码云等。<br>由于你的本地<code>git</code>仓库和<code>git</code>服务器仓库之间的传输是通过<code>SSH</code>加密的，需要设置：</p>
+<ul>
+<li>创建<code>SSH Key</code>。在用户主目录下，看看有没有<code>.ssh</code>目录。如果有，再看看这个目录下有没有<code>id_rsa</code>和<code>id_rsa.pub</code>这两个文件，如果已经有，可直接跳到下一步。如果没有，打开<code>Shell</code>，创建<code>SSH Key</code>：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh-keygen -t rsa -C &quot;your.email@example.com&quot; -b 4096</div></pre></td></tr></table></figure>
+<ul>
+<li>将公共SSH密钥复制到剪贴板：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pbcopy &lt; ~/.ssh/id_rsa.pub</div></pre></td></tr></table></figure>
+<ul>
+<li>登陆<code>git</code>服务器，打开<code>“Account settings”</code>，<code>“SSH Keys”</code>页面：</li>
+<li>点<code>“Add SSH Key”</code>，填上任意Title，在<code>Key</code>文本框里粘贴<code>id_rsa.pub</code>文件的内容：</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-93e16d0ca42e91bd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>注意：<br>为什么<code>git</code>服务器需要<code>SSH Key</code>呢？因为<code>git</code>服务器需要识别出你推送的提交确实是你推送的，而不是别人冒充的，而<code>git</code>支持<code>SSH</code>协议，所以，<code>git</code>服务器只要知道了你的公钥，就可以确认只有你自己才能推送。</p>
+<p>当然，<code>git</code>服务器允许你添加多个<code>Key</code>。假定你有若干电脑，你一会儿在公司提交，一会儿在家里提交，只要把每台电脑的<code>Key</code>都添加到<code>git</code>服务器，就可以在每台电脑上往<code>git</code>服务器推送了。</p>
+<h4 id="五、添加远程仓库"><a href="#五、添加远程仓库" class="headerlink" title="五、添加远程仓库"></a>五、添加远程仓库</h4><ul>
+<li>登陆<code>git</code>服务器，然后，找到<code>“Create a new repo”</code>按钮，创建一个新的仓库：</li>
+<li>在<code>Repository name</code>填入<code>learngit</code>，其他保持默认设置，点击<code>“Create repository”</code>按钮，就成功地创建了一个新的<code>git</code>仓库。<br>注意：<br>目前，在<code>git</code>服务器上的这个<code>learngit</code>仓库还是空的，<code>git</code>服务器告诉我们，可以从这个仓库克隆出新的仓库，也可以把一个已有的本地仓库与之关联，然后，把本地仓库的内容推送到<code>git</code>服务器仓库。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-3270bd7b01a820cd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>通过上图可以看出：<br>1、如果在本地没有创建仓库，可以通过下面命令从<code>git</code>服务器<code>clone</code>出一个新的仓库：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">git clone http://michael@git.51fanxing.com:88/fxbest/ios/learngit.git</div><div class="line">cd learngit</div><div class="line">touch README.md</div><div class="line">git add README.md</div><div class="line">git commit -m &quot;add README&quot;</div><div class="line">git push -u origin master</div></pre></td></tr></table></figure></p>
+<p>2、如果本地已经创建了，可以通过下面命令把本地仓库与<code>git</code>服务器仓库进行关联：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">cd existing_folder</div><div class="line">git init</div><div class="line">git remote add origin http://michael@git.51fanxing.com:88/fxbest/ios/learngit.git</div><div class="line">git add .</div><div class="line">git commit</div><div class="line">git push -u origin master</div></pre></td></tr></table></figure>
+<p>注意：<br>1、<code>git remote add origin</code>表示将本地服务器与<code>git</code>服务器进行关联。<br>2、<code>origin</code>是<code>git</code>服务器的别名，取什么名字都可以，你也可以在<code>push</code>时将<code>git</code>服务器替换为 origin。但为了以后<code>push</code>方便，我们第一次一般都会先<code>remote add</code>。<br>3、<code>git push -u origin master</code>将你修改或者添加的文件提交到<code>git</code>服务器。</p>
+<p>3、git remote<br><code>git remote</code>命令允许你创建、查看和删除和其它仓库之间的远程连接。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote</div></pre></td></tr></table></figure>
+<p>列出和其他仓库之间的远程连接。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote -v</div></pre></td></tr></table></figure>
+<p>列出和其他仓库之间的远程连接，但同时显示每个连接的<code>URL</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote add &lt;name&gt; &lt;url&gt;</div></pre></td></tr></table></figure>
+<p>创建一个新的远程仓库连接。在添加之后，可以将<code>&lt;name&gt;</code>作为<code>&lt;url&gt;</code>便捷的别名在其他<code>git</code>命令中使用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote rm &lt;name&gt;</div></pre></td></tr></table></figure>
+<p>移除名为的远程仓库的连接。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote rename &lt;old-name&gt; &lt;new-name&gt;</div></pre></td></tr></table></figure>
+<p>将远程连接从<code>&lt;old-name&gt;</code>重命名为<code>&lt;new-name&gt;</code>。</p>
+<h4 id="六、检查仓库状态"><a href="#六、检查仓库状态" class="headerlink" title="六、检查仓库状态"></a>六、检查仓库状态</h4><p>1、git status<br><code>git status</code>命令显示工作目录和缓存区的状态。你可以看到哪些更改被缓存了，哪些还没有，以及哪些还未被<code>git</code>记录。</p>
+<p>2、git log<br><code>git log</code>命令查看每次<code>commit</code>的历史记录。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git log</div></pre></td></tr></table></figure>
+<p>使用默认格式显示完整地<code>commit</code>记录，如果输出超过一屏，你可以用空格键来滚动，按q退出。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git log -n &lt;limit&gt;</div></pre></td></tr></table></figure>
+<p>用<limit>限制提交的数量，比如<code>git log -n 3</code>只会显示3个提交。</limit></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git log --oneline</div></pre></td></tr></table></figure>
+<p>将每个提交压缩到一行，当你需要查看项目历史的上层情况时这会很有用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git log --stat</div></pre></td></tr></table></figure>
+<p>除了<code>git log</code>信息之外，包含哪些文件被更改了，以及每个文件相对的增删行数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git log -p</div></pre></td></tr></table></figure>
+<p>显示代表每个提交的一堆信息，显示每个提交全部的差异（diff），这也是项目历史中最详细的视图。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git log --author=&quot;&lt;pattern&gt;&quot;</div></pre></td></tr></table></figure>
+<p>搜索特定作者的提交。<code>&lt;pattern&gt;</code>可以是字符串或正则表达式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git log --grep=&quot;&lt;pattern&gt;&quot;</div></pre></td></tr></table></figure>
+<p>搜索提交信息匹配特定<code>&lt;pattern&gt;</code>的提交。<code>&lt;pattern&gt;</code>可以是字符串或正则表达式。</p>
+<h4 id="七、git-reset、git-checkout和git-revert"><a href="#七、git-reset、git-checkout和git-revert" class="headerlink" title="七、git reset、git checkout和git revert"></a>七、git reset、git checkout和git revert</h4><p><code>git</code>仓库有三个主要组成——工作目录，缓存区和提交历史。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-6a21a168d9789d51.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><code>git reset</code>、<code>git checkout</code>和<code>git revert</code>是你的<code>git</code>工具箱中最有用的一些命令。它们都用来撤销代码仓库中的某些更改，而前两个命令不仅可以作用于提交，还可以作用于特定文件。</p>
+<p>因为它们非常相似，所以我们经常会搞混，不知道什么场景下该用哪个命令。</p>
+<p>1、<code>git reset</code></p>
+<p><code>git reset</code>操作会将当前分支的<code>HEAD</code>指向另外一个<code>commit</code>记录，这样可以在当前分支上移除部分<code>commit</code>记录。例如，在hotfix分支上回滚前两次的<code>commit</code>状态：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git reset HEAD~2</div></pre></td></tr></table></figure>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-b37c7f0e1cc74e53.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-353241c3327b5ab1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>当执行<code>git reset</code>时，hotfix分支上最后两次提交的状态会变成空状态，等到<code>git</code>执行垃圾回收的时候，hotfix分支上最后两次提交的状态会被回收。</p>
+<ul>
+<li>–soft – 缓存区和工作目录都不会被改变</li>
+<li>–mixed – 默认选项。缓存区和你指定的提交同步，但工作目录不受影响</li>
+<li>–hard – 缓存区和工作目录都同步到你指定的提交</li>
+</ul>
+<p><code>git reset</code>一般配合这些参数使用，<code>git reset --mixed HEAD</code>将你当前的改动从缓存区中移除，但是这些改动还留在工作目录中。如果你想完全舍弃你没有提交的改动，你可以使用<code>git reset --hard HEAD</code>，这是<code>git reset</code>最常用的两种用法。<br>注意：<br><strong><code>git reset</code>是不可逆的，因为<code>git reset</code>操作会重写当前分支的历史，用来撤销缓存区和工作目录的修改。<code>git reset</code>只适用于本地修改，不能重设服务器上的<code>commit</code>记录。</strong></p>
+<p>2、<code>git checkout</code></p>
+<ul>
+<li>切换分支：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git checkout hotfix</div></pre></td></tr></table></figure>
+<p>注意：<br><strong>使用<code>git checkout</code>之前，要把工作区的内容提交到<code>git</code>服务器或者缓存区。<code>git checkout</code>是将<code>HEAD</code>指针从一个分支切换到另一个分支，然后更新工作目录。因为这可能会覆盖本地的修改，<code>git</code>会强制你提交或者缓存工作目录中的所有更改，不然在checkout的时候这些更改都会丢失。</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-46593e029f800b33.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-0d591979a332a9ad.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<ul>
+<li>查看文件之前的版本</li>
+</ul>
+<p>除了切换分支之外，<code>git checkout</code>还可以将<code>HEAD</code>指针移动到当前分支其他的<code>commit</code>记录。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git checkout HEAD~2</div></pre></td></tr></table></figure>
+<p><code>git checkout</code>更改的是工作目录而不是缓存区<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git checkout HEAD~2 xxx</div></pre></td></tr></table></figure></p>
+<p>如果你缓存并且提交了<code>checkout</code>的文件，它具备将某个文件回撤到之前版本的效果，注意它撤销了这个文件后面所有的更改。不影响你仓库的当前状态。你可以在新的快照中像其他文件一样重新提交旧版本。所以，在效果上，<code>git checkout</code>的这个用法可以用来将单个文件回滚到旧版本。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-1d467da0f8a6492e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-e06dd9f6e82ec593.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>注意：<br><strong><code>git checkout</code>是可逆的。</strong></p>
+<p>3、<code>git revert</code></p>
+<p><code>git revert</code>撤销一个<code>commit</code>记录的同时会创建另一个新的<code>commit</code>记录，这是一个安全的方法，而不是从项目历史中移除这个提交。这避免了<code>git</code>丢失项目历史记录，这一点对于你的版本历史和协作的可靠性来说是很重要的。</p>
+<p>比如，下面的命令会找出倒数第二个提交，然后创建一个新的提交来撤销这些更改，然后把这个提交加入项目中。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git revert HEAD~2</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-c0b3dfb6eb5f32e9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-6fef5a231e49f9ea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><code>git revert</code>应该用在你想要在项目历史中移除一整个提交的时候。比如说，你在追踪一个 bug，然后你发现它是由一个提交造成的，这时候撤销就很有用。与其说自己去修复它，然后提交一个新的快照，不如用<code>git revert</code>，它帮你做了所有的事情。</p>
+<p><code>git revert</code>回滚了单独一个提交，它没有移除后面的提交记录，同时会创建另一个新的<code>commit</code>记录。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-dcf4353870b8b2ff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><code>git reset</code>回滚了单独一个提交，并且移除后面的提交记录，是<strong>不可逆的</strong>。<br><img src="http://upload-images.jianshu.io/upload_images/588630-bde0c98e8c62a2a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><code>git revert</code>可以针对历史记录中任何一个提交，而<code>git reset</code>只能从当前提交向前回滚。比如，你想用<code>git reset</code>重设一个旧的提交，你不得不移除那个提交后的所有提交，再移除那个提交，然后重新提交后面的所有提交。一般公司不提倡这么做。因此，<code>git revert</code>可以用在公共分支上，<code>git reset</code>应该用在私有分支上。</p>
+<p>4、<strong><code>git reset</code>用慎用</strong><br>当有<code>commit</code>之后的提交被推送到公共分支上，你绝不应该使用<code>git reset</code>。使用<code>git reset</code>回滚了单独一个提交，并且移除后面的提交记录。当团队成员在上面继续开发的提交在协作时会引发严重的问题。当他们试着和你的仓库同步时，他们会发现项目历史的一部分突然消失了。<br>下面的序列展示了如果你尝试重设公共提交时会发生什么。<code>origin/master</code>是你本地<code>master</code>分支对应的中央仓库中的分支。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-4ca6571366212ff5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-66c305ffcfbb405d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-f4eab69ac10165f0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>一旦你在重设之后又增加了新的提交，<code>git</code>会认为你的本地历史已经和 <code>origin/master</code>分叉了，同步你的仓库时的合并提交（merge commit）会使你的同事困惑。</p>
+<p>5、<code>git clean</code></p>
+<p><code>git clean</code>命令将未记录的文件从你的工作目录中移除。它只是提供了一条捷径，因为用<code>git status</code>查看未记录的文件，然后手动移除它们也很方便。和一般的<code>rm</code>命令一样，<code>git clean</code>是无法撤消的，所以在删除未记录的文件之前想清楚，你是否真的要这么做。</p>
+<p><code>git clean</code>命令经常和<code>git reset --hard</code>一起使用。记住，<code>git reset</code>只影响被记录的文件，所以还需要一个单独的命令来清理未被记录的文件。这个两个命令相结合，你就可以将工作目录回到之前特定提交时的状态。</p>
+<p>注意：<br><strong><code>git clean</code>也是不可逆的。</strong></p>
+<h4 id="八、分支"><a href="#八、分支" class="headerlink" title="八、分支"></a>八、分支</h4><p>1、git branch<br>分支代表了一条独立的开发流水线，<code>git branch</code>命令允许你创建、列出、重命名和删除分支。一般<code>git branch</code>和<code>git checkout</code>、<code>git merge</code>这两个命令通常紧密地结合在一起使用。一般使用过<code>git</code>的同学都知道：</p>
+<ul>
+<li><code>master</code>是长期分支，一般用于管理对外发布版本，每个<code>commit</code>对一个<code>tag</code>，也就是一个发布版本。</li>
+<li><code>develop</code>是长期分支，一般用于作为日常开发汇总，即开发版的代码</li>
+<li><code>feature</code>是短期分支，一般用于一个新功能的开发。</li>
+<li><code>hotfix</code>是短期分支 ，一般用于正式发布以后，出现bug，需要创建一个分支，进行bug修补。</li>
+<li><code>release</code>是短期分支，一般用于发布正式版本之前（即合并到<code>master</code>分支之前），需要有的预发布的版本进行测试。<code>release</code>分支在经历测试之后，测试确认验收，将会被合并的<code>develop</code>和<code>master</code>。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch</div></pre></td></tr></table></figure>
+<p>列出仓库中所有分支。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch &lt;branch&gt;</div></pre></td></tr></table></figure></p>
+<p>创建一个名为 <branch> 的分支。不会自动切换到那个分支去。</branch></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch -d &lt;branch&gt;</div></pre></td></tr></table></figure>
+<p>删除指定分支。这是一个安全的操作，<code>git</code>会阻止你删除包含未合并更改的分支。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch -D &lt;branch&gt;</div></pre></td></tr></table></figure>
+<p>强制删除指定分支，即使包含未合并更改。如果你希望永远删除某条开发线的所有提交，你应该用这个命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch -m &lt;branch&gt;</div></pre></td></tr></table></figure>
+<p>将当前分支命名为<branch>。</branch></p>
+<p>2、git merge<br>用于合并指定分支到当前分支，<code>git merge</code>命令允许你将<code>git branch</code>创建的多条分支合并成一个。</p>
+<p>注意：<br>合并指定分支到当前分支，当前分支会被更新，以响应合并操作，但目标分支完全不受影响。也就是说<code>git merge</code>经常和<code>git checkout</code>一起使用，选择当前分支，然后用<code>git branch -d</code>删除废弃的目标分支。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git merge &lt;branch&gt;</div></pre></td></tr></table></figure>
+<p>将指定分支并入当前分支。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git merge --no-ff &lt;branch&gt;</div></pre></td></tr></table></figure>
+<p>将指定分支并入当前分支，但 总是 生成一个合并提交（即使是快速向前合并）。这可以用来记录仓库中发生的所有合并。</p>
+<p>3、git merge几种方法</p>
+<ul>
+<li>快速向前合并<br>当当前分支顶端到目标分支路径是线性之时，我们可以采取快速向前合并。<code>git</code>只需要将当前分支顶端（快速向前地）移动到目标分支顶端，即可整合两个分支的历史，而不需要“真正”合并分支。它在效果上合并了历史，因为目标分支上的提交现在在当前分支可以访问到。比如，<code>some-feature</code>到<code>master</code>分支的快速向前合并会是这样的：</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-944fb76a38db291d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-5ac694413e3967f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<ul>
+<li>三路合并<br>如果分支已经分叉了，那么就无法进行快速向前合并。当和目标分支之间的路径不是线性之时，<code>git</code>只能执行三路合并。三路合并使用一个专门的提交来合并两个分支的历史。这个术语取自这样一个事实，<code>git</code>使用三个提交来生成合并提交：两个分支顶端和它们共同的祖先。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-d78b8f3c40b6ef82.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-90ea927631a7c49d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>很多开发者喜欢使用<code>git rebase</code>快速向前合并，来合并微小的功能或者修复bug，使用三路合并来整合长期运行的功能。后者导致的合并提交作为两个分支的连接标志。</p>
+<p>4、解决冲突</p>
+<p>如果你尝试合并的两个分支同一个文件的同一个部分，<code>git</code>将无法决定使用哪个版本。当这种情况发生时，它会停在合并提交，让你手动解决这些冲突。</p>
+<p>当你遇到合并冲突时，运行<code>git status</code>命令来查看哪些文件存在需要解决的冲突。</p>
+<p>当你手动修复完冲突之后，只需对冲突的文件运行<code>git add</code>告诉<code>git</code>冲突已解决。然后，运行<code>git commit</code>生成一个合并提交。</p>
+<p>使用<code>git log --graph</code>命令可以看到分支合并图。</p>
+<p>团队合作的分支看起来就像这样：<br><img src="http://upload-images.jianshu.io/upload_images/588630-d2df21bfde4c29ca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>注意：<br><strong>提交冲突只会出现在三路合并中。在快速向前合并中，我们不可能出现冲突的更改。</strong></p>
+<h4 id="九、创建标签"><a href="#九、创建标签" class="headerlink" title="九、创建标签"></a>九、创建标签</h4><p>一般在公司每一个上线版本都会打一个标签，为了记录和维护，当线上版本出现紧急bug，我们就可以通过<code>git checkout</code>检出项目，然后创建hotfix分支进行bug的修复。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git tag</div></pre></td></tr></table></figure>
+<p>查看所有标签</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git tag &lt;name&gt;</div><div class="line">git tag &lt;name&gt; commit id</div></pre></td></tr></table></figure>
+<p>用于新建一个标签，默认为<code>HEAD</code>，也可以指定一个<code>commit id</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git show &lt;tagname&gt;</div></pre></td></tr></table></figure>
+<p>查看标签信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git push origin &lt;tagname&gt;</div></pre></td></tr></table></figure>
+<p>可以推送一个本地标签</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git push origin --tags</div></pre></td></tr></table></figure>
+<p>可以推送全部未推送过的本地标签</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git tag -d &lt;tagname&gt;</div></pre></td></tr></table></figure>
+<p>可以删除一个本地标签</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git push origin :refs/tags/&lt;tagname&gt;</div></pre></td></tr></table></figure>
+<p>可以删除一个远程标签</p>
+<p>Reference：<br><a href="https://www.atlassian.com/git/tutorials/merging-vs-rebasing" target="_blank" rel="external">https://www.atlassian.com/git/tutorials/merging-vs-rebasing</a><br><a href="https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000" target="_blank" rel="external">https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h4 id=&quot;一、git简介&quot;&gt;&lt;a href=&quot;#一、git简介&quot; class=&quot;headerlink&quot; title=&quot;一、git简介&quot;&gt;&lt;/a&gt;一、git简介&lt;/h4&gt;&lt;p&gt;&lt;code&gt;git&lt;/code&gt;是目前世界上被最广泛使用的现代软件版本管理系统。&lt;code&gt;git&lt;
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>iOS学习笔记 第2期(2016.03.03)</title>
     <link href="https://sunjinshuai.github.io/2016/03/03/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC2%E6%9C%9F-2016-03-03/"/>
     <id>https://sunjinshuai.github.io/2016/03/03/iOS学习笔记-第2期-2016-03-03/</id>

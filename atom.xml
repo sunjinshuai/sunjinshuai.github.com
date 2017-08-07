@@ -59,53 +59,6 @@
   </entry>
   
   <entry>
-    <title>iOS学习笔记 第3期(2016.08.03)</title>
-    <link href="https://sunjinshuai.github.io/2017/08/07/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC3%E6%9C%9F-2016-08-03/"/>
-    <id>https://sunjinshuai.github.io/2017/08/07/iOS学习笔记-第3期-2016-08-03/</id>
-    <published>2017-08-07T02:25:15.000Z</published>
-    <updated>2017-08-07T03:15:14.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>本期主要记录了以下几个问题：</p>
-<ul>
-<li>数组容错处理</li>
-<li>Foundation中的断言处理</li>
-</ul>
-<h4 id="数组容错处理"><a href="#数组容错处理" class="headerlink" title="数组容错处理"></a>数组容错处理</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">/*!</div><div class="line"> @method objectAtIndexCheck:</div><div class="line"> @abstract 检查是否越界和NSNull如果是返回nil</div><div class="line"> @result 返回对象</div><div class="line"> */</div><div class="line">- (id)objectAtIndexCheck:(NSUInteger)index;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">- (id)objectAtIndexCheck:(NSUInteger)index</div><div class="line">&#123;</div><div class="line">    if (index &gt;= [self count]) &#123;</div><div class="line">        return nil;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    id value = [self objectAtIndex:index];</div><div class="line">    if (value == [NSNull null]) &#123;</div><div class="line">        return nil;</div><div class="line">    &#125;</div><div class="line">    return value;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="Foundation中的断言处理"><a href="#Foundation中的断言处理" class="headerlink" title="Foundation中的断言处理"></a>Foundation中的断言处理</h4><p><code>Foundation</code>中定义了两组断言相关的宏，分别是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NSAssert / NSCAssert</div><div class="line">NSParameterAssert / NSCParameterAssert</div></pre></td></tr></table></figure></p>
-<p>这两组宏主要在功能和语义上有所差别，这些区别主要有以下两点：</p>
-<ul>
-<li>如果我们需要确保方法或函数的输入参数的正确性，则应该在方法(函数)的顶部使用<code>NSParameterAssert / NSCParameterAssert</code>；而在其它情况下，使用<code>NSAssert / NSCAssert</code>。</li>
-<li>另一个不同是介于<code>C</code>和<code>Objective-C</code>之间。<code>NSAssert / NSParameterAssert</code>应该用于<code>Objective-C</code>的上下文(方法)中，而<code>NSCAssert / NSCParameterAssert</code>应该用于<code>C</code>的上下文(函数)中。</li>
-</ul>
-<p>当断言失败时，通常是会抛出一个如下所示的异常：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">*** Terminating app due to uncaught exception &apos;NSInternalInconsistencyException&apos;, reason: &apos;true is not equal to false&apos;</div></pre></td></tr></table></figure></p>
-<p><code>Foundation</code>为了处理断言，专门定义了一个<code>NSAssertionHandler</code>来处理断言的失败情况。<code>NSAssertionHandler</code>对象是自动创建的，用于处理失败的断言。当断言失败时，会传递一个字符串给<code>NSAssertionHandler</code>对象来描述失败的原因。每个线程都有自己的<code>NSAssertionHandler</code>对象。当调用时，一个断言处理器会打印包含方法和类(或函数)的错误消息，并引发一个<code>NSInternalInconsistencyException</code>异常。就像上面所看到的一样。</p>
-<p>我们很少直接去调用<code>NSAssertionHandler</code>的断言处理方法，通常都是自动调用的。</p>
-<p><code>NSAssertionHandler</code>提供的方法并不多，就三个，如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">// 返回与当前线程的NSAssertionHandler对象。</div><div class="line">// 如果当前线程没有相关的断言处理器，则该方法会创建一个并指定给当前线程</div><div class="line">+ (NSAssertionHandler *)currentHandler</div><div class="line">// 当NSCAssert或NSCParameterAssert断言失败时，会调用这个方法</div><div class="line">- (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)object lineNumber:(NSInteger)fileName description:(NSString *)line, format,...</div><div class="line">// 当NSAssert或NSParameterAssert断言失败时，会调用这个方法</div><div class="line">- (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format, ...</div></pre></td></tr></table></figure></p>
-<p>另外，还定义了一个常量字符串，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NSString * const NSAssertionHandlerKey;</div></pre></td></tr></table></figure></p>
-<p>主要是用于在线程的<code>threadDictionary</code>字典中获取或设置断言处理器。</p>
-<p><code>Xcode</code>已经默认将<code>release</code>环境下的断言取消了, 免除了忘记关闭断言造成的程序不稳定. 所以不用担心在开发时候大胆使用。</p>
-<p>自定义<code>NSAssertionHandler</code><br><code>NSAssertionHandler</code>实例是自动创建的，用于处理错误断言。如果<code>NSAssert</code>和<code>NSCAssert</code>条件评估为错误，会向<code>NSAssertionHandler</code>实例发送一个表示错误的字符串。每个线程都有它自己的<code>NSAssertionHandler</code>实例。<br>我们可以自定义处理方法，从而使用断言的时候，控制台输出错误，但是程序不会直接崩溃。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">#import &quot;MyAssertHandler.h&quot;</div><div class="line"></div><div class="line">@implementation MyAssertHandler</div><div class="line"></div><div class="line">//处理Objective-C的断言</div><div class="line">- (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format,...</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;NSAssert Failure: Method %@ for object %@ in %@#%li&quot;, NSStringFromSelector(selector), object, fileName, (long)line);</div><div class="line">&#125;</div><div class="line">//处理C的断言</div><div class="line">- (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format,...</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;NSCAssert Failure: Function (%@) in %@#%li&quot;, functionName, fileName, (long)line);</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure></p>
-<p>给线程添加处理类</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">- (BOOL)application:(UIApplication *)application</div><div class="line">didFinishLaunchingWithOptions:(NSDictionary *)launchOptions</div><div class="line">&#123;</div><div class="line">  NSAssertionHandler *assertionHandler = [[LoggingAssertionHandler alloc] init];</div><div class="line">  [[[NSThread currentThread] threadDictionary] setValue:assertionHandler</div><div class="line">                                                 forKey:NSAssertionHandlerKey];</div><div class="line">  // ...</div><div class="line">  return YES;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>自定义<code>NSAssertionHandler</code>后,程序能够获得断言失败后的信息,但是程序可以继续运行,不会强制退出程序.</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本期主要记录了以下几个问题：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;数组容错处理&lt;/li&gt;
-&lt;li&gt;Foundation中的断言处理&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&quot;数组容错处理&quot;&gt;&lt;a href=&quot;#数组容错处理&quot; class=&quot;headerlink&quot; title=&quot;数组容错处
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
     <title>iOS之使用Cocoapods创建私有仓库</title>
     <link href="https://sunjinshuai.github.io/2017/03/18/iOS%E4%B9%8B%E4%BD%BF%E7%94%A8Cocoapods%E5%88%9B%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/"/>
     <id>https://sunjinshuai.github.io/2017/03/18/iOS之使用Cocoapods创建私有仓库/</id>
@@ -284,6 +237,53 @@
     <summary type="html">
     
       &lt;p&gt;一般在公司git整合分支一般有两种方法——快速向前合并&lt;code&gt;git rebase&lt;/code&gt;和三路合并&lt;code&gt;git merge&lt;/code&gt;。其实在开发中，&lt;code&gt;git rebase&lt;/code&gt;和&lt;code&gt;git merge&lt;/code&gt;表达都是一个
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>iOS学习笔记 第3期(2016.08.03)</title>
+    <link href="https://sunjinshuai.github.io/2016/08/03/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC3%E6%9C%9F-2016-08-03/"/>
+    <id>https://sunjinshuai.github.io/2016/08/03/iOS学习笔记-第3期-2016-08-03/</id>
+    <published>2016-08-03T02:25:15.000Z</published>
+    <updated>2017-08-07T03:52:12.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>本期主要记录了以下几个问题：</p>
+<ul>
+<li>数组容错处理</li>
+<li>Foundation中的断言处理</li>
+</ul>
+<h4 id="数组容错处理"><a href="#数组容错处理" class="headerlink" title="数组容错处理"></a>数组容错处理</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">/*!</div><div class="line"> @method objectAtIndexCheck:</div><div class="line"> @abstract 检查是否越界和NSNull如果是返回nil</div><div class="line"> @result 返回对象</div><div class="line"> */</div><div class="line">- (id)objectAtIndexCheck:(NSUInteger)index;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">- (id)objectAtIndexCheck:(NSUInteger)index</div><div class="line">&#123;</div><div class="line">    if (index &gt;= [self count]) &#123;</div><div class="line">        return nil;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    id value = [self objectAtIndex:index];</div><div class="line">    if (value == [NSNull null]) &#123;</div><div class="line">        return nil;</div><div class="line">    &#125;</div><div class="line">    return value;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="Foundation中的断言处理"><a href="#Foundation中的断言处理" class="headerlink" title="Foundation中的断言处理"></a>Foundation中的断言处理</h4><p><code>Foundation</code>中定义了两组断言相关的宏，分别是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NSAssert / NSCAssert</div><div class="line">NSParameterAssert / NSCParameterAssert</div></pre></td></tr></table></figure></p>
+<p>这两组宏主要在功能和语义上有所差别，这些区别主要有以下两点：</p>
+<ul>
+<li>如果我们需要确保方法或函数的输入参数的正确性，则应该在方法(函数)的顶部使用<code>NSParameterAssert / NSCParameterAssert</code>；而在其它情况下，使用<code>NSAssert / NSCAssert</code>。</li>
+<li>另一个不同是介于<code>C</code>和<code>Objective-C</code>之间。<code>NSAssert / NSParameterAssert</code>应该用于<code>Objective-C</code>的上下文(方法)中，而<code>NSCAssert / NSCParameterAssert</code>应该用于<code>C</code>的上下文(函数)中。</li>
+</ul>
+<p>当断言失败时，通常是会抛出一个如下所示的异常：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">*** Terminating app due to uncaught exception &apos;NSInternalInconsistencyException&apos;, reason: &apos;true is not equal to false&apos;</div></pre></td></tr></table></figure></p>
+<p><code>Foundation</code>为了处理断言，专门定义了一个<code>NSAssertionHandler</code>来处理断言的失败情况。<code>NSAssertionHandler</code>对象是自动创建的，用于处理失败的断言。当断言失败时，会传递一个字符串给<code>NSAssertionHandler</code>对象来描述失败的原因。每个线程都有自己的<code>NSAssertionHandler</code>对象。当调用时，一个断言处理器会打印包含方法和类(或函数)的错误消息，并引发一个<code>NSInternalInconsistencyException</code>异常。就像上面所看到的一样。</p>
+<p>我们很少直接去调用<code>NSAssertionHandler</code>的断言处理方法，通常都是自动调用的。</p>
+<p><code>NSAssertionHandler</code>提供的方法并不多，就三个，如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">// 返回与当前线程的NSAssertionHandler对象。</div><div class="line">// 如果当前线程没有相关的断言处理器，则该方法会创建一个并指定给当前线程</div><div class="line">+ (NSAssertionHandler *)currentHandler</div><div class="line">// 当NSCAssert或NSCParameterAssert断言失败时，会调用这个方法</div><div class="line">- (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)object lineNumber:(NSInteger)fileName description:(NSString *)line, format,...</div><div class="line">// 当NSAssert或NSParameterAssert断言失败时，会调用这个方法</div><div class="line">- (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format, ...</div></pre></td></tr></table></figure></p>
+<p>另外，还定义了一个常量字符串，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NSString * const NSAssertionHandlerKey;</div></pre></td></tr></table></figure></p>
+<p>主要是用于在线程的<code>threadDictionary</code>字典中获取或设置断言处理器。</p>
+<p><code>Xcode</code>已经默认将<code>release</code>环境下的断言取消了, 免除了忘记关闭断言造成的程序不稳定. 所以不用担心在开发时候大胆使用。</p>
+<p>自定义<code>NSAssertionHandler</code><br><code>NSAssertionHandler</code>实例是自动创建的，用于处理错误断言。如果<code>NSAssert</code>和<code>NSCAssert</code>条件评估为错误，会向<code>NSAssertionHandler</code>实例发送一个表示错误的字符串。每个线程都有它自己的<code>NSAssertionHandler</code>实例。<br>我们可以自定义处理方法，从而使用断言的时候，控制台输出错误，但是程序不会直接崩溃。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">#import &quot;MyAssertHandler.h&quot;</div><div class="line"></div><div class="line">@implementation MyAssertHandler</div><div class="line"></div><div class="line">//处理Objective-C的断言</div><div class="line">- (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format,...</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;NSAssert Failure: Method %@ for object %@ in %@#%li&quot;, NSStringFromSelector(selector), object, fileName, (long)line);</div><div class="line">&#125;</div><div class="line">//处理C的断言</div><div class="line">- (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format,...</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;NSCAssert Failure: Function (%@) in %@#%li&quot;, functionName, fileName, (long)line);</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p>给线程添加处理类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">- (BOOL)application:(UIApplication *)application</div><div class="line">didFinishLaunchingWithOptions:(NSDictionary *)launchOptions</div><div class="line">&#123;</div><div class="line">  NSAssertionHandler *assertionHandler = [[LoggingAssertionHandler alloc] init];</div><div class="line">  [[[NSThread currentThread] threadDictionary] setValue:assertionHandler</div><div class="line">                                                 forKey:NSAssertionHandlerKey];</div><div class="line">  // ...</div><div class="line">  return YES;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>自定义<code>NSAssertionHandler</code>后,程序能够获得断言失败后的信息,但是程序可以继续运行,不会强制退出程序.</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本期主要记录了以下几个问题：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;数组容错处理&lt;/li&gt;
+&lt;li&gt;Foundation中的断言处理&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&quot;数组容错处理&quot;&gt;&lt;a href=&quot;#数组容错处理&quot; class=&quot;headerlink&quot; title=&quot;数组容错处
     
     </summary>
     

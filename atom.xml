@@ -143,6 +143,62 @@
   </entry>
   
   <entry>
+    <title>iOS之使用Cocoapods创建公有仓库</title>
+    <link href="https://sunjinshuai.github.io/2016/12/08/iOS%E4%B9%8B%E4%BD%BF%E7%94%A8Cocoapods%E5%88%9B%E5%BB%BA%E5%85%AC%E6%9C%89%E4%BB%93%E5%BA%93/"/>
+    <id>https://sunjinshuai.github.io/2016/12/08/iOS之使用Cocoapods创建公有仓库/</id>
+    <published>2016-12-08T05:45:50.000Z</published>
+    <updated>2017-08-08T06:00:17.000Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><p>在开发过程中，经常会使用到第三框架，我们通过一个<code>pod install</code>命令，很方便的就将第三方框架加到我们自己的项目中。</p>
+<p>如果我们也想将自己写的组件或库开源出去，让别人也可以通过<code>pod install</code>命令安装自己的框架该怎么做呢？下面，我就教大家一步一步的将自己的<code>pods</code>发布到<code>CocoaPods</code>中。如果你现在对<code>CocoaPods</code>还不太了解，推荐你看一看这篇文章：<a href="https://sunjinshuai.github.io/2016/08/08/CocoaPods%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/">CocoaPods的安装与使用</a></p>
+<h4 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h4><p>1、注册<code>CocoaPods</code>账户信息<br>2、创建共享库文件并上传到公有仓库<br>3、编辑<code>.podspec</code>文件<br>4、打<code>tag</code>, 发布一个<code>release</code>版本<br>5、发布自己的库描述文件<code>podspec</code>给<code>cocoapods</code><br>6、关于查找和使用新创建的库<br>7、更新维护<code>podspec</code></p>
+<p>下面就创建<code>CocoaPods</code>公有库做一下分享：</p>
+<p>一、在github上创建项目，复制项目的链接路径，例如：<a href="https://github.com/sunjinshuai/MYSementManager" target="_blank" rel="external">https://github.com/sunjinshuai/MYSementManager</a>;</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-18287791668c31f7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>备注：<br>1、<code>GitHub</code>仓库的名称，不允许重名。<br>2、开源协议，一般都选择<code>MIT</code>。</p>
+<p>二、使用命令行、<code>sourceTree</code>或者<code>GitHub Mac</code>版将项目克隆到本地新建的一个文件夹中;</p>
+<p>三、cd进入本地该文件夹，将自己之前的工程文件(demo)以及共享文件(共享库Lib)拖入其中，并创建公有仓库，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pod spec create cocoaPodsName;</div></pre></td></tr></table></figure>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-e67a3ac9fd6604f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>备注：<br>1、自己的工程文件(demo)以及共享文件(共享库Lib)。<br>2、<code>MYSementManager.podspec</code>创建的公有库名称。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-20364e263a61e972.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>当<code>Specification created at MYSementManager.podspec</code>说明创建公有库成功。</p>
+<p>四、使用文本编辑器或者<code>sublime</code>等编辑公有仓库信息(注意：引号不能搞错了，是英文格式的””,不是中文格式“”)，默认选择文本编辑器。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-ae92088a994e1ce4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>备注：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">1、s.name：公有库的名称。</div><div class="line">2、s.version：公有库的版本。</div><div class="line">3、s.summary：公有库简短介绍。</div><div class="line">4、s.description：公有库详细介绍。</div><div class="line">5、s.homepage：公有库在GitHub上的地址。</div><div class="line">6、s.license：开源协议。</div><div class="line">7、s.author：作者。</div><div class="line">8、s.source：公有库在GitHub上的地址和版本号。</div><div class="line">9、s.source_files：公有库对外共享的.h和.m文件。</div><div class="line">10、s.requires_arc：是否支持ARC。</div></pre></td></tr></table></figure></p>
+<p>没有涉及到的字段可以去<a href="http://guides.cocoapods.org/syntax/podspec.html" target="_blank" rel="external">官方文档</a>查阅。</p>
+<p>五、编辑结束保存，并验证本地的公有仓库是否有效。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pod lib lint cocoaPodsName.podspec</div></pre></td></tr></table></figure>
+<p>六、验证有效后，然后再将本地该文件夹中所有的文件<code>push</code>到<code>github</code>上。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">git add .</div><div class="line">git commit -m &quot;first commit&quot;</div><div class="line">git remote add origin https://github.com/sunjinshuai/test.git</div><div class="line">git push -u origin master</div></pre></td></tr></table></figure>
+<p>使用<code>git tag</code>(此方法操作后再<code>push</code>上传一次)或者直接在<code>github</code>上点击<code>release</code>进入后创建<code>release</code>并给公有仓库打上<code>tag</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ git tag -m &quot;first release&quot; 0.0.1</div><div class="line">$ git push --tags     #推送tag到远端仓库</div></pre></td></tr></table></figure>
+<p>七、注册<code>trunk</code>，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pod trunk register 邮箱 ‘用户名’ --description=‘描述’</div></pre></td></tr></table></figure>
+<p>注意：<br>邮箱为<code>github</code>上的登录邮箱、用户名为<code>github</code>上的用户名。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-e5852a3ef0d784db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>接收发送到邮箱的链接，点击进入后注册成功。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-31ebbd1972d0b840.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"><br>查看注册的个人信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pod trunk me</div></pre></td></tr></table></figure>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-1c00ba7b4cc7dee1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>验证上传到<code>github</code>上的公有仓库是否有效。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pod spec lint cocoaPodsName.podspec</div></pre></td></tr></table></figure>
+<p>八、将公有仓库推送到<code>CocoaPods</code>上<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pod trunk push cocoaPodsName.podspec</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-3b58f26ecefe1456.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>大功告成，使用<code>pod search cocoaPodsName</code>搜索即可。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-ebd6b6df003a75e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h4 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h4&gt;&lt;p&gt;在开发过程中，经常会使用到第三框架，我们通过一个&lt;code&gt;pod install&lt;/code&gt;命令，很方便的就将第三方框架加到我们自己的项
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>AutoreleasePool的实现原理</title>
     <link href="https://sunjinshuai.github.io/2016/10/06/AutoreleasePool%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/"/>
     <id>https://sunjinshuai.github.io/2016/10/06/AutoreleasePool的实现原理/</id>

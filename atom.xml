@@ -76,12 +76,13 @@
     <link href="https://sunjinshuai.github.io/2017/05/03/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC4%E6%9C%9F-2017-05-03/"/>
     <id>https://sunjinshuai.github.io/2017/05/03/iOS学习笔记-第4期-2017-05-03/</id>
     <published>2017-05-03T03:20:08.000Z</published>
-    <updated>2017-08-07T03:56:12.000Z</updated>
+    <updated>2017-08-09T06:43:51.000Z</updated>
     
     <content type="html"><![CDATA[<p>本期主要记录了以下几个问题：</p>
 <ul>
 <li>僵尸对象（Zombie Objects）</li>
 <li>使用Instruments检测僵尸对象</li>
+<li>iOS11适配之UITableview、UICollectionView下拉刷新错乱</li>
 </ul>
 <h4 id="僵尸对象（Zombie-Objects）"><a href="#僵尸对象（Zombie-Objects）" class="headerlink" title="僵尸对象（Zombie Objects）"></a>僵尸对象（Zombie Objects）</h4><p>僵尸对象：已经被释放掉的对象。一般来说，访问已经释放的对象或向它发消息会引起错误。因为指针指向的内存块认为你无权访问或它无法执行该消息，这时候内核会抛出一个异常（EXC），表明你不能访问该存储区域（BAD ACCESS）（EXC_BAD_ACCESS类型错误）。</p>
 <h5 id="使用NSZombieEnabled"><a href="#使用NSZombieEnabled" class="headerlink" title="使用NSZombieEnabled"></a>使用NSZombieEnabled</h5><p><code>Xcode</code>提供的<code>NSZombieEnabled</code>，通过生成僵尸对象来替换<code>dealloc</code>的实现，当对象引用计数为0的时候，将需要<code>dealloc</code>的对象转化为僵尸对象。如果之后再给这个僵尸对象发消息，则抛出异常。先选中<code>Product -&gt; Scheme -&gt; Edit Scheme -&gt; Diagnostics -&gt; 勾选Zombie Objects</code>项，显示如下：</p>
@@ -105,6 +106,18 @@
 <p>双击调用栈对应的方法后，还可以查看具体的代码，如下图所示。</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/588630-9f083fc18e1f88f3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>注意：<br>不能使用<code>assgin</code>或<code>unsafe_unretained</code>修饰指向OC对象的指针<br><code>assgin</code>和<code>unsafe_unretained</code>表示不持对象，是弱引用。如果指针指向的对象被释放了，它们就变成了野指针，很有可能发生Crash。</p>
+<h4 id="iOS11适配之UITableview、UICollectionView下拉刷新错乱"><a href="#iOS11适配之UITableview、UICollectionView下拉刷新错乱" class="headerlink" title="iOS11适配之UITableview、UICollectionView下拉刷新错乱"></a>iOS11适配之UITableview、UICollectionView下拉刷新错乱</h4><p>升级<code>Xcode 9</code>之后，在<code>iOS11</code>的环境下，发现原本没问题的<code>collectionView</code>和<code>tableView</code>像是中了风一样，头部刷新UI出现了错乱。</p>
+<p>于是谷歌了一下发现<code>iOS11</code>弃用了<code>automaticallyAdjustsScrollViewInsets</code>属性，新增<code>contentInsetAdjustmentBehavior</code>来替代它。</p>
+<p>关于<code>contentInsetAdjustmentBehavior</code>，<br>swift语言:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">@available(iOS 11.0, *)</div><div class="line">public enum UIScrollViewContentInsetAdjustmentBehavior : Int &#123;</div><div class="line"></div><div class="line">    case automatic // Similar to .scrollableAxes, but will also adjust the top &amp; bottom contentInset when the scroll view is owned by a view controller with automaticallyAdjustsScrollViewContentInset = YES inside a navigation controller, regardless of whether the scroll view is scrollable</div><div class="line"></div><div class="line">    case scrollableAxes // Edges for scrollable axes are adjusted (i.e., contentSize.width/height &gt; frame.size.width/height or alwaysBounceHorizontal/Vertical = YES)</div><div class="line"></div><div class="line">    case never // contentInset is not adjusted</div><div class="line"></div><div class="line">    case always // contentInset is always adjusted by the scroll view&apos;s safeAreaInsets</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>UIScrollViewContentInsetAdjustmentBehavior 是一个枚举类型,值有以下几种:</p>
+<ul>
+<li><code>automatic</code>和<code>scrollableAxes</code>一样，<code>scrollView</code>会自动计算和适应顶部和底部的内边距并且在<code>scrollView</code>不可滚动时，也会设置内边距。</li>
+<li><code>scrollableAxes</code>自动计算内边距。</li>
+<li><code>never</code>不计算内边距。</li>
+<li><code>always</code>根据<code>safeAreaInsets</code>计算内边距。<br>很显然，在适配<code>iOS11</code>的时候我们这里要设置为<code>never</code>。</li>
+</ul>
+<p>OC语言:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// 声明tableView的位置 添加下面代码</div><div class="line">if (@available(iOS 11.0, *)) &#123;</div><div class="line">    _tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>swift语言:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// 声明tableView的位置 添加下面代码</div><div class="line">if #available(iOS 11.0, *) &#123;</div><div class="line">    tableView.contentInsetAdjustmentBehavior = .never</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 ]]></content>
     
     <summary type="html">
@@ -113,8 +126,8 @@
 &lt;ul&gt;
 &lt;li&gt;僵尸对象（Zombie Objects）&lt;/li&gt;
 &lt;li&gt;使用Instruments检测僵尸对象&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&quot;僵尸对象（Zombie-Objects）&quot;&gt;&lt;a href=&quot;#僵尸对象（Zom
+&lt;li&gt;iOS11适配之UITableview、UICollectionView下拉刷新错乱&lt;/li&gt;
+&lt;/
     
     </summary>
     
@@ -1046,6 +1059,90 @@
   </entry>
   
   <entry>
+    <title>iOS之真机测试</title>
+    <link href="https://sunjinshuai.github.io/2015/03/09/iOS%E4%B9%8B%E7%9C%9F%E6%9C%BA%E6%B5%8B%E8%AF%95/"/>
+    <id>https://sunjinshuai.github.io/2015/03/09/iOS之真机测试/</id>
+    <published>2015-03-09T11:26:25.000Z</published>
+    <updated>2017-08-09T11:17:09.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>开发者在进行iOS开发的时候，不可避免要进行真机测试。如果想要进行真机调试，需要有一个开发者账号。</p>
+<ul>
+<li>个人的<code>99$</code>申请简单，付钱就行，688人民币;</li>
+<li>企业的<code>99$</code>申请复杂，需要<code>&quot;邓白氏&quot;</code>认证，可以确认企业是合法有效的，可以管理团队开发;</li>
+<li>商业的<code>299$</code>也需要邓白氏认证，开发的应用，不能够上架（不经过苹果的审核）！专门给企业级用户定制应用程序使用！</li>
+</ul>
+<h4 id="真机测试步骤"><a href="#真机测试步骤" class="headerlink" title="真机测试步骤"></a>真机测试步骤</h4><ul>
+<li>创建<code>App ID</code></li>
+<li>创建<code>CSR</code>证书</li>
+<li>创建<code>CER</code>开发者证书</li>
+<li>注册<code>Identifiers</code></li>
+<li>注册<code>Devices</code></li>
+<li>创建<code>Provisioning Profiles</code>文件</li>
+<li>设置<code>Xcode</code>然后真机调试</li>
+</ul>
+<h5 id="创建App-ID"><a href="#创建App-ID" class="headerlink" title="创建App ID"></a>创建<code>App ID</code></h5><p>打开苹果<a href="https://developer.apple.com/" target="_blank" rel="external">开发者官网</a>，点击<code>&quot;Account&quot;</code>登录会员中心。</p>
+<h5 id="创建证书"><a href="#创建证书" class="headerlink" title="创建证书"></a>创建证书</h5><p><img src="http://upload-images.jianshu.io/upload_images/588630-fa4c95b763f36c87.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>登录钥匙串访问–&gt;钥匙串访问–&gt;证书助理–&gt;从证书颁发机构请求证书，保存在本地。</p>
+<h5 id="创建CER开发者证书"><a href="#创建CER开发者证书" class="headerlink" title="创建CER开发者证书"></a>创建<code>CER</code>开发者证书</h5><p>登录开发者中心</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-e7daf11ce3d16623.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-fe5fb51044779bbf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>注意：</p>
+<ul>
+<li><code>Develpment</code>开发者测试的真机证书</li>
+<li><code>Production</code>商品化的证书，上架，发布</li>
+</ul>
+<p>创建开发者测试的真机证书(发布和上架证书)</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-1703d1e7278f30c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>点击<code>Continue</code></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-81d586e26d8f04fa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>点击<code>Continue</code></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-8327c7cc937c1c7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>点击<code>choose File..</code>选择上传创建好的证书请求文件：<code>CertificateSigningRequest.certSigningRequest</code>文件，点击<code>Generate</code>。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-28241ce9dd6c1778.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>双击安装，如果安装不上，可以直接将证书文件拖拽到钥匙串访问的列表中。</p>
+<h5 id="注册Identifiers"><a href="#注册Identifiers" class="headerlink" title="注册Identifiers"></a>注册<code>Identifiers</code></h5><p>注册<code>Identifiers</code>，告诉苹果那一个应用程序需要调试。<br><img src="http://upload-images.jianshu.io/upload_images/588630-7b1b431cab21e0a0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>点击+<br><img src="http://upload-images.jianshu.io/upload_images/588630-5defc2dd21cb326a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>注意：<br><code>App ID Description</code>：<code>Identifiers</code>描述，用于区分其他的<code>Identifiers</code>。<br><code>Explicit App ID</code>：唯一的<code>Identifiers</code><br><code>Wildcard App ID</code>：通配<code>Identifiers</code>，多个应用程序可以使用。</p>
+<p>点击<code>Register</code></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-6b28e4a752c7f5da.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>点击<code>Done</code><br><img src="http://upload-images.jianshu.io/upload_images/588630-18b4829aff9f9be5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><code>Identifiers</code>注册成功<br><img src="http://upload-images.jianshu.io/upload_images/588630-36e9c6bde8603c68.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h5 id="注册Devices"><a href="#注册Devices" class="headerlink" title="注册Devices"></a>注册<code>Devices</code></h5><p>注册<code>Devices</code>，告诉苹果哪些真机能够调试开发。每个开发者，最多只能添加100台设备！</p>
+<p>但是苹果并没有提供删除设备ID的功能，仅仅是可以禁止(生成配置文件时不选择设备ID)某台设备调试。在一年有效期内，即便删除了设备，名额仍然会被占用！会在下一次交款后，被禁止的设备会自动清空。</p>
+<p>每一个设备的唯一标示符号，能够唯一准确的定位到一台设备，只能在真机测试添加设备时使用！如果在程序中获取唯一标示，将会导致无法上架。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-bbfcc16c8041eb45.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>填写测试机的名称和<code>UDID</code><br><img src="http://upload-images.jianshu.io/upload_images/588630-4abe0e48a94a869f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h5 id="创建Provisioning-Profiles文件"><a href="#创建Provisioning-Profiles文件" class="headerlink" title="创建Provisioning Profiles文件"></a>创建<code>Provisioning Profiles</code>文件</h5><p>创建<code>Provisioning Profiles</code>文件，用来描述那台电脑开发，能够开发哪个应用程序，在哪台真机上调试。</p>
+<p>创建开发者测试的真机<code>Provisioning Profiles</code>(发布和上架证书)</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-61c27630d56d6e4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>然后点击右上角 + 号<br><img src="http://upload-images.jianshu.io/upload_images/588630-a9d2ee3939e5abab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>注意：<br><code>iOS App Development</code>：真机测试的<code>Provisioning Profiles</code><br><code>App Store</code>：发布的<code>Provisioning Profiles</code><br><code>Ad Hoc</code>：打包的<code>Provisioning Profiles</code></p>
+<p>在<code>App ID</code>这个选项栏里面找到你刚刚注册的<code>Identifiers</code>，点击<code>Continue</code></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-0a9534133b222daf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>选择描述文件所对应的证书。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-172ae116cb2d95f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>选择描述文件所对应的测试设备。<br><img src="http://upload-images.jianshu.io/upload_images/588630-5db4000dcabe5b9b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>为选择描述文件所对应的测试设备。<br><img src="http://upload-images.jianshu.io/upload_images/588630-b9da325eacf67e11.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>为选择描述文件命名。<br><img src="http://upload-images.jianshu.io/upload_images/588630-d80af1d4c788d1a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><code>Download</code>刚注册的<code>Provisioning Profiles</code>，然后点击Done，双击就添加到Xcode中。</p>
+<h5 id="设置Xcode然后真机调试"><a href="#设置Xcode然后真机调试" class="headerlink" title="设置Xcode然后真机调试"></a>设置<code>Xcode</code>然后真机调试</h5><p>打开<code>Xcode</code>选择相应的调试证书<br><img src="http://upload-images.jianshu.io/upload_images/588630-2fc3971a42871f7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>注意：<br>选择证书时，可以根据<code>release</code>和<code>debug</code>对应不同状态的证书。例如<code>release</code>对应发布证书，<code>debug</code>对应调试证书。</p>
+<p>在团队开发中，如果证书是其他人申请的，可以通过在钥匙串中导出.P12证书来进行真机测试。P12文件中，包含有创建证书时的私钥，和苹果签名的信息，可以给其他人使用“双击”安装；</p>
+<p>iOS之真机测试其实很简单，只要有开发者账号，进行傻瓜式安装就可以了。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;开发者在进行iOS开发的时候，不可避免要进行真机测试。如果想要进行真机调试，需要有一个开发者账号。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;个人的&lt;code&gt;99$&lt;/code&gt;申请简单，付钱就行，688人民币;&lt;/li&gt;
+&lt;li&gt;企业的&lt;code&gt;99$&lt;/code&gt;申请复杂，需要&lt;c
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>通知中心(NSNotificationCenter)的实现原理</title>
     <link href="https://sunjinshuai.github.io/2014/12/07/%E9%80%9A%E7%9F%A5%E4%B8%AD%E5%BF%83-NSNotificationCenter-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/"/>
     <id>https://sunjinshuai.github.io/2014/12/07/通知中心-NSNotificationCenter-的实现原理/</id>
@@ -1234,46 +1331,6 @@
     
       &lt;p&gt;block是C语言的扩充功能，也被称为带有自动变量(局部变量)的匿名函数。block在网络请求的回调中起着举足轻重的作用。下面就来一步步的探索它的由来和使用方法。&lt;/p&gt;
 &lt;h4 id=&quot;block由来&quot;&gt;&lt;a href=&quot;#block由来&quot; class=&quot;headerli
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>HEXO搭建个人博客</title>
-    <link href="https://sunjinshuai.github.io/2014/07/04/HEXO%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"/>
-    <id>https://sunjinshuai.github.io/2014/07/04/HEXO搭建个人博客/</id>
-    <published>2014-07-04T13:41:47.000Z</published>
-    <updated>2017-07-04T14:39:31.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>想着写博客，一方面是给自己做笔记，可以提升自己的写作、总结能力，一个技术点会使用，并不难，但是要做到让别人也能听懂我们讲得，还是需要一定的技巧和经验的。很多类似于CSDN、博客园也都可以写文章，但是页面的样式我不是太喜欢。最近看到一些大神们的博客，貌似都是用hexo写得，本人也利用hexo+github搭建了本博客，用于分享一些心得。在此过程中，折腾博客的各种配置以及功能占具了我一部分时间，在此详细记录下我是如何利用hexo+github搭建静态博客以及一些配置相关问题，以免过后遗忘，且当备份之用。</p>
-<h4 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h4><p>安装homebrew</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</div></pre></td></tr></table></figure>
-<p>安装git<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">brew install git</div></pre></td></tr></table></figure></p>
-<p>安装node<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">brew install node</div></pre></td></tr></table></figure></p>
-<p>安装hexo<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install -g hexo</div></pre></td></tr></table></figure></p>
-<h4 id="搭建hexo博客"><a href="#搭建hexo博客" class="headerlink" title="搭建hexo博客"></a>搭建hexo博客</h4><p>创建新建一个文件夹，用来存放本地博客。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">hexo init</div><div class="line">npm install</div></pre></td></tr></table></figure>
-<p>Hexo会在创建的文件夹创建本地博客所需的一切资源。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo server</div></pre></td></tr></table></figure></p>
-<p>访问本地localhost:4000可以看到博客已经搭建成功。</p>
-<h4 id="同步Hexo博客到Github"><a href="#同步Hexo博客到Github" class="headerlink" title="同步Hexo博客到Github"></a>同步Hexo博客到Github</h4><ul>
-<li>在Github上创建名字为XXX.github.io的项目，XXX为自己的github用户名。</li>
-<li>开本地的创建的文件夹中的_config.yml配置文件，将其中的type设置为git。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># Deployment</div><div class="line">## Docs: https://hexo.io/docs/deployment.html</div><div class="line">deploy:</div><div class="line">type: git</div><div class="line">repo: https://github.com/sunjinshuai/sunjinshuai.github.com</div><div class="line">branch: master</div></pre></td></tr></table></figure>
-<p>在terminal终端，将当前目录切换到你的本地博客目录，执行以下命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install hexo-deployer-git --save</div></pre></td></tr></table></figure></p>
-<p>在terminal终端，执行以下命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">hexo generate   // 可以简写成hexo g 根据markdown文件生成静态文件</div><div class="line">hexo deploy     // 或者简写成hexo d 将本地修改，部署到远端</div></pre></td></tr></table></figure></p>
-<p>此时，打开浏览器，访问<a href="https://sunjinshuai.github.io">https://sunjinshuai.github.io</a> ，就可以看到你的博客。</p>
-<h4 id="Hexo安装新主题apollo"><a href="#Hexo安装新主题apollo" class="headerlink" title="Hexo安装新主题apollo"></a>Hexo安装新主题apollo</h4><p>Hexo换皮肤还是比较简单的，既可以自己根据默认的主题来修改，也可以到<a href="https://hexo.io/themes/" target="_blank" rel="external">https://hexo.io/themes/</a> 上去找主题。</p>
-<h5 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h5><p>github上的文档给出了详细的安装命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">hexo init #blogname#</div><div class="line">cd #blogname# </div><div class="line">npm install</div><div class="line">npm install --save hexo-renderer-jade hexo-generator-feed hexo-generator-sitemap hexo-browsersync hexo-generator-archive</div><div class="line">git clone https://github.com/pinggod/hexo-theme-apollo.git themes/apollo</div></pre></td></tr></table></figure></p>
-<h5 id="启用"><a href="#启用" class="headerlink" title="启用"></a>启用</h5><p>安装成功后就可以开始启用主题，主题的启用需要修改_config.yml 的 theme 配置项为 apollo：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"># Extensions</div><div class="line">## Plugins: https://hexo.io/plugins/</div><div class="line">## Themes: https://hexo.io/themes/</div><div class="line">theme: apollo</div><div class="line"></div><div class="line"># 在归档页面显示所有文章</div><div class="line"># 需要上面安装的 hexo-generator-archive 插件支持</div><div class="line">archive_generator:</div><div class="line">per_page: 0</div><div class="line">yearly: false</div><div class="line">monthly: false</div><div class="line">daily: false</div></pre></td></tr></table></figure></p>
-<h4 id="hexo常用的命令"><a href="#hexo常用的命令" class="headerlink" title="hexo常用的命令"></a>hexo常用的命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">hexo init       //在指定目录执行该命令，会将当前目录初始化为hexo站点，生成hexo站点所需的一切文件</div><div class="line">hexo new “my new blog title”   //新建一篇文章。如果没有设置 layout 的话，默认使用 _config.yml 中的 default_layout 参数代替。如果标题包含空格的话，请使用引号括起来。</div><div class="line">hexo clean      // 清除缓存，如果对本地文件做了修改，同步到远程验证修改的效果之前，先clean，清除缓存</div><div class="line">hexo generate   // 可以简写成hexo g 根据markdown文件生成静态文件</div><div class="line">hexo server     // 或者简写成hexo s 启动本地hexo 服务器，默认localhost:4000可以访问</div><div class="line">hexo deploy     // 或者简写成hexo d 将本地修改，部署到远端</div><div class="line">hexo version    // 显示hexo版本</div></pre></td></tr></table></figure>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;想着写博客，一方面是给自己做笔记，可以提升自己的写作、总结能力，一个技术点会使用，并不难，但是要做到让别人也能听懂我们讲得，还是需要一定的技巧和经验的。很多类似于CSDN、博客园也都可以写文章，但是页面的样式我不是太喜欢。最近看到一些大神们的博客，貌似都是用hexo写得，本
     
     </summary>
     

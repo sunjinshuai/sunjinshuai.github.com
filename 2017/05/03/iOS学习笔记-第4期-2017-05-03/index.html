@@ -2,6 +2,7 @@
 <ul>
 <li>僵尸对象（Zombie Objects）</li>
 <li>使用Instruments检测僵尸对象</li>
+<li>iOS11适配之UITableview、UICollectionView下拉刷新错乱</li>
 </ul>
 <h4 id="僵尸对象（Zombie-Objects）"><a href="#僵尸对象（Zombie-Objects）" class="headerlink" title="僵尸对象（Zombie Objects）"></a>僵尸对象（Zombie Objects）</h4><p>僵尸对象：已经被释放掉的对象。一般来说，访问已经释放的对象或向它发消息会引起错误。因为指针指向的内存块认为你无权访问或它无法执行该消息，这时候内核会抛出一个异常（EXC），表明你不能访问该存储区域（BAD ACCESS）（EXC_BAD_ACCESS类型错误）。</p>
 <h5 id="使用NSZombieEnabled"><a href="#使用NSZombieEnabled" class="headerlink" title="使用NSZombieEnabled"></a>使用NSZombieEnabled</h5><p><code>Xcode</code>提供的<code>NSZombieEnabled</code>，通过生成僵尸对象来替换<code>dealloc</code>的实现，当对象引用计数为0的时候，将需要<code>dealloc</code>的对象转化为僵尸对象。如果之后再给这个僵尸对象发消息，则抛出异常。先选中<code>Product -&gt; Scheme -&gt; Edit Scheme -&gt; Diagnostics -&gt; 勾选Zombie Objects</code>项，显示如下：</p>
@@ -25,6 +26,18 @@
 <p>双击调用栈对应的方法后，还可以查看具体的代码，如下图所示。</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/588630-9f083fc18e1f88f3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>注意：<br>不能使用<code>assgin</code>或<code>unsafe_unretained</code>修饰指向OC对象的指针<br><code>assgin</code>和<code>unsafe_unretained</code>表示不持对象，是弱引用。如果指针指向的对象被释放了，它们就变成了野指针，很有可能发生Crash。</p>
+<h4 id="iOS11适配之UITableview、UICollectionView下拉刷新错乱"><a href="#iOS11适配之UITableview、UICollectionView下拉刷新错乱" class="headerlink" title="iOS11适配之UITableview、UICollectionView下拉刷新错乱"></a>iOS11适配之UITableview、UICollectionView下拉刷新错乱</h4><p>升级<code>Xcode 9</code>之后，在<code>iOS11</code>的环境下，发现原本没问题的<code>collectionView</code>和<code>tableView</code>像是中了风一样，头部刷新UI出现了错乱。</p>
+<p>于是谷歌了一下发现<code>iOS11</code>弃用了<code>automaticallyAdjustsScrollViewInsets</code>属性，新增<code>contentInsetAdjustmentBehavior</code>来替代它。</p>
+<p>关于<code>contentInsetAdjustmentBehavior</code>，<br>swift语言:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">@available(iOS 11.0, *)</div><div class="line">public enum UIScrollViewContentInsetAdjustmentBehavior : Int &#123;</div><div class="line"></div><div class="line">    case automatic // Similar to .scrollableAxes, but will also adjust the top &amp; bottom contentInset when the scroll view is owned by a view controller with automaticallyAdjustsScrollViewContentInset = YES inside a navigation controller, regardless of whether the scroll view is scrollable</div><div class="line"></div><div class="line">    case scrollableAxes // Edges for scrollable axes are adjusted (i.e., contentSize.width/height &gt; frame.size.width/height or alwaysBounceHorizontal/Vertical = YES)</div><div class="line"></div><div class="line">    case never // contentInset is not adjusted</div><div class="line"></div><div class="line">    case always // contentInset is always adjusted by the scroll view&apos;s safeAreaInsets</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>UIScrollViewContentInsetAdjustmentBehavior 是一个枚举类型,值有以下几种:</p>
+<ul>
+<li><code>automatic</code>和<code>scrollableAxes</code>一样，<code>scrollView</code>会自动计算和适应顶部和底部的内边距并且在<code>scrollView</code>不可滚动时，也会设置内边距。</li>
+<li><code>scrollableAxes</code>自动计算内边距。</li>
+<li><code>never</code>不计算内边距。</li>
+<li><code>always</code>根据<code>safeAreaInsets</code>计算内边距。<br>很显然，在适配<code>iOS11</code>的时候我们这里要设置为<code>never</code>。</li>
+</ul>
+<p>OC语言:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// 声明tableView的位置 添加下面代码</div><div class="line">if (@available(iOS 11.0, *)) &#123;</div><div class="line">    _tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>swift语言:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// 声明tableView的位置 添加下面代码</div><div class="line">if #available(iOS 11.0, *) &#123;</div><div class="line">    tableView.contentInsetAdjustmentBehavior = .never</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 </div></article></div></main><footer><div class="paginator"><a href="/2017/08/08/iOS之iconfont实战/" class="prev">上一篇</a><a href="/2017/03/18/iOS之使用Cocoapods创建私有仓库/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
 var disqus_identifier = '2017/05/03/iOS学习笔记-第4期-2017-05-03/';
 var disqus_title = 'iOS学习笔记 第4期(2017.05.03)';

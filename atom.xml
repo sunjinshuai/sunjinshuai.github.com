@@ -76,7 +76,7 @@
     <link href="https://sunjinshuai.github.io/2017/05/03/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC4%E6%9C%9F-2017-05-03/"/>
     <id>https://sunjinshuai.github.io/2017/05/03/iOS学习笔记-第4期-2017-05-03/</id>
     <published>2017-05-03T03:20:08.000Z</published>
-    <updated>2017-08-09T06:43:51.000Z</updated>
+    <updated>2017-08-16T07:02:46.000Z</updated>
     
     <content type="html"><![CDATA[<p>本期主要记录了以下几个问题：</p>
 <ul>
@@ -105,7 +105,11 @@
 <p><img src="http://upload-images.jianshu.io/upload_images/588630-4378fe75488a32bb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>双击调用栈对应的方法后，还可以查看具体的代码，如下图所示。</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/588630-9f083fc18e1f88f3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>注意：<br>不能使用<code>assgin</code>或<code>unsafe_unretained</code>修饰指向OC对象的指针<br><code>assgin</code>和<code>unsafe_unretained</code>表示不持对象，是弱引用。如果指针指向的对象被释放了，它们就变成了野指针，很有可能发生Crash。</p>
+<p>注意：</p>
+<ul>
+<li>不能使用<code>assgin</code>或<code>unsafe_unretained</code>修饰指向OC对象的指针。</li>
+<li><code>assgin</code>和<code>unsafe_unretained</code>表示不持对象，是弱引用。如果指针指向的对象被释放了，它们就变成了野指针，很有可能发生Crash。</li>
+</ul>
 <h4 id="iOS11适配之UITableview、UICollectionView下拉刷新错乱"><a href="#iOS11适配之UITableview、UICollectionView下拉刷新错乱" class="headerlink" title="iOS11适配之UITableview、UICollectionView下拉刷新错乱"></a>iOS11适配之UITableview、UICollectionView下拉刷新错乱</h4><p>升级<code>Xcode 9</code>之后，在<code>iOS11</code>的环境下，发现原本没问题的<code>collectionView</code>和<code>tableView</code>像是中了风一样，头部刷新UI出现了错乱。</p>
 <p>于是谷歌了一下发现<code>iOS11</code>弃用了<code>automaticallyAdjustsScrollViewInsets</code>属性，新增<code>contentInsetAdjustmentBehavior</code>来替代它。</p>
 <p>关于<code>contentInsetAdjustmentBehavior</code>，<br>swift语言:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">@available(iOS 11.0, *)</div><div class="line">public enum UIScrollViewContentInsetAdjustmentBehavior : Int &#123;</div><div class="line"></div><div class="line">    case automatic // Similar to .scrollableAxes, but will also adjust the top &amp; bottom contentInset when the scroll view is owned by a view controller with automaticallyAdjustsScrollViewContentInset = YES inside a navigation controller, regardless of whether the scroll view is scrollable</div><div class="line"></div><div class="line">    case scrollableAxes // Edges for scrollable axes are adjusted (i.e., contentSize.width/height &gt; frame.size.width/height or alwaysBounceHorizontal/Vertical = YES)</div><div class="line"></div><div class="line">    case never // contentInset is not adjusted</div><div class="line"></div><div class="line">    case always // contentInset is always adjusted by the scroll view&apos;s safeAreaInsets</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>

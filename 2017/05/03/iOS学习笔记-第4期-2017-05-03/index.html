@@ -3,6 +3,7 @@
 <li>僵尸对象（Zombie Objects）</li>
 <li>使用Instruments检测僵尸对象</li>
 <li>iOS11适配之UITableview、UICollectionView下拉刷新错乱</li>
+<li>@WeakObj和@StrongObj的宏定义</li>
 </ul>
 <h4 id="僵尸对象（Zombie-Objects）"><a href="#僵尸对象（Zombie-Objects）" class="headerlink" title="僵尸对象（Zombie Objects）"></a>僵尸对象（Zombie Objects）</h4><p>僵尸对象：已经被释放掉的对象。一般来说，访问已经释放的对象或向它发消息会引起错误。因为指针指向的内存块认为你无权访问或它无法执行该消息，这时候内核会抛出一个异常（EXC），表明你不能访问该存储区域（BAD ACCESS）（EXC_BAD_ACCESS类型错误）。</p>
 <h5 id="使用NSZombieEnabled"><a href="#使用NSZombieEnabled" class="headerlink" title="使用NSZombieEnabled"></a>使用NSZombieEnabled</h5><p><code>Xcode</code>提供的<code>NSZombieEnabled</code>，通过生成僵尸对象来替换<code>dealloc</code>的实现，当对象引用计数为0的时候，将需要<code>dealloc</code>的对象转化为僵尸对象。如果之后再给这个僵尸对象发消息，则抛出异常。先选中<code>Product -&gt; Scheme -&gt; Edit Scheme -&gt; Diagnostics -&gt; 勾选Zombie Objects</code>项，显示如下：</p>
@@ -27,8 +28,9 @@
 <p><img src="http://upload-images.jianshu.io/upload_images/588630-9f083fc18e1f88f3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>注意：</p>
 <ul>
-<li>不能使用<code>assgin</code>或<code>unsafe_unretained</code>修饰指向OC对象的指针。</li>
-<li><code>assgin</code>和<code>unsafe_unretained</code>表示不持对象，是弱引用。如果指针指向的对象被释放了，它们就变成了野指针，很有可能发生Crash。</li>
+<li>不能使用<code>assgin</code>或<code>unsafe_unretained</code>修饰指向OC对象的指针。<code>assgin</code>和<code>unsafe_unretained</code>表示不持对象，是弱引用。如果指针指向的对象被释放了，它们就变成了野指针，很有可能发生Crash。</li>
+<li><code>assign</code>仅用于修饰<code>NSInteger</code>等OC基础类型，以及<code>short</code>、<code>int</code>、<code>double</code>、结构体等C数据类型，不修饰对象指针。</li>
+<li>如果需要弱引用OC对象，建议使用<code>weak</code>关键字，因为被<code>weak</code>指针所引用的对象被回收后，<code>weak</code>指针会被赋为<code>nil</code>（空指针），给<code>nil</code>发任何消息都不会出问题。使用<code>weak</code>修饰代理对象属性就是很好的例子。</li>
 </ul>
 <h4 id="iOS11适配之UITableview、UICollectionView下拉刷新错乱"><a href="#iOS11适配之UITableview、UICollectionView下拉刷新错乱" class="headerlink" title="iOS11适配之UITableview、UICollectionView下拉刷新错乱"></a>iOS11适配之UITableview、UICollectionView下拉刷新错乱</h4><p>升级<code>Xcode 9</code>之后，在<code>iOS11</code>的环境下，发现原本没问题的<code>collectionView</code>和<code>tableView</code>像是中了风一样，头部刷新UI出现了错乱。</p>
 <p>于是谷歌了一下发现<code>iOS11</code>弃用了<code>automaticallyAdjustsScrollViewInsets</code>属性，新增<code>contentInsetAdjustmentBehavior</code>来替代它。</p>
@@ -42,6 +44,19 @@
 </ul>
 <p>OC语言:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// 声明tableView的位置 添加下面代码</div><div class="line">if (@available(iOS 11.0, *)) &#123;</div><div class="line">    _tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>swift语言:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// 声明tableView的位置 添加下面代码</div><div class="line">if #available(iOS 11.0, *) &#123;</div><div class="line">    tableView.contentInsetAdjustmentBehavior = .never</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="WeakObj和-StrongObj的宏定义"><a href="#WeakObj和-StrongObj的宏定义" class="headerlink" title="@WeakObj和@StrongObj的宏定义"></a>@WeakObj和@StrongObj的宏定义</h4><p>我们都知道在防止如<code>block</code>的循环引用时，会使用<code>__weak</code>关键字做如下定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">__weak typeof(self) weakSelf = self;</div></pre></td></tr></table></figure>
+<p>后来，为了方便，不用每次都要写这样一句固定代码，我们定义了宏：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#define WeakSelf __weak typeof(self) weakSelf = self;</div></pre></td></tr></table></figure>
+<p>之后，我们可以比较方便的在需要的地方：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[weakSelf doSomething];</div></pre></td></tr></table></figure>
+<p>再后来，我们发现不止<code>self</code>需要使用<code>weak</code>，可能有部分变量也需要<code>weak</code>，于是我们的宏继续进化，不仅仅只支持<code>self</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#define WeakObj(o) __weak typeof(o) o##Weak = o;</div></pre></td></tr></table></figure>
+<p>这样，后续对需要使用<code>weak</code>的对象，只要写一句<code>WeakObj(obj)</code>即可使用<code>objWeak</code>变量。</p>
+<p>再后来，我们发现了一些小技巧，可以让我们的这个宏看起来更原生一些，我们添加了@符号在前面：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#define WeakObj(o) autoreleasepool&#123;&#125; __weak typeof(o) o##Weak = o;</div><div class="line">#define StrongObj(o) autoreleasepool&#123;&#125; __strong typeof(o) o = o##Weak;</div></pre></td></tr></table></figure>
+<p>使用上看起来是这样:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@WeakObj(self);</div><div class="line">[var setBlock:^&#123;</div><div class="line">    @StrongObj(self);</div><div class="line">    [self doSomething];</div><div class="line">&#125;];</div></pre></td></tr></table></figure>
 </div></article></div></main><footer><div class="paginator"><a href="/2017/08/08/iOS之iconfont实战/" class="prev">上一篇</a><a href="/2017/03/18/iOS之使用Cocoapods创建私有仓库/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
 var disqus_identifier = '2017/05/03/iOS学习笔记-第4期-2017-05-03/';
 var disqus_title = 'iOS学习笔记 第4期(2017.05.03)';

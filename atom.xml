@@ -646,6 +646,98 @@
   </entry>
   
   <entry>
+    <title>iOS RunTime之四：消息转发</title>
+    <link href="https://sunjinshuai.github.io/2016/06/14/iOS-RunTime%E4%B9%8B%E5%9B%9B%EF%BC%9A%E6%B6%88%E6%81%AF%E8%BD%AC%E5%8F%91/"/>
+    <id>https://sunjinshuai.github.io/2016/06/14/iOS-RunTime之四：消息转发/</id>
+    <published>2016-06-14T12:32:02.000Z</published>
+    <updated>2017-08-17T03:54:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>消息发送和消息转发流程可以概括为：</p>
+<ul>
+<li>消息发送是<code>Runtime</code>通过<code>selector</code>快速查找<code>IMP</code>的过程，有了函数指针就可以执行对应的方法实现；</li>
+<li>消息转发是在查找<code>IMP</code>失败后执行一系列转发流程的慢速通道，如果不作转发处理，则会打日志和抛出异常。</li>
+</ul>
+<p>首先，了解一下下面的几个词：</p>
+<h4 id="动态方法解析"><a href="#动态方法解析" class="headerlink" title="动态方法解析"></a>动态方法解析</h4><p>一般我们写代码的时候有可能会用到<code>@dynamic</code>，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">@dynamic propertyName;</div></pre></td></tr></table></figure></p>
+<p>这表明我们会为这个属性动态提供存取方法，也就是说编译器不会再默认为我们生成<code>set</code>和<code>get</code>方法，而需要我们动态提供。我们可以通过分别重载<code>resolveInstanceMethod:</code>和<code>resolveClassMethod:</code>方法分别添加实例方法实现和类方法实现。</p>
+<p>因为当<code>Runtime</code>系统在<code>Cache</code>和方法分发表中找不到要执行的方法时，<code>Runtime</code>会调用<code>resolveInstanceMethod:</code>或<code>resolveClassMethod:</code>来给程序员一次动态添加方法实现的机会。</p>
+<p>我们需要用<code>class_addMethod</code>函数完成向特定类添加特定方法实现的操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">void dynamicMethodIMP(id self, SEL _cmd) &#123;</div><div class="line">    // implementation ....</div><div class="line">&#125;</div><div class="line"></div><div class="line">+ (BOOL)resolveInstanceMethod:(SEL)aSEL</div><div class="line">&#123;</div><div class="line">    if (aSEL == @selector(resolveThisMethodDynamically)) &#123;</div><div class="line">          class_addMethod([self class], aSEL, (IMP) dynamicMethodIMP, &quot;v@:&quot;);</div><div class="line">          return YES;</div><div class="line">    &#125;</div><div class="line">    return [super resolveInstanceMethod:aSEL];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>注意：</p>
+<ul>
+<li><p><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html" target="_blank" rel="external">v@:</a>表示每一个方法会默认隐藏两个参数，<code>self</code>、<code>_cmd</code>，<code>self</code>代表方法调用者，<code>_cmd</code>代表这个方法的<code>SEL</code>，签名类型就是用来描述这个方法的返回值、参数的，<code>v</code>代表返回值为<code>void</code>，<code>@</code>表示<code>self</code>，<code>:</code>表示<code>_cmd</code>。</p>
+</li>
+<li><p>动态方法解析会在消息转发机制浸入前执行。如果<code>respondsToSelector:</code>或<code>instancesRespondToSelector:</code>方法被执行，动态方法解析器将会被首先给予一个提供该方法选择器对应的<code>IMP</code>的机会。如果你想让该方法选择器被传送到转发机制，那么就让<code>resolveInstanceMethod:</code>返回<code>NO</code>。</p>
+</li>
+</ul>
+<h4 id="self和-cmd"><a href="#self和-cmd" class="headerlink" title="self和_cmd"></a>self和_cmd</h4><p>我们经常在方法中使用<code>self</code>关键字来引用实例本身，但从没有想过为什么<code>self</code>就能取到调用当前方法的对象吧。其实<code>self</code>的内容是在方法运行时被偷偷的动态传入的。</p>
+<p>在讲消息发送的时候，我们知道当<code>objc_msgSend</code>找到方法对应的实现时，它将直接调用该方法实现，并将消息中所有的参数都传递给方法实现,同时,它还将传递两个隐藏的参数:</p>
+<ul>
+<li>接收消息的对象（也就是<code>self</code>指向的内容）</li>
+<li>方法选择器（<code>_cmd</code>指向的内容）</li>
+</ul>
+<p>之所以说它们是隐藏的是因为在源代码方法的定义中并没有声明这两个参数。它们是在代码被编译时被插入实现中的。尽管这些参数没有被明确声明，在源代码中我们仍然可以引用它们。在这两个参数中，<code>self</code>更有用。实际上，它是在方法实现中访问消息接收者对象的实例变量的途径。</p>
+<p>而当方法中的<code>super</code>关键字接收到消息时，编译器会创建一个<code>objc_super</code>结构体：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-a6558105047e321a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p><strong>这个结构体指明了消息应该被传递给特定超类的定义。</strong><br>但<code>receiver</code>仍然是<code>self</code>本身，这点需要注意，因为当我们想通过<code>[super class]</code>获取超类时，编译器只是将指向<code>self</code>的<code>id</code>指针和<code>class</code>的<code>SEL</code>传递给了<code>objc_msgSendSuper</code>函数，因为只有在<code>NSObject</code>类找到<code>class</code>方法，然后<code>class</code>方法调用<code>object_getClass()</code>，接着调用<code>objc_msgSend(objc_super-&gt;receiver, @selector(class))</code>，传入的第一个参数是指向<code>self</code>的<code>id</code>指针，与调用<code>[self class]</code>相同，所以我们得到的永远都是<code>self</code>的类型。</p>
+<h4 id="消息转发"><a href="#消息转发" class="headerlink" title="消息转发"></a>消息转发</h4><p>接下来，我们要通过一个小例子来简单、通俗的理解一下什么是消息转发以及如何消息转发，希望看完这篇文章时大家会彻底的明白<code>OC</code>的消息。</p>
+<p>上一篇<a href="https://sunjinshuai.github.io/2016/09/20/iOS-RunTime%E4%B9%8B%E4%B8%89%EF%BC%9A%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81/">消息发送</a>，我们知道<code>Objective-C</code>语言动态语言。比如<code>Car</code>这个对象里面只声明没有实现函数名为<code>fly</code>的函数，编译器编译的时候会不会通过呢。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-d0dcfa5deda2eb1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>通过运行程序，可以看出在语言中<code>Objective-C</code>只声明并且没有实现方法编译器依然能够通过，但是运行期间则会因为获取不到实际执行的方法而抛出异常。</p>
+<ul>
+<li>动态方法解析</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel</div><div class="line">+ (BOOL)resolveClassMethod:(SEL)sel</div></pre></td></tr></table></figure>
+<ul>
+<li>重定向</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (id)forwardingTargetForSelector:(SEL)aSelector</div></pre></td></tr></table></figure>
+<p>在消息转发机制执行前，<code>Runtime</code>系统会再给我们一次偷梁换柱的机会，即通过重载<code>- (id)forwardingTargetForSelector:(SEL)aSelector</code>方法替换消息的接受者为其他对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">- (id)forwardingTargetForSelector:(SEL)aSelector</div><div class="line">&#123;</div><div class="line">    if(aSelector == @selector(mysteriousMethod:))&#123;</div><div class="line">        return alternateObject;</div><div class="line">    &#125;</div><div class="line">    return [super forwardingTargetForSelector:aSelector];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>转发</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector;</div><div class="line">- (void)forwardInvocation:(NSInvocation *)anInvocation;</div></pre></td></tr></table></figure>
+<p>当动态方法解析不作处理返回<code>NO</code>时，消息转发机制会被触发。在这时<code>forwardInvocation:</code>方法会被执行。</p>
+<p>该消息的唯一参数是个<code>NSInvocation</code>类型的对象——该对象封装了原始的消息和消息的参数。我们可以实现<code>forwardInvocation:</code>方法来对不能处理的消息做一些默认的处理，也可以将消息转发给其他对象来处理，而不抛出错误。</p>
+<p>这里需要注意的是参数<code>anInvocation</code>是从哪的来的呢？其实在<code>forwardInvocation:</code>消息发送前，<code>Runtime</code>系统会向对象发送<code>methodSignatureForSelector:</code>消息，并取到返回的方法签名用于生成<code>NSInvocation</code>对象。所以我们在重写<code>forwardInvocation:</code>的同时也要重写<code>methodSignatureForSelector:</code>方法，否则会抛异常。</p>
+<p>当一个对象由于没有相应的方法实现而无法响应某消息时，运行时系统将通过<code>forwardInvocation:</code>消息通知该对象。每个对象都从<code>NSObject</code>类中继承了<code>forwardInvocation:</code>方法。然而，<code>NSObject</code>中的方法实现只是简单地调用了<code>doesNotRecognizeSelector:</code>。通过实现我们自己的<code>forwardInvocation:</code>方法，我们可以在该方法实现中将消息转发给其它对象。</p>
+<p><code>forwardInvocation:</code>方法就像一个不能识别的消息的分发中心，将这些消息转发给不同接收对象。或者它也可以象一个运输站将所有的消息都发送给同一个接收对象。它可以将一个消息翻译成另外一个消息，或者简单的”吃掉“某些消息，因此没有响应也没有错误。</p>
+<p><code>forwardInvocation:</code>方法也可以对不同的消息提供同样的响应，这一切都取决于方法的具体实现。该方法所提供是将不同的对象链接到消息链的能力。</p>
+<p>注意：<br><code>forwardInvocation:</code>方法只有在消息接收对象中无法正常响应消息时才会被调用。 所以，如果我们希望一个对象将<code>negotiate</code>消息转发给其它对象，则这个对象不能有<code>negotiate</code>方法。否则，<code>forwardInvocation:</code>将不可能会被调用。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-9fb706d219d3b412.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h4 id="消息转发验证"><a href="#消息转发验证" class="headerlink" title="消息转发验证"></a>消息转发验证</h4><p><img src="http://upload-images.jianshu.io/upload_images/588630-d0dcfa5deda2eb1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>1、动态解析<br>我们在<code>Car</code>类的<code>.m</code>文件里面，通过上面介绍<strong>动态解析</strong>可以知道，可以重载<code>resolveInstanceMethod:</code>和<code>resolveClassMethod:</code>方法分别添加实例方法实现和类方法实现。因为当<code>Runtime</code>系统在<code>Cache</code>和方法分发表中找不到要执行的方法时，<code>Runtime</code>会调用<code>resolveInstanceMethod:</code>或<code>resolveClassMethod:</code>来给程序员一次动态添加方法实现的机会。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-99c60c3aca2ed76e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>2、重定向<br>我们新建一个<code>Person</code>类，为了让运行时系统能够运行到<code>forwardingTargetForSelector:</code>方法，我们先在<code>resolveInstanceMethod:</code>中返回<code>NO</code>，代码如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-8bd42146a3282f8f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-4b2354c9f3aee51a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>从运行结果中看出，我们执行<code>[person fly]</code>方法，控制台中打出<code>Car</code>的<code>run</code>方法，最终也实现了消息的转发。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Person *person = [[Person alloc] init];</div><div class="line">[person fly];</div></pre></td></tr></table></figure>
+<p>3、转发<br>如果我们都不实现<code>forwardingTargetForSelector</code>，系统就会方法<code>methodSignatureForSelector</code>和<code>forwardInvocation</code>来实现转发，代码如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-f758b33e20dff7fa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>从运行结果中看出，我们执行<code>[person fly]</code>方法，控制台中打出<code>Car</code>的<code>run</code>方法，最终也实现了消息的转发。</p>
+<p>注意：</p>
+<ul>
+<li><code>methodSignatureForSelector</code>用来生成方法签名，这个签名就是给<code>forwardInvocation</code>中的参数<code>NSInvocation</code>调用的。</li>
+<li><code>unrecognized selector sent to instance</code>，原来就是因为<code>methodSignatureForSelector</code>这个方法中，由于没有找到<code>fly</code>对应的实现方法，所以返回了一个空的方法签名，最终导致程序报错崩溃。</li>
+</ul>
+<p>以上就是消息的转发，如果有觉得上述我讲的不对的地方欢迎指出，大家多多交流沟通。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;消息发送和消息转发流程可以概括为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;消息发送是&lt;code&gt;Runtime&lt;/code&gt;通过&lt;code&gt;selector&lt;/code&gt;快速查找&lt;code&gt;IMP&lt;/code&gt;的过程，有了函数指针就可以执行对应的方法实现；&lt;/li&gt;
+&lt;li&gt;消息转发是
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>iOS RunTime之三：消息发送</title>
     <link href="https://sunjinshuai.github.io/2016/06/12/iOS-RunTime%E4%B9%8B%E4%B8%89%EF%BC%9A%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81/"/>
     <id>https://sunjinshuai.github.io/2016/06/12/iOS-RunTime之三：消息发送/</id>
@@ -1362,37 +1454,6 @@
 &lt;ul&gt;
 &lt;li&gt;个人的&lt;code&gt;99$&lt;/code&gt;申请简单，付钱就行，688人民币;&lt;/li&gt;
 &lt;li&gt;企业的&lt;code&gt;99$&lt;/code&gt;申请复杂，需要&lt;c
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>通知中心(NSNotificationCenter)的实现原理</title>
-    <link href="https://sunjinshuai.github.io/2014/12/07/%E9%80%9A%E7%9F%A5%E4%B8%AD%E5%BF%83-NSNotificationCenter-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/"/>
-    <id>https://sunjinshuai.github.io/2014/12/07/通知中心-NSNotificationCenter-的实现原理/</id>
-    <published>2014-12-07T06:54:58.000Z</published>
-    <updated>2017-08-07T07:32:02.000Z</updated>
-    
-    <content type="html"><![CDATA[<h4 id="通知解决的问题"><a href="#通知解决的问题" class="headerlink" title="通知解决的问题"></a>通知解决的问题</h4><ul>
-<li><p>可以实现跨层的传递，例如A页面跳转到B页面，B页面再跳转到C页面，这时候如果我们通过委托回调的模式让A知道C的一些修改，那么实现起来就会很麻烦。</p>
-</li>
-<li><p>可以实现一对多，<code>NSNotification</code>的实现是一种观察者模式，因此可以对通知实现广播。</p>
-</li>
-</ul>
-<h4 id="NSNotificationCenter的实现原理"><a href="#NSNotificationCenter的实现原理" class="headerlink" title="NSNotificationCenter的实现原理"></a>NSNotificationCenter的实现原理</h4><p><code>NSNotificationCenter</code>就相当于一个广播站，使用defaultCenter来获取通知中心，通知中心实际上是iOS程序内部之间的一种消息广播机制，主要为了解决应用程序内部不同对象之间<strong>解耦</strong>而设计。它是基于观察者模式设计的，不能跨应用程序进程通信，当通知中心接收到消息之后会根据内部的消息转发表，将消息发送给订阅者；它可以向应用任何地方发送和接收通知。在通知中心注册观察者，发送者使用通知中心广播时，以<code>NSNotification</code>的<code>name</code>和<code>object</code>来确定需要发送给哪个观察者。为保证观察者能接收到通知，所以应先向通知中心注册观察者，接着再发送通知这样才能在通知中心调度表中查找到相应观察者进行通知。</p>
-<h4 id="NSNotification"><a href="#NSNotification" class="headerlink" title="NSNotification"></a>NSNotification</h4><p><code>NSNotification</code>是通知中心<code>NSNotificationCenter</code>接收到消息之后根据内部的消息转发表，将消息发送给订阅者封装的对象；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">@interface NSNotification : NSObject &lt;NSCopying, NSCoding&gt;</div><div class="line">//这个成员变量是这个消息对象的唯一标识，用于辨别消息对象</div><div class="line">@property (readonly, copy) NSString *name;</div><div class="line">// 这个成员变量定义一个对象，可以理解为针对某一个对象的消息，代表通知的发送者</div><div class="line">@property (nullable, readonly, retain) id object;</div><div class="line">//这个成员变量是一个字典，可以用其来进行传值</div><div class="line">@property (nullable, readonly, copy) NSDictionary *userInfo;</div><div class="line"></div><div class="line">// 初始化方法</div><div class="line">- (instancetype)initWithName:(NSString *)name object:(nullable id)object userInfo:(nullable NSDictionary *)userInfo NS_AVAILABLE(10_6, 4_0) NS_DESIGNATED_INITIALIZER;</div><div class="line">- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder NS_DESIGNATED_INITIALIZER;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure></p>
-<p><strong>在通知中心注册观察者，发送者使用通知中心广播时，以<code>NSNotification</code>的<code>name</code>和<code>object</code>来确定需要发送给哪个观察者。为保证观察者能接收到通知，所以应先向通知中心注册观察者，接着再发送通知这样才能在通知中心调度表中查找到相应观察者进行通知。</strong> 因为属性都是只读的，如果要创建消息时要用下面<code>NSNotification(NSNotificationCreation)</code>分类相应的方法进行初始化；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@interface NSNotification (NSNotificationCreation)</div><div class="line"></div><div class="line">+ (instancetype)notificationWithName:(NSString *)aName object:(nullable id)anObject;</div><div class="line">+ (instancetype)notificationWithName:(NSString *)aName object:(nullable id)anObject userInfo:(nullable NSDictionary *)aUserInfo;</div><div class="line"></div><div class="line">- (instancetype)init /*NS_UNAVAILABLE*/;    /* do not invoke; not a valid initializer for this class */</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
-<p>注意：<br>如果<code>NSNotification</code>对象中的notificationName为nil，则会接收所有的通知。通知中心是以<code>NSNotification</code>的<code>name</code>和<code>object</code>来确定需要发送给哪个观察者。监听同一条通知的多个观察者，在通知到达时，它们执行回调的顺序是不确定的，所以我们不能去假设操作的执行会按照添加观察者的顺序来执行。</p>
-<h4 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h4><p><a href="http://nshipster.com/nsnotification-and-nsnotificationcenter/" target="_blank" rel="external">http://nshipster.com/nsnotification-and-nsnotificationcenter/</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h4 id=&quot;通知解决的问题&quot;&gt;&lt;a href=&quot;#通知解决的问题&quot; class=&quot;headerlink&quot; title=&quot;通知解决的问题&quot;&gt;&lt;/a&gt;通知解决的问题&lt;/h4&gt;&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;可以实现跨层的传递，例如A页面跳转到B页面，B页面再跳转到C页面，这时候如果我们通
     
     </summary>
     

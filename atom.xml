@@ -646,6 +646,41 @@
   </entry>
   
   <entry>
+    <title>iOS RunTime之五：Category不能动态添加成员变量</title>
+    <link href="https://sunjinshuai.github.io/2016/06/20/iOS-RunTime%E4%B9%8B%E4%BA%94%EF%BC%9ACategory%E4%B8%8D%E8%83%BD%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F/"/>
+    <id>https://sunjinshuai.github.io/2016/06/20/iOS-RunTime之五：Category不能动态添加成员变量/</id>
+    <published>2016-06-20T14:32:02.000Z</published>
+    <updated>2017-08-17T03:59:21.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>面试题：为什么<code>Category</code>中不能动态添加成员变量？</p>
+<p>解答：</p>
+<p>很多人在面试的时候都会被问到<code>Category</code>，既然允许用<code>Category</code>给类增加方法和属性，那为什么不允许增加成员变量？</p>
+<p>在<code>Objective-C</code>提供的<code>runtime</code>函数中，确实有一个<code>class_addIvar()</code>函数用于给类添加成员变量，但是阅读过苹果的官方文档的人应该会看到：</p>
+<blockquote>
+<p>This function may only be called after objc_allocateClassPair and before objc_registerClassPair. Adding an instance variable to an existing class is not supported.</p>
+</blockquote>
+<p>大概的意思说，这个函数只能在“构建一个类的过程中”调用。一旦完成类定义，就不能再添加成员变量了。经过编译的类在程序启动后就被<code>runtime</code>加载，没有机会调用<code>addIvar</code>。程序在运行时动态构建的类需要在调用<code>objc_registerClassPair</code>之后才可以被使用，同样没有机会再添加成员变量。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-3e956669e49c0239.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>从运行结果中看出，<strong>你不能为一个类动态的添加成员变量，可以给类动态增加方法和属性。</strong></p>
+<p><strong>因为方法和属性并不“属于”类实例，而成员变量“属于”类实例。</strong> 我们所说的“类实例”概念，指的是一块内存区域，包含了<code>isa</code>指针和所有的成员变量。所以假如允许动态修改类成员变量布局，已经创建出的类实例就不符合类定义了，变成了无效对象。但方法定义是在<code>objc_class</code>中管理的，不管如何增删类方法，都不影响类实例的内存布局，已经创建出的类实例仍然可正常使用。</p>
+<p>同理：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-6594de971343a76f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>某一个类的分类是在<code>runTime</code>时，被动态的添加到类的结构中。<br>想了解分类是如何加载的请看<a href="https://sunjinshuai.github.io/2016/09/21/iOS-RunTime%E4%B9%8B%E5%85%AD%EF%BC%9ACategory/">iOS RunTime之六：Category</a></p>
+<p>如果有觉得上述我讲的不对的地方欢迎指出，大家多多交流沟通。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;面试题：为什么&lt;code&gt;Category&lt;/code&gt;中不能动态添加成员变量？&lt;/p&gt;
+&lt;p&gt;解答：&lt;/p&gt;
+&lt;p&gt;很多人在面试的时候都会被问到&lt;code&gt;Category&lt;/code&gt;，既然允许用&lt;code&gt;Category&lt;/code&gt;给类增加方法和属性，那为什么不允
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>iOS RunTime之四：消息转发</title>
     <link href="https://sunjinshuai.github.io/2016/06/14/iOS-RunTime%E4%B9%8B%E5%9B%9B%EF%BC%9A%E6%B6%88%E6%81%AF%E8%BD%AC%E5%8F%91/"/>
     <id>https://sunjinshuai.github.io/2016/06/14/iOS-RunTime之四：消息转发/</id>
@@ -1370,90 +1405,6 @@
     
       &lt;h4 id=&quot;格式&quot;&gt;&lt;a href=&quot;#格式&quot; class=&quot;headerlink&quot; title=&quot;格式&quot;&gt;&lt;/a&gt;格式&lt;/h4&gt;&lt;p&gt;1、任意函数长度不得超过50行。&lt;br&gt;2、任意行代码不得超过80字符。可以在设置中设置超过80个字符的提醒。&lt;/p&gt;
 &lt;p&gt;3、在定义函数
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>iOS之真机测试</title>
-    <link href="https://sunjinshuai.github.io/2015/03/09/iOS%E4%B9%8B%E7%9C%9F%E6%9C%BA%E6%B5%8B%E8%AF%95/"/>
-    <id>https://sunjinshuai.github.io/2015/03/09/iOS之真机测试/</id>
-    <published>2015-03-09T11:26:25.000Z</published>
-    <updated>2017-08-09T11:17:09.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>开发者在进行iOS开发的时候，不可避免要进行真机测试。如果想要进行真机调试，需要有一个开发者账号。</p>
-<ul>
-<li>个人的<code>99$</code>申请简单，付钱就行，688人民币;</li>
-<li>企业的<code>99$</code>申请复杂，需要<code>&quot;邓白氏&quot;</code>认证，可以确认企业是合法有效的，可以管理团队开发;</li>
-<li>商业的<code>299$</code>也需要邓白氏认证，开发的应用，不能够上架（不经过苹果的审核）！专门给企业级用户定制应用程序使用！</li>
-</ul>
-<h4 id="真机测试步骤"><a href="#真机测试步骤" class="headerlink" title="真机测试步骤"></a>真机测试步骤</h4><ul>
-<li>创建<code>App ID</code></li>
-<li>创建<code>CSR</code>证书</li>
-<li>创建<code>CER</code>开发者证书</li>
-<li>注册<code>Identifiers</code></li>
-<li>注册<code>Devices</code></li>
-<li>创建<code>Provisioning Profiles</code>文件</li>
-<li>设置<code>Xcode</code>然后真机调试</li>
-</ul>
-<h5 id="创建App-ID"><a href="#创建App-ID" class="headerlink" title="创建App ID"></a>创建<code>App ID</code></h5><p>打开苹果<a href="https://developer.apple.com/" target="_blank" rel="external">开发者官网</a>，点击<code>&quot;Account&quot;</code>登录会员中心。</p>
-<h5 id="创建证书"><a href="#创建证书" class="headerlink" title="创建证书"></a>创建证书</h5><p><img src="http://upload-images.jianshu.io/upload_images/588630-fa4c95b763f36c87.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>登录钥匙串访问–&gt;钥匙串访问–&gt;证书助理–&gt;从证书颁发机构请求证书，保存在本地。</p>
-<h5 id="创建CER开发者证书"><a href="#创建CER开发者证书" class="headerlink" title="创建CER开发者证书"></a>创建<code>CER</code>开发者证书</h5><p>登录开发者中心</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-e7daf11ce3d16623.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-fe5fb51044779bbf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>注意：</p>
-<ul>
-<li><code>Develpment</code>开发者测试的真机证书</li>
-<li><code>Production</code>商品化的证书，上架，发布</li>
-</ul>
-<p>创建开发者测试的真机证书(发布和上架证书)</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-1703d1e7278f30c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>点击<code>Continue</code></p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-81d586e26d8f04fa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>点击<code>Continue</code></p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-8327c7cc937c1c7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>点击<code>choose File..</code>选择上传创建好的证书请求文件：<code>CertificateSigningRequest.certSigningRequest</code>文件，点击<code>Generate</code>。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-28241ce9dd6c1778.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>双击安装，如果安装不上，可以直接将证书文件拖拽到钥匙串访问的列表中。</p>
-<h5 id="注册Identifiers"><a href="#注册Identifiers" class="headerlink" title="注册Identifiers"></a>注册<code>Identifiers</code></h5><p>注册<code>Identifiers</code>，告诉苹果那一个应用程序需要调试。<br><img src="http://upload-images.jianshu.io/upload_images/588630-7b1b431cab21e0a0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>点击+<br><img src="http://upload-images.jianshu.io/upload_images/588630-5defc2dd21cb326a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>注意：<br><code>App ID Description</code>：<code>Identifiers</code>描述，用于区分其他的<code>Identifiers</code>。<br><code>Explicit App ID</code>：唯一的<code>Identifiers</code><br><code>Wildcard App ID</code>：通配<code>Identifiers</code>，多个应用程序可以使用。</p>
-<p>点击<code>Register</code></p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-6b28e4a752c7f5da.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>点击<code>Done</code><br><img src="http://upload-images.jianshu.io/upload_images/588630-18b4829aff9f9be5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p><code>Identifiers</code>注册成功<br><img src="http://upload-images.jianshu.io/upload_images/588630-36e9c6bde8603c68.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h5 id="注册Devices"><a href="#注册Devices" class="headerlink" title="注册Devices"></a>注册<code>Devices</code></h5><p>注册<code>Devices</code>，告诉苹果哪些真机能够调试开发。每个开发者，最多只能添加100台设备！</p>
-<p>但是苹果并没有提供删除设备ID的功能，仅仅是可以禁止(生成配置文件时不选择设备ID)某台设备调试。在一年有效期内，即便删除了设备，名额仍然会被占用！会在下一次交款后，被禁止的设备会自动清空。</p>
-<p>每一个设备的唯一标示符号，能够唯一准确的定位到一台设备，只能在真机测试添加设备时使用！如果在程序中获取唯一标示，将会导致无法上架。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-bbfcc16c8041eb45.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>填写测试机的名称和<code>UDID</code><br><img src="http://upload-images.jianshu.io/upload_images/588630-4abe0e48a94a869f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h5 id="创建Provisioning-Profiles文件"><a href="#创建Provisioning-Profiles文件" class="headerlink" title="创建Provisioning Profiles文件"></a>创建<code>Provisioning Profiles</code>文件</h5><p>创建<code>Provisioning Profiles</code>文件，用来描述那台电脑开发，能够开发哪个应用程序，在哪台真机上调试。</p>
-<p>创建开发者测试的真机<code>Provisioning Profiles</code>(发布和上架证书)</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-61c27630d56d6e4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>然后点击右上角 + 号<br><img src="http://upload-images.jianshu.io/upload_images/588630-a9d2ee3939e5abab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>注意：<br><code>iOS App Development</code>：真机测试的<code>Provisioning Profiles</code><br><code>App Store</code>：发布的<code>Provisioning Profiles</code><br><code>Ad Hoc</code>：打包的<code>Provisioning Profiles</code></p>
-<p>在<code>App ID</code>这个选项栏里面找到你刚刚注册的<code>Identifiers</code>，点击<code>Continue</code></p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-0a9534133b222daf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>选择描述文件所对应的证书。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-172ae116cb2d95f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>选择描述文件所对应的测试设备。<br><img src="http://upload-images.jianshu.io/upload_images/588630-5db4000dcabe5b9b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>为选择描述文件所对应的测试设备。<br><img src="http://upload-images.jianshu.io/upload_images/588630-b9da325eacf67e11.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>为选择描述文件命名。<br><img src="http://upload-images.jianshu.io/upload_images/588630-d80af1d4c788d1a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p><code>Download</code>刚注册的<code>Provisioning Profiles</code>，然后点击Done，双击就添加到Xcode中。</p>
-<h5 id="设置Xcode然后真机调试"><a href="#设置Xcode然后真机调试" class="headerlink" title="设置Xcode然后真机调试"></a>设置<code>Xcode</code>然后真机调试</h5><p>打开<code>Xcode</code>选择相应的调试证书<br><img src="http://upload-images.jianshu.io/upload_images/588630-2fc3971a42871f7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>注意：<br>选择证书时，可以根据<code>release</code>和<code>debug</code>对应不同状态的证书。例如<code>release</code>对应发布证书，<code>debug</code>对应调试证书。</p>
-<p>在团队开发中，如果证书是其他人申请的，可以通过在钥匙串中导出.P12证书来进行真机测试。P12文件中，包含有创建证书时的私钥，和苹果签名的信息，可以给其他人使用“双击”安装；</p>
-<p>iOS之真机测试其实很简单，只要有开发者账号，进行傻瓜式安装就可以了。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;开发者在进行iOS开发的时候，不可避免要进行真机测试。如果想要进行真机调试，需要有一个开发者账号。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;个人的&lt;code&gt;99$&lt;/code&gt;申请简单，付钱就行，688人民币;&lt;/li&gt;
-&lt;li&gt;企业的&lt;code&gt;99$&lt;/code&gt;申请复杂，需要&lt;c
     
     </summary>
     

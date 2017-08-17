@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> iOS RunTime之二：数据结构 · 孙金帅的技术博客</title><meta name="description" content="iOS RunTime之二：数据结构 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunjinshuai" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">iOS RunTime之二：数据结构</h1><div class="post-info">2016年6月11日</div><div class="post-content"><p>由上面一章中,我们了解了什么是<a href="https://sunjinshuai.github.io/2016/06/10/iOS-RunTime%E4%B9%8B%E4%B8%80%EF%BC%9A%E7%AE%80%E4%BB%8B/">RunTime</a>，<code>RunTime</code>用来做什么，下面了解一下<code>Runtime</code>数据结构。</p>
+<p>我们知道在<code>Objective-C</code>中，使用<code>[object doSomething]</code>语法并不会马上执行<code>object</code>接受者对象的<code>doSomething</code>方法的代码，而是向<code>object</code>接受者对发送一条<code>doSomething</code>消息，这条消息可能由<code>object</code>接受者对来处理，也可能由转发给其他对象来处理，也有可能假装没有接收到这条消息而没有处理。</p>
+<p>其实<code>[object doSomething]</code>被编译器转化为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">id objc_msgSend ( id self, SEL op, ... );</div></pre></td></tr></table></figure>
+<p>下面从两个数据结构<code>id</code>和<code>SEL</code>来逐步分析和理解<code>Runtime</code>有哪些重要的数据结构。</p>
+<h4 id="id"><a href="#id" class="headerlink" title="id"></a><strong>id</strong></h4><p><code>objc_msgSend</code>方法里面的第一个参数的数据类型<code>id</code>，通用类型指针，能够表示任何对象。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-f1fa24b64e56b099.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>查看源文件，可以看出<code>id</code>其实就是一个指向<code>objc_object</code>结构体指针，它包含一个<code>Class isa</code>成员，根据<code>Class isa</code>指针就可以找到对象所属的类。</p>
+<h4 id="Class"><a href="#Class" class="headerlink" title="Class"></a><strong>Class</strong></h4><p>从源文件看出，<code>Objective-C</code>的对象就是一个包含<code>isa</code>指针的数据结构，而<code>isa</code>指针的数据类型是<code>Class</code>，<code>Class</code>表示对象所属的类。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-b56425997d122083.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>从源文件看出，<code>Class</code>其实就是一个<code>objc_class</code>结构体指针。<code>objc_class</code>结构体定义如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">isa：在Objective-C中，所有的类自身也是一个对象，即类对象。在这个类对象里面也有一个isa指针，它指向metaClass(元类)。</div><div class="line">super_class：指向该类的父类，如果该类已经是最顶层的根类(如NSObject)，则super_class为NULL。</div><div class="line">name：这个类的类名。</div><div class="line">version：提供类的版本信息，这对于对象的序列化非常有用，它可是让我们识别出不同类定义版本中实例变量布局的改变。</div><div class="line">info：类信息，供运行期使用的一些位标识。</div><div class="line">instance_size：该类的实例变量大小。</div><div class="line">ivars：该类的成员变量链表。</div><div class="line">methodLists：方法定义的链表。</div><div class="line">protocols：协议链表。</div><div class="line">cache：一个接收者对象接收到一个消息时，它会根据isa指针去查找能够响应这个消息的对象。在实际使用中，这个对象只有一部分方法是常用的，很多方法其实很少用或者根本用不上。这种情况下，如果每次消息来时，我们都是methodLists中遍历一遍，性能势必很差。这时，cache就派上用场了。在我们每次调用过一个方法后，这个方法就会被缓存到cache列表中，下次调用的时候runtime就会优先去cache中查找，如果cache没有，才去methodLists中查找方法。这样，对于那些经常用到的方法的调用，但提高了调用的效率。</div></pre></td></tr></table></figure>
+<p>注意：</p>
+<ul>
+<li>在面向对象设计中，一切都是对象，<code>Class</code>在设计中本身也是一个对象。</li>
+<li>由此可见，结构体<code>objc_class</code>也是继承<code>objc_object</code>，说明<code>Class</code>在设计中本身也是一个对象。</li>
+</ul>
+<h4 id="元类（Meta-Class）"><a href="#元类（Meta-Class）" class="headerlink" title="元类（Meta Class）"></a><strong>元类（Meta Class）</strong></h4><p>在<code>Objective-C</code>中，所有的类自身也是一个对象，这个对象里面也有一个<code>isa</code>指针，它指向<code>metaClass</code>(元类)，向这个对象发送消息（即调用类方法）。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-05d97aac774b34a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>从图中看出：</p>
+<ul>
+<li>当我们向一个对象发送消息时，<code>isa</code>指针会在这个对象所属的这个类的方法列表中查找方法；</li>
+<li>向一个类发送消息时，<code>isa</code>指针会在这个类的<code>meta-class</code>的方法列表中查找。<code>meta-class</code>之所以重要，是因为它存储着一个类的所有类方法。</li>
+<li>每个类都会有一个单独的<code>meta-class</code>，因为每个类的类方法基本不可能完全相同。</li>
+</ul>
+<blockquote>
+<p>Objective-C的设计者让所有的meta-class的isa指向基类的meta-class，以此作为它们的所属类。即，任何NSObject继承体系下的meta-class都使用NSObject的meta-class作为自己的所属类，而基类的meta-class的isa指针是指向它自己，这样就形成了一个完美的闭环。</p>
+</blockquote>
+<h4 id="SEL"><a href="#SEL" class="headerlink" title="SEL"></a><strong>SEL</strong></h4><p><code>objc_msgSend</code>函数第二个参数类型为<code>SEL</code>，它是<code>selector</code>在<code>Objc</code>中的表示类型（<code>Swift</code>中是<code>Selector</code>类）。<code>selector</code>是方法选择器，可以理解为区分方法的<code>id</code>，而这个<code>id</code>的数据结构是<code>SEL</code>，即表示一个方法的<code>selector</code>的指针。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-f1c54b79137a3a1c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<ul>
+<li>方法的<code>selector</code>用于表示运行时方法的名字，<code>Objective-C</code>在编译时，会依据每一个方法的名字、参数序列，生成一个唯一的整型标识(<code>int</code>类型的地址)，这个标识就是<code>SEL</code>。</li>
+<li>在<code>Objective-C</code>中，只要方法名相同，那么方法的<code>SEL</code>就是一样的，每一个方法都对应着一个<code>SEL</code>，所以在<code>Objective-C</code>中，同一个类中或者这个类的继承体系中，不能存在2个同名的方法，不同的类可以拥有相同的<code>selector</code>，不同的类的实例对象执行相同的<code>selector</code>，会在各自的方法列表中根据<code>selector</code>去寻找对应的<code>IMP</code>。</li>
+<li>在本质上，<code>SEL</code>只是一个指向方法的指针（被<code>hash</code>化得<code>KEY</code>值），能提高方法的查询速度。</li>
+</ul>
+<h4 id="IMP"><a href="#IMP" class="headerlink" title="IMP"></a><strong>IMP</strong></h4><p><code>IMP</code>就是<code>implementation</code>的缩写，本质就是一个函数指针，这个被指向的函数包含一个接收消息的对象<code>id</code>，调用方法的<code>SEL</code>，以及一些方法参数，并返回一个<code>id</code>。因此我们可以通过<code>SEL</code>获得它所对应的<code>IMP</code>，在取得了函数指针之后，也就意味着我们取得了需要执行方法的代码入口，这样我们就可以像普通的<code>C</code>语言函数调用一样使用这个函数指针。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-36d603b62e4690d6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p><code>SEL</code>就是为了查找方法的最终实现<code>IMP</code>的，由于每个方法对应唯一的<code>SEL</code>，因此我们可以通过<code>SEL</code>方便快速准确地获得它所对应的<code>IMP</code>。</p>
+<h4 id="Method"><a href="#Method" class="headerlink" title="Method"></a><strong>Method</strong></h4><p><code>Method</code>是一种代表类中的某个方法的类型。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-c75430d85b645678.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>而<code>objc_method</code>在上面的方法列表中提到过，它存储了方法名，方法类型和方法实现：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-382fc04a120fc065.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>注意：</p>
+<ul>
+<li>方法名类型为<code>SEL</code>，前面提到过相同名字的方法即使在不同类中定义，它们的方法选择器也相同。</li>
+<li>方法类型<code>method_types</code>是个<code>char</code>指针，其实存储着方法的参数类型和返回值类型。</li>
+<li><code>method_imp</code>指向了方法的实现，本质上是一个函数指针。</li>
+</ul>
+<h4 id="Ivar"><a href="#Ivar" class="headerlink" title="Ivar"></a><strong>Ivar</strong></h4><p><code>Ivar</code>是一种代表类中实例变量的类型。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-dcb54cf3c9cc43ae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-4f01a318d7041fb7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h4 id="Cache"><a href="#Cache" class="headerlink" title="Cache"></a><strong>Cache</strong></h4><p><img src="http://upload-images.jianshu.io/upload_images/588630-72e7a54f147a8948.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p><strong><code>Cache</code>其实就是一个存储<code>Method</code>的链表，主要是为了优化方法调用的性能。</strong></p>
+<p>当对象<code>receiver</code>调用方法<code>message</code>时，首先根据对象<code>receiver</code>的<code>isa</code>指针查找到它对应的类，然后在类的<code>methodLists</code>中搜索方法，如果没有找到，就使用<code>super_class</code>指针到父类中的<code>methodLists</code>查找，一旦找到就调用方法。如果没有找到，有可能消息转发，也可能忽略它。但这样查找方式效率太低，因为往往一个类大概只有20%的方法经常被调用，占总调用次数的80%。所以使用<code>Cache</code>来缓存经常调用的方法，当调用方法时，优先在<code>Cache</code>查找，如果没有找到，再到<code>methodLists</code>查找。</p>
+</div></article></div></main><footer><div class="paginator"><a href="/2016/08/03/iOS学习笔记-第3期-2016-08-03/" class="prev">上一篇</a><a href="/2016/06/10/iOS-RunTime之一：简介/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2016/06/11/iOS-RunTime之二：数据结构/';
+var disqus_title = 'iOS RunTime之二：数据结构';
+var disqus_url = 'https://sunjinshuai.github.io/2016/06/11/iOS-RunTime之二：数据结构/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2017 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

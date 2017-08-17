@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> iOS RunTime之三：消息发送 · 孙金帅的技术博客</title><meta name="description" content="iOS RunTime之三：消息发送 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunjinshuai" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">iOS RunTime之三：消息发送</h1><div class="post-info">2016年6月12日</div><div class="post-content"><p>由上面一章中，我们了解了什么是<a href="https://sunjinshuai.github.io/2016/06/11/iOS-RunTime%E4%B9%8B%E4%BA%8C%EF%BC%9A%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">RunTime的数据结构</a>，下面了解一下<code>Runtime</code>的消息发送。</p>
+<p>我们知道<code>[object doSomething]</code>被编译器转化为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">id objc_msgSend ( id self, SEL op, ... );</div></pre></td></tr></table></figure>
+<p>在<code>Objective-C</code>中，消息直到运行时才会绑定到方法的实现上。编译器会把代码中<code>[object doSomething]</code>转换成<code>objc_msgSend</code>消息函数，这个函数完成了动态绑定的所有事情，它的运行流程如下:</p>
+<ul>
+<li>检查<code>selector</code>是否需要忽略。</li>
+<li>检查<code>target</code>是否为<code>nil</code>。如果为<code>nil</code>，直接<code>cleanup</code>，然后<code>return</code>。(这就是我们可以向<code>nil</code>发送消息的原因。)</li>
+<li>然后在<code>target</code>的<code>Class</code>中根据<code>Selector</code>去找<code>IMP</code>。</li>
+</ul>
+<p>寻找<code>IMP</code>的过程:</p>
+<ul>
+<li>先从当前<code>class</code>的<code>cache</code>方法列表（<code>cache methodLists</code>）里去找。</li>
+<li>如果找到了，跳到对应函数实现。</li>
+<li>如果没找到，就从<code>class</code>的方法列表（<code>methodLists</code>）里找。</li>
+<li>如果还找不到，就到<code>super class</code>的方法列表里找，直到找到基类（<code>NSObject</code>）为止。</li>
+<li>最后再找不到，就会进入动态方法解析和消息转发的机制。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-695c1539e166418f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>注意:</p>
+<ul>
+<li>这里说的分发表其实就是<code>Class</code>中的方法列表，它将方法选择器和方法实现地质联系起来。</li>
+<li>消息的发送其实就是先确定<code>object</code>接受者对象，然后根据<code>isa</code>指针查找其方法然后跳转过去并执行。</li>
+<li>但是编译期间，是无法确定<code>object</code>接受者对象。<strong>只有在程序运行期间，<code>object</code>接受者对象才能得到确定</strong>。这种在运行期间才确定<code>object</code>接受者对象，<code>Objective-C</code>称为动态绑定。</li>
+<li>消息发送这种工作机制明显区别另一著名面向对象编程语言——<code>C++</code>或者<code>Java</code>。<code>C++</code>或者<code>Java</code>调用对象的函数，<strong>函数与对象之间的关系，在编译期间就必须严格确定</strong>。比如<code>Car</code>这个对象里面没有定义函数名为<code>fly</code>的函数，编译器不会通过，而是会报错。<code>Objective-C</code>如果向<code>Car</code>这个对象发送字符串为<code>fly</code>的<code>selector</code>，即使<code>car</code>没有实现<code>fly</code>方法，编译器依然能够通过，但是运行期间则会因为获取不到实际执行的方法而抛出异常。</li>
+<li>消息发送的设计使得编译期间<code>Objective-C</code>非常包容对象所属的类。在<code>Objective-C</code>语言中你可以向任何包括空指针<code>nil</code>在内的对象发你想发的消息。</li>
+<li>消息发送的机制使得在不重新编译的情况下，<strong>在运行期间，干预或者说<code>hook</code>原来的<code>target</code>（方法、变量等）变得更易于实现，更有实际应用价值</strong>，这个是需要依赖于消息发送和动态绑定的实现机制——<code>Runtime</code>。</li>
+</ul>
+</div></article></div></main><footer><div class="paginator"><a href="/2016/08/03/iOS学习笔记-第3期-2016-08-03/" class="prev">上一篇</a><a href="/2016/06/11/iOS-RunTime之二：数据结构/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2016/06/12/iOS-RunTime之三：消息发送/';
+var disqus_title = 'iOS RunTime之三：消息发送';
+var disqus_url = 'https://sunjinshuai.github.io/2016/06/12/iOS-RunTime之三：消息发送/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2017 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

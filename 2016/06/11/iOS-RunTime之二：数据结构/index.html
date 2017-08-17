@@ -52,7 +52,7 @@
 <h4 id="Cache"><a href="#Cache" class="headerlink" title="Cache"></a><strong>Cache</strong></h4><p><img src="http://upload-images.jianshu.io/upload_images/588630-72e7a54f147a8948.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
 <p><strong><code>Cache</code>其实就是一个存储<code>Method</code>的链表，主要是为了优化方法调用的性能。</strong></p>
 <p>当对象<code>receiver</code>调用方法<code>message</code>时，首先根据对象<code>receiver</code>的<code>isa</code>指针查找到它对应的类，然后在类的<code>methodLists</code>中搜索方法，如果没有找到，就使用<code>super_class</code>指针到父类中的<code>methodLists</code>查找，一旦找到就调用方法。如果没有找到，有可能消息转发，也可能忽略它。但这样查找方式效率太低，因为往往一个类大概只有20%的方法经常被调用，占总调用次数的80%。所以使用<code>Cache</code>来缓存经常调用的方法，当调用方法时，优先在<code>Cache</code>查找，如果没有找到，再到<code>methodLists</code>查找。</p>
-</div></article></div></main><footer><div class="paginator"><a href="/2016/08/03/iOS学习笔记-第3期-2016-08-03/" class="prev">上一篇</a><a href="/2016/06/10/iOS-RunTime之一：简介/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+</div></article></div></main><footer><div class="paginator"><a href="/2016/06/12/iOS-RunTime之三：消息发送/" class="prev">上一篇</a><a href="/2016/06/10/iOS-RunTime之一：简介/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
 var disqus_identifier = '2016/06/11/iOS-RunTime之二：数据结构/';
 var disqus_title = 'iOS RunTime之二：数据结构';
 var disqus_url = 'https://sunjinshuai.github.io/2016/06/11/iOS-RunTime之二：数据结构/';

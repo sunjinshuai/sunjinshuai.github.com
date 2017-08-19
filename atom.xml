@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://sunjinshuai.github.io/"/>
-  <updated>2017-08-17T08:02:33.000Z</updated>
+  <updated>2017-08-08T08:55:19.000Z</updated>
   <id>https://sunjinshuai.github.io/</id>
   
   <author>
@@ -14,20 +14,6 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>iOS RunTime之实战</title>
-    <link href="https://sunjinshuai.github.io/2017/08/17/iOS-RunTime%E4%B9%8B%E5%AE%9E%E6%88%98/"/>
-    <id>https://sunjinshuai.github.io/2017/08/17/iOS-RunTime之实战/</id>
-    <published>2017-08-17T08:02:33.000Z</published>
-    <updated>2017-08-17T08:02:33.000Z</updated>
-    
-    <summary type="html">
-    
-    </summary>
-    
-    
-  </entry>
   
   <entry>
     <title>iOS之iconfont实战</title>
@@ -609,7 +595,7 @@
     <link href="https://sunjinshuai.github.io/2016/08/03/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC3%E6%9C%9F-2016-08-03/"/>
     <id>https://sunjinshuai.github.io/2016/08/03/iOS学习笔记-第3期-2016-08-03/</id>
     <published>2016-08-03T02:25:15.000Z</published>
-    <updated>2017-08-16T11:07:50.000Z</updated>
+    <updated>2017-08-19T05:34:32.000Z</updated>
     
     <content type="html"><![CDATA[<p>本期主要记录了以下几个问题：</p>
 <ul>
@@ -617,6 +603,7 @@
 <li>Foundation中的断言处理</li>
 <li>文本计算的坑</li>
 <li>UITableview的headerView和footerView高度的设置</li>
+<li>UIWebView底部的黑条</li>
 </ul>
 <h4 id="数组容错处理"><a href="#数组容错处理" class="headerlink" title="数组容错处理"></a>数组容错处理</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">/*!</div><div class="line"> @method objectAtIndexCheck:</div><div class="line"> @abstract 检查是否越界和NSNull如果是返回nil</div><div class="line"> @result 返回对象</div><div class="line"> */</div><div class="line">- (id)objectAtIndexCheck:(NSUInteger)index;</div></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">- (id)objectAtIndexCheck:(NSUInteger)index</div><div class="line">&#123;</div><div class="line">    if (index &gt;= [self count]) &#123;</div><div class="line">        return nil;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    id value = [self objectAtIndex:index];</div><div class="line">    if (value == [NSNull null]) &#123;</div><div class="line">        return nil;</div><div class="line">    &#125;</div><div class="line">    return value;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
@@ -641,6 +628,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">// 单行的</div><div class="line">- (CGSize)textSizeWithFont:(UIFont *)font &#123;</div><div class="line">   CGSize textSize = [self sizeWithAttributes:@&#123;NSFontAttributeName:font&#125;];</div><div class="line">   textSize = CGSizeMake((int)ceil(textSize.width), (int)ceil(textSize.height));</div><div class="line">   return textSize;</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 根据字体、行数、行间距和constrainedWidth计算多行文本占据的size</div><div class="line">- (CGSize)textSizeWithFont:(UIFont*)font</div><div class="line">             numberOfLines:(NSInteger)numberOfLines</div><div class="line">               lineSpacing:(CGFloat)lineSpacing</div><div class="line">          constrainedWidth:(CGFloat)constrainedWidth</div><div class="line">          isLimitedToLines:(BOOL *)isLimitedToLines &#123;</div><div class="line"></div><div class="line">    if (self.length == 0) &#123;</div><div class="line">        return CGSizeZero;</div><div class="line">    &#125;</div><div class="line">    CGFloat oneLineHeight = font.lineHeight;</div><div class="line">    CGSize textSize = [self boundingRectWithSize:CGSizeMake(constrainedWidth, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@&#123;NSFontAttributeName:font&#125; context:nil].size;</div><div class="line"></div><div class="line">    CGFloat rows = textSize.height / oneLineHeight;</div><div class="line">    CGFloat realHeight = oneLineHeight;</div><div class="line">    // 0 不限制行数</div><div class="line">    if (numberOfLines == 0) &#123;</div><div class="line">        if (rows &gt;= 1) &#123;</div><div class="line">            realHeight = (rows * oneLineHeight) + (rows - 1) * lineSpacing;</div><div class="line">        &#125;</div><div class="line">    &#125; else &#123;</div><div class="line">        if (rows &gt; numberOfLines) &#123;</div><div class="line">            rows = numberOfLines;</div><div class="line">            if (isLimitedToLines) &#123;</div><div class="line">                *isLimitedToLines = YES;  //被限制</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        realHeight = (rows * oneLineHeight) + (rows - 1) * lineSpacing;</div><div class="line">    &#125;</div><div class="line">    return CGSizeMake(ceil(constrainedWidth),ceil(realHeight));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h4 id="UITableview的headerView和footerView高度的设置"><a href="#UITableview的headerView和footerView高度的设置" class="headerlink" title="UITableview的headerView和footerView高度的设置"></a>UITableview的headerView和footerView高度的设置</h4><p>一般在项目中使用<code>UITableview</code>的<code>headerView</code>和<code>footerView</code>的时候都会遇到一个问题，即给<code>headerView</code>和<code>footerView</code>高度设置0的时候，发现不好使。经过查阅资料得知如果给<code>headerView</code>和<code>footerView</code>高度设置0，则会被设置成为默认值。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section &#123;</div><div class="line">    return CGFLOAT_MIN;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section &#123;</div><div class="line">    return CGFLOAT_MIN;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="UIWebView底部的黑条"><a href="#UIWebView底部的黑条" class="headerlink" title="UIWebView底部的黑条"></a>UIWebView底部的黑条</h4><p>一般我使用<code>UIWebView</code>的时候会发现，<code>UIWebView</code>底部的黑条很难看，特别是在底部还有透明控件的时候，隐藏的做法其实很简单，只需要将<code>opaque</code>设为NO，背景色设为<code>clearColor</code>即可。</p>
 ]]></content>
     
     <summary type="html">
@@ -651,8 +639,21 @@
 &lt;li&gt;Foundation中的断言处理&lt;/li&gt;
 &lt;li&gt;文本计算的坑&lt;/li&gt;
 &lt;li&gt;UITableview的headerView和footerView高度的设置&lt;/li&gt;
-&lt;/ul&gt;
-&lt;
+&lt;li&gt;UIW
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>iOS RunTime之实战及应用</title>
+    <link href="https://sunjinshuai.github.io/2016/07/17/iOS-RunTime%E4%B9%8B%E5%AE%9E%E6%88%98/"/>
+    <id>https://sunjinshuai.github.io/2016/07/17/iOS-RunTime之实战/</id>
+    <published>2016-07-17T08:02:33.000Z</published>
+    <updated>2017-08-17T09:01:24.000Z</updated>
+    
+    <summary type="html">
     
     </summary>
     

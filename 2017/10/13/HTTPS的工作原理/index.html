@@ -1,0 +1,29 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> HTTPS的工作原理 · 孙金帅的技术博客</title><meta name="description" content="HTTPS的工作原理 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunjinshuai" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">HTTPS的工作原理</h1><div class="post-info">2017年10月13日</div><div class="post-content"><p>HTTPS在传输数据之前需要客户端与服务端之间进行一次握手，在握手过程中将确立双方加密传输数据的密码信息。TLS/SSL中使用了非对称加密，对称加密以及HASH算法。握手过程的简单描述如下：</p>
+<ul>
+<li><p>客户端发起HTTPS请求</p>
+</li>
+<li><p>服务端的配置<br>采用HTTPS协议的服务器必须要有自己制作或者CA证书，区别就是自己颁发的证书需要客户端验证通过，才可以继续访问，而使用CA证书则不会弹出提示页面。这套证书其实就是一对公钥和私钥。公钥给别人加密使用，私钥给自己解密使用。</p>
+</li>
+<li><p>传送证书<br>这个证书其实就是公钥，只是包含了很多信息，如证书的颁发机构，过期时间等。</p>
+</li>
+<li><p>客户端解析证书<br>这部分工作是有客户端的TLS来完成的，首先会验证公钥是否有效，比如颁发机构，过期时间等，如果发现异常，则会弹出一个警告框，提示证书存在问题。如果证书没有问题，那么就生成一个随机数，然后用证书对该随机数进行加密。</p>
+</li>
+<li><p>传送加密信息<br>这部分传送的是用证书加密后的随机数，目的就是让服务端得到这个随机数，以后客户端和服务端的通信就可以通过这个随机数来进行加密解密了。</p>
+</li>
+<li><p>服务段解密信息<br>服务端用私钥解密后，得到了客户端传过来的随机数(私钥)，然后把内容通过该值进行对称加密。所谓对称加密就是，将信息和私钥通过某种算法混合在一起，这样除非知道私钥，不然无法获取内容，而正好客户端和服务端都知道这个私钥，所以只要加密算法够彪悍，私钥够复杂，数据就够安全。</p>
+</li>
+<li><p>传输加密后的信息<br>这部分信息是服务段用私钥加密后的信息，可以在客户端被还原。</p>
+</li>
+<li><p>客户端解密信息<br>客户端用之前生成的私钥解密服务段传过来的信息，于是获取了解密后的内容。</p>
+</li>
+</ul>
+<p><img src="https://user-gold-cdn.xitu.io/2017/10/22/7c798128543df40434986cc27fd4a761" alt="image.png"></p>
+</div></article></div></main><footer><div class="paginator"><a href="/2017/09/23/对称加密与非对称加密/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2017/10/13/HTTPS的工作原理/';
+var disqus_title = 'HTTPS的工作原理';
+var disqus_url = 'https://sunjinshuai.github.io/2017/10/13/HTTPS的工作原理/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2017 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

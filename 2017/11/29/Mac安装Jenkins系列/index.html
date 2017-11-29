@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> Mac安装Jenkins系列 · 孙金帅的技术博客</title><meta name="description" content="Mac安装Jenkins系列 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunjinshuai" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">Mac安装Jenkins系列</h1><div class="post-info">2017年11月29日</div><div class="post-content"><h5 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h5><p>Jenkins是一个开源软件项目，是基于Java开发的一种<a href="https://baike.baidu.com/item/%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90" target="_blank" rel="external">持续集成</a>工具，用于监控持续重复的工作，旨在提供一个开放易用的软件平台，使软件的持续集成变成可能。</p>
+<h5 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h5><ul>
+<li>持续的软件版本发布/测试项目。</li>
+<li>监控外部调用执行的工作。</li>
+</ul>
+<p>使用Jenkins持续化集成，可以帮助开发人员，缩减开发周期，快速迭代版本，开发人员只关注开发任务，像给测试、产品、市场人员打包等等，这些任务就可以交给其他人员来完成，利用Jenkins的优点，只需要点击构建项目，就能完成自动打包，测试人员也只需要扫一下二维码即可安装，很方便，这也算是给测试带来的便利。</p>
+<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><p>登录<a href="https://jenkins.io/" target="_blank" rel="external">Jenkins官网</a>下载Jenkins；</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-67232327f1f66e11.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>点击Download：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-a17520b0ba049c02.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-920782eda654745c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>备注：需要注意的是在下载的时候勾选Mac平台下的pkg包。</p>
+<p>下载下来以后，双击即可安装，安装时第一步是输入密码：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-75923641c13ee123.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-e372d2df9e67fcfe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-389a2ae653be2a0b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-93ccab9f5d1487d6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-8ab7a00ae5191423.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-faeb4b1fca308f40.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-e61a43c8638c2816.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>安装完成之后，Safari可能会自动打开，如果没有自动打开，打开浏览器，输入<a href="http://localhost:8080/" target="_blank" rel="external">http://localhost:8080</a></p>
+<ul>
+<li>在Safari浏览器上，会出现Safari不能连接到服务器。</li>
+<li>在谷歌浏览器上，会报<strong>“dial tcp [::1]:8080: getsockopt: connection refused”</strong>。</li>
+</ul>
+<p>解决方案：<br>猜想可能是Mac电脑上没有安装Java环境，安装<a href="http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html" target="_blank" rel="external">jre</a>、安装<a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank" rel="external">jdk</a>之后，从新刷新浏览器，友好的界面出现了。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-df2b3456b8b381ee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>如果Mac电脑上面安装了Java环境，重启浏览器，输入<a href="http://localhost:8080/" target="_blank" rel="external">http://localhost:8080</a><br><img src="http://upload-images.jianshu.io/upload_images/588630-50b8f63e09d44fc5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-6d9b459270d4af71.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>可以通过下面两种方式获取初始化密码：</p>
+<ul>
+<li>打开terminal，执行cat命令即可(需要管理员权限)</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo cat /Users/Shared/Jenkins/Home/secrets/initialAdminPassword</div></pre></td></tr></table></figure>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-ce8ca0f2434b3c1e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<ul>
+<li>打开Finder，前往文件夹“/Users/Shared/Jenkins/Home/”</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-76d711eea2a7e14d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>把secrets文件下面的initialAdminPassword用文本编辑器打开，<br><img src="http://upload-images.jianshu.io/upload_images/588630-39dd7bbd5fdc33c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-5bb5aa765c81f5d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>一般会选择Jenkins推荐安装的插件<br><img src="http://upload-images.jianshu.io/upload_images/588630-872658e831f3d277.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>等待进度条完成<br><img src="http://upload-images.jianshu.io/upload_images/588630-cd5b4b8c465f6d32.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>输入用户名和密码之后，Jenkins就彻底安装好了。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-4a55f007a1eb1a9b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-7d522da542c2ee7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>安装Jenkins不需要什么技术含量，只需要一步一步傻瓜式的下一步。</p>
+<h4 id="执行Jenkins卸载命令"><a href="#执行Jenkins卸载命令" class="headerlink" title="执行Jenkins卸载命令"></a>执行Jenkins卸载命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/Library/Application Support/Jenkins/Uninstall.command</div></pre></td></tr></table></figure>
+<h4 id="或-依次执行下面的命令"><a href="#或-依次执行下面的命令" class="headerlink" title="或 依次执行下面的命令"></a>或 依次执行下面的命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">sudo launchctl unload /Library/LaunchDaemons/org.jenkins-ci.plist    </div><div class="line">sudo rm !$    </div><div class="line">sudo rm -rf /Applications/Jenkins &quot;/Library/Application Support/Jenkins&quot; /Library/Documentation/Jenkins    </div><div class="line">sudo rm -rf /Users/Shared/Jenkins    </div><div class="line"># if you want to get rid of all the jobs and builds:    </div><div class="line">sudo dscl . -delete /Users/jenkins    </div><div class="line"># delete the jenkins user and group (if you chose to use them):    </div><div class="line">sudo dscl . -delete /Groups/jenkins</div></pre></td></tr></table></figure>
+<h4 id="为什么我的Jenkins会报“dial-tcp-1-8080-getsockopt-connection-refused”"><a href="#为什么我的Jenkins会报“dial-tcp-1-8080-getsockopt-connection-refused”" class="headerlink" title="为什么我的Jenkins会报“dial tcp [::1]:8080: getsockopt: connection refused”"></a>为什么我的Jenkins会报“dial tcp [::1]:8080: getsockopt: connection refused”</h4><p>然后在浏览器中输入localhost:8080，结果报错：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dial tcp [::1]:8080: getsockopt: connection refused</div></pre></td></tr></table></figure></p>
+<p>猜想可能是Mac电脑上没有安装Java环境，安装<a href="http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html" target="_blank" rel="external">jre</a>、安装<a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank" rel="external">jdk</a>之后，从新刷新浏览器，友好的界面出现了。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-df2b3456b8b381ee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+</div></article></div></main><footer><div class="paginator"><a href="/2017/10/24/iOS面试题-如何在项目中处理页面中的多个网络请求/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2017/11/29/Mac安装Jenkins系列/';
+var disqus_title = 'Mac安装Jenkins系列';
+var disqus_url = 'https://sunjinshuai.github.io/2017/11/29/Mac安装Jenkins系列/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2017 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

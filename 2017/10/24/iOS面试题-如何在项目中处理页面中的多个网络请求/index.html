@@ -20,7 +20,7 @@
 <p>二、dispatch_semaphore_t</p>
 <p><img src="https://user-gold-cdn.xitu.io/2017/10/24/9ab683a05139e6c125718f62d4f5cf00" alt="image.png"></p>
 <p>在每个请求开始之前，我们创建一个信号量，初始为0，在请求操作之后，我们设一个<code>dispatch_semaphore_wait</code>，在请求到结果之后，再将信号量+1，也即是<code>dispatch_semaphore_signal</code>。这样做的目的是保证在请求结果没有返回之前，一直让线程等待在那里，这样一个线程的任务一直在等待，就不会算作完成，<code>notify</code>的内容也就不会执行了，直到每个请求的结果都返回了，线程任务才能够结束，这时候<code>notify</code>也才能够执行。</p>
-</div></article></div></main><footer><div class="paginator"><a href="/2017/10/13/HTTPS的工作原理/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+</div></article></div></main><footer><div class="paginator"><a href="/2017/11/29/Mac安装Jenkins系列/" class="prev">上一篇</a><a href="/2017/10/13/HTTPS的工作原理/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
 var disqus_identifier = '2017/10/24/iOS面试题-如何在项目中处理页面中的多个网络请求/';
 var disqus_title = 'iOS面试题--如何在项目中处理页面中的多个网络请求';
 var disqus_url = 'https://sunjinshuai.github.io/2017/10/24/iOS面试题-如何在项目中处理页面中的多个网络请求/';

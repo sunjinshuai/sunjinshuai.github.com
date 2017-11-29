@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://sunjinshuai.github.io/2017/11/29/Mac%E5%AE%89%E8%A3%85Jenkins%E7%B3%BB%E5%88%97/</loc>
+    
+    <lastmod>2017-11-29T15:34:51.742Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://sunjinshuai.github.io/2016/09/19/Load-Initialize/</loc>
     
     <lastmod>2017-11-29T15:22:09.163Z</lastmod>
@@ -12,34 +19,6 @@
     <loc>https://sunjinshuai.github.io/2015/08/07/%E9%80%9A%E7%9F%A5%E4%B8%AD%E5%BF%83-NSNotificationCenter-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</loc>
     
     <lastmod>2017-11-29T15:20:03.633Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://sunjinshuai.github.io/2017/09/02/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E7%9A%84Jenkins%E4%BC%9A%E6%8A%A5%E2%80%9Cdial-tcp-1-8080-getsockopt-connection-refused%E2%80%9D/</loc>
-    
-    <lastmod>2017-10-25T11:40:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://sunjinshuai.github.io/2017/08/26/MAC%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6%E6%8F%90%E7%A4%BA%E8%BD%AF%E4%BB%B6%E5%B7%B2%E6%8D%9F%E5%9D%8F%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/</loc>
-    
-    <lastmod>2017-10-25T11:39:54.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://sunjinshuai.github.io/2017/08/25/Mac%E4%B8%8A%E5%8D%B8%E8%BD%BDJenkins%E7%9A%84%E6%96%B9%E6%B3%95/</loc>
-    
-    <lastmod>2017-10-25T11:38:52.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://sunjinshuai.github.io/2017/09/20/Mac%E4%B8%8A%E5%AE%89%E8%A3%85Jenkins/</loc>
-    
-    <lastmod>2017-10-25T11:37:49.000Z</lastmod>
     
   </url>
   

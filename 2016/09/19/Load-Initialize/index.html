@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> Load&Initialize · 孙金帅的技术博客</title><meta name="description" content="Load&amp;Initialize - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunjinshuai" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">Load&Initialize</h1><div class="post-info">2016年9月19日</div><div class="post-content"><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">+ (void)load;</div><div class="line">+ (void)initialize;</div></pre></td></tr></table></figure>
+<h2 id="Load"><a href="#Load" class="headerlink" title="Load"></a>Load</h2><p>如果你实现了 <code>+ load</code> 方法，那么当类被加载到内存时，它会自动被调用，并且是在 <code>main</code> 函数调用之前被调用。</p>
+<h4 id="load-方法的调用栈"><a href="#load-方法的调用栈" class="headerlink" title="load 方法的调用栈"></a>load 方法的调用栈</h4><p>首先分析一下 <code>load</code> 方法是如何被调用的</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-79f9a27a6fad634c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>从控制台的打印可以看出，运行之后，依然打印了 <code>XXXX load</code> 字符串，也就是说调用了 <code>+ load</code> 方法。</p>
+<h4 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h4><p><code>load</code> 方法的调用顺序其实有迹可循，我们看到 <code>demo</code> 的项目设置如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-578317d4cc2d9920.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>在 <code>TARGETS -&gt; Build Phases -&gt; Compile Sources</code>中调整一下文件的加载顺序：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-0bdb3567814e7f69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>结果发现：</p>
+<ul>
+<li>在 <code>load</code> 方法的调用中会自动调用父类的方法，即<strong>父类先于子类调用</strong>。</li>
+<li>在 <code>load</code> 方法的调用中，<strong>文件的加载顺序靠前的类优先调用</strong>。</li>
+<li>在 <code>load</code> 方法的调用中，<strong>类先于分类调用</strong>。</li>
+<li>在 <code>load</code> 方法的调用中，<strong>文件的加载顺序靠前的分类优先调用</strong>。</li>
+</ul>
+<h4 id="load方法如何加载到内存中"><a href="#load方法如何加载到内存中" class="headerlink" title="load方法如何加载到内存中"></a><code>load</code>方法如何加载到内存中</h4><p>使用 <code>Xcode</code> 添加一个符号断点 <code>+[Parent load]</code>：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-fc3a92e363d99516.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>注意：<br>注意这里 <code>+</code> 和 <code>[</code> 之间没有空格</p>
+<p>重新运行程序。这时，代码会停在 <code>NSLog(@&quot;%@ , %s&quot;, [self class], __FUNCTION__);</code> 这一行的实现上：</p>
+<p>左侧的调用栈很清楚的展示哪些方法被调用了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">0  +[Parent load]</div><div class="line">1  call_load_methods</div><div class="line">2  load_images</div><div class="line">3  dyld::notifySingle(dyld_image_states, ImageLoader const*, ImageLoader::InitializerTimingList*)</div><div class="line">...</div><div class="line">13 _dyld_start</div></pre></td></tr></table></figure>
+<p>从runtime初始化开始</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-9494f2a6913b9e0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>当 <code>Objective-C</code> 运行时初始化的时候，会通过 <code>dyld_register_image_state_change_handler</code> 在每次有新的镜像加入运行时的时候，进行回调。</p>
+<ul>
+<li><code>map_images</code> 主要是在 <code>image</code> 加载进内容后对其二进制内容进行解析，初始化里面的类的结构等。</li>
+<li><code>load_images</code> 主要是调用 <code>call_load_methods</code>。按照继承层次依次调用 <code>Class</code> 的 <code>+load</code> 方法然后再是 <code>Category</code> 的 <code>+load</code> 方法。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-ab9a17fe1c457f6a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-ec529c4bedd7e4ba.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>从源码中可以看出，</p>
+<ul>
+<li>通过 <code>_getObjc2NonlazyClassList</code> 获取所有的类的列表之后，会通过 <code>remapClass</code> 获取类对应的指针，然后调用 <code>schedule_class_load</code> 递归把当前类和没有调用 <code>+ load</code> 方法的父类，通过 <code>add_class_to_loadable_list(cls)</code> 方法添加到 <code>loadable_classes</code> 列表中，<strong>保证父类在子类前调用 <code>+load</code> 方法</strong>。</li>
+<li>通过 <code>_getObjc2NonlazyCategoryList</code> 获取所有的分类的列表之后，会通过 <code>remapClass</code> 获取分类对应的指针，然后调用<code>add_category_to_loadable_list</code> 把当前分类添加到 <code>loadable_categories</code> 列表中。</li>
+</ul>
+<p>在将镜像加载到运行时、对 <code>+load</code> 方法的准备就绪之后，执行 <code>call_load_methods</code>，开始调用 <code>+load</code> 方法：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-908e53a2462438c8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<ul>
+<li>不停调用类的 <code>+load</code> 方法，直到 <code>loadable_classes</code> 为空。</li>
+<li>然后调用一次 <code>call_category_loads</code> 加载分类。</li>
+<li>如果有 <code>loadable_classes</code> 或者更多的分类，继续调用 <code>+load</code> 方法。</li>
+<li><strong>类先于分类调用</strong>。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-5c3408d006682624.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>其中 <code>call_class_loads</code> 会从一个待加载的类列表 <code>loadable_classes</code> 中寻找对应的类，然后通过对应的 <code>SEL</code> ，找到 <code>IMP</code> 的实现并执行。</p>
+<h4 id="load-方法的应用"><a href="#load-方法的应用" class="headerlink" title="load 方法的应用"></a>load 方法的应用</h4><p>由于调用 <code>+load</code> 方法运行时间过早，环境很不安全，我们应该尽量减少 <code>+load</code> 方法的逻辑。另一个原因是load方法是线程安全的，它内部使用了锁，所以我们应该避免线程阻塞在 <code>+load</code> 方法中。不过在这个时间点，所有的 <code>framework</code> 都已经加载到了运行时中，所以调用 <code>framework</code> 中的方法都是安全的。</p>
+<h2 id="Initialize"><a href="#Initialize" class="headerlink" title="Initialize"></a>Initialize</h2><ul>
+<li><code>initialize</code> 的调用是惰性的，它会在第一次调用当前类的方法时被调用。</li>
+<li>与 <code>load</code> 不同，<code>initialize</code> 方法调用时，所有的类都已经加载到了内存中。</li>
+<li><code>initialize</code> 的运行是线程安全的。</li>
+<li>子类会继承父类的 <code>initialize</code> 方法。</li>
+</ul>
+<h4 id="执行顺序-1"><a href="#执行顺序-1" class="headerlink" title="执行顺序"></a>执行顺序</h4><p>在项目中没有引用任何文件，当我们运行项目，会发现与 <code>load</code> 方法不同的是，虽然我们在 <code>initialize</code> 方法中调用了 <code>NSLog</code>。但是程序运行之后没有任何输出。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-1ed8f3a5cc66ad20.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>结果发现：<br>没有直接调用 <code>initialize</code> 方法。但是，这里也打印出了 <code>XXXX initialize</code> 字符串。</p>
+<p><strong> <code>initialize</code> 只会在对应类的方法第一次被调用时，才会调用。</strong></p>
+<p>由于子类会继承父类的 <code>initialize</code> 方法，即使子类没有实现 <code>initialize</code> 方法，也会调用父类的方法，这会导致一个很严重的问题：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-e7b192de1527d86f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>运行后发现父类的 <code>initialize</code> 方法竟然调用了两次：</p>
+<p>虽然 <code>initialize</code> 方法对一个类而言只会调用一次，但这里由于出现了两个类，所以调用两次符合规则，但不符合我们的需求。正确使用initialize方法的姿势如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// In Parent.m</div><div class="line">+ (void)initialize &#123;</div><div class="line">if (self == [Parent class]) &#123;</div><div class="line">NSLog(@&quot;Initialize Parent, caller Class %@&quot;, [self class]);</div><div class="line">&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>加上判断后，就不会因为子类而调用到自己的 <code>initialize</code> 方法了。</p>
+<p><strong> 如果在分类中也实现了 <code>initialize</code>  方法，则会出现方法”覆盖”</strong>。</p>
+<p>在 <code>initialize</code> 方法中打一个断点，来查看这个方法的调用栈：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-4b45dbbbeceffd7d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>从runtime初始化开始</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-9eca14718fb589ea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><code>lookUpImpOrForward</code> 方法只会在向对象发送消息，并且在类的缓存中没有找到消息的选择子时才会调用。</p>
+<h4 id="Initialize-方法的应用"><a href="#Initialize-方法的应用" class="headerlink" title="Initialize 方法的应用"></a>Initialize 方法的应用</h4><p>由于 <code>initialize</code> 作用也非常局限，一般我们只会在 <code>initialize</code> 方法中进行一些常量的初始化。</p>
+</div></article></div></main><footer><div class="paginator"><a href="/2016/10/06/AutoreleasePool的实现原理/" class="prev">上一篇</a><a href="/2016/08/08/CocoaPods的安装与使用/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2016/09/19/Load-Initialize/';
+var disqus_title = 'Load&amp;Initialize';
+var disqus_url = 'https://sunjinshuai.github.io/2016/09/19/Load-Initialize/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2017 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

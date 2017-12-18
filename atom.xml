@@ -393,6 +393,81 @@
   </entry>
   
   <entry>
+    <title>iOS AutoLayout 中 Label 的抗拉伸和抗压缩</title>
+    <link href="https://sunjinshuai.github.io/2017/07/18/iOS-AutoLayout-%E4%B8%AD-Label-%E7%9A%84%E6%8A%97%E6%8B%89%E4%BC%B8%E5%92%8C%E6%8A%97%E5%8E%8B%E7%BC%A9/"/>
+    <id>https://sunjinshuai.github.io/2017/07/18/iOS-AutoLayout-中-Label-的抗拉伸和抗压缩/</id>
+    <published>2017-07-17T16:42:23.000Z</published>
+    <updated>2017-12-18T14:43:09.406Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="iOS-AutoLayout中Label的”抗拉伸”和”抗压缩”"><a href="#iOS-AutoLayout中Label的”抗拉伸”和”抗压缩”" class="headerlink" title="iOS AutoLayout中Label的”抗拉伸”和”抗压缩”"></a>iOS AutoLayout中Label的”抗拉伸”和”抗压缩”</h1><h4 id="关键词-intrinsic-content-size"><a href="#关键词-intrinsic-content-size" class="headerlink" title="关键词 intrinsic content size"></a>关键词 <code>intrinsic content size</code></h4><p>有些控件能通过自己显示的内容计算出需要的 <code>size</code>，这个自动计算出来 <code>size</code> 就是该控件的固有内容大小。这个大小是和需要显示的内容相关的。<code>UIButton</code>、<code>UILabel</code> 就是具有固有内容大小属性的控件。<code>UIButton</code> 可以根据它的 <code>title</code> 字符串长度和需要显示的 <code>image</code> 来计算需要的 <code>size</code>，<code>UILabel</code> 可以根据它的 <code>text</code> 来计算。</p>
+<p>以 <code>UILable</code> 为例子：<br>在默认情况下，我们没有设置各个布局的优先级，那么他就会优先显示左边的 <code>label</code>，左边的完全显示后剩余的空间都是右边的 <code>label</code>，如果整个空间宽度都不够左边的 <code>label</code> 的话，那么右边的 <code>label</code> 没有显示的机会了。<br>如果我们现在的需求是优先显示右边的 <code>label</code>，左边的 <code>label</code> 内容超出的省略，这时就需要我们调整约束的优先级了。</p>
+<p>原理：</p>
+<ul>
+<li>约束优先级： 在 <code>Autolayout</code>中每个约束都有一个优先级, 优先级的范围是 <code>1~1000</code>。创建一个约束，默认的优先级是最高的<code>1000</code></li>
+<li><code>Content Hugging Priority</code> ：该优先级表示一个控件抗被拉伸的优先级。优先级越高，越不容易被拉伸，默认是 <code>250</code>。</li>
+<li><code>Content Compression Resistance Priority</code> ：该优先级和上面那个优先级相对应，表示一个控件抗压缩的优先级。优先级越高，越不容易被压缩，默认是 <code>750</code>。</li>
+</ul>
+<p>所以默认情况下两边的 <code>label</code> 的 <code>Content Hugging</code> 和 <code>Content Compression</code> 优先级都是一样的，为了让右边的 <code>label</code> 完全显示，那么我们需要增大右边 <code>label</code> 的抗压缩级，或者减小左边 <code>label</code> 的抗压缩级，总之是得让右边的抗压缩级大于左边的 <code>label</code>，这样才能让右边的label内容优先显示。</p>
+<p><code>UIView</code> 中关于 <code>Content Hugging</code> 和 <code>Content Compression Resistance</code> 的方法有：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">- (UILayoutPriority)contentHuggingPriorityForAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);</div><div class="line">- (void)setContentHuggingPriority:(UILayoutPriority)priority forAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);</div><div class="line"></div><div class="line">- (UILayoutPriority)contentCompressionResistancePriorityForAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);</div><div class="line">- (void)setContentCompressionResistancePriority:(UILayoutPriority)priority forAxis:(UILayoutConstraintAxis)axis NS_AVAILABLE_IOS(6_0);</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;iOS-AutoLayout中Label的”抗拉伸”和”抗压缩”&quot;&gt;&lt;a href=&quot;#iOS-AutoLayout中Label的”抗拉伸”和”抗压缩”&quot; class=&quot;headerlink&quot; title=&quot;iOS AutoLayout中Label的”抗拉伸”和”
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>探索 UIScrollView 的原理</title>
+    <link href="https://sunjinshuai.github.io/2017/06/15/%E6%8E%A2%E7%B4%A2-UIScrollView-%E7%9A%84%E5%8E%9F%E7%90%86/"/>
+    <id>https://sunjinshuai.github.io/2017/06/15/探索-UIScrollView-的原理/</id>
+    <published>2017-06-15T01:43:29.000Z</published>
+    <updated>2017-12-18T14:44:11.752Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="UIScrollView的原理"><a href="#UIScrollView的原理" class="headerlink" title="UIScrollView的原理"></a>UIScrollView的原理</h1><p><code>UIKit</code> 坐标系每一个 <code>View</code> 都定义了他自己的坐标系，如下图所示，<code>x</code> 轴指向右方，<code>y</code> 轴指向下方：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-b4be73e8ede40f16.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>注意：<br>这个逻辑坐标系并不关注包含在其中 <code>View</code> 的宽度和高度，整个坐标系没有边界向四周无限延伸。<br>我们在坐标系中放置四个子 <code>View</code>，每一次色块代表一个 <code>View</code>：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-173b57f84345e191.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">UIView *redView = [[UIView alloc] initWithFrame:CGRectMake(20, 20, 100, 100)];</div><div class="line">redView.backgroundColor = [UIColor colorWithRed:0.815 green:0.007</div><div class="line">blue:0.105 alpha:1];</div><div class="line"></div><div class="line">UIView *greenView = [[UIView alloc] initWithFrame:CGRectMake(150, 160, 150, 200)];</div><div class="line">greenView.backgroundColor = [UIColor colorWithRed:0.494 green:0.827</div><div class="line">blue:0.129 alpha:1];</div><div class="line"></div><div class="line">UIView *blueView = [[UIView alloc] initWithFrame:CGRectMake(40, 400, 200, 150)];</div><div class="line">blueView.backgroundColor = [UIColor colorWithRed:0.29 green:0.564</div><div class="line">blue:0.886 alpha:1];</div><div class="line"></div><div class="line">UIView *yellowView = [[UIView alloc] initWithFrame:CGRectMake(100, 600, 180, 150)];</div><div class="line">yellowView.backgroundColor = [UIColor colorWithRed:0.972 green:0.905</div><div class="line">blue:0.109 alpha:1];</div><div class="line"></div><div class="line">[mainView addSubview:redView];</div><div class="line">[mainView addSubview:greenView];</div><div class="line">[mainView addSubview:blueView];</div><div class="line">[mainView addSubview:yellowView];</div></pre></td></tr></table></figure>
+<h4 id="bounds"><a href="#bounds" class="headerlink" title="bounds"></a>bounds</h4><p><code>Apple</code> 关于 <code>UIView</code> 的文档中是这样描述 <code>bounds</code> 属性的：</p>
+<blockquote>
+<p>bounds矩形…描述了该视图在其自身坐标系中的位置和大小。</p>
+</blockquote>
+<p>一个 <code>View</code> 可以被看作是定义在其所在坐标系平面上的一个矩形的可视区域，<code>View</code> 的边界表明了这个矩形可视区域的位置和大小。</p>
+<p>假设我们的 <code>View</code> 宽320像素，高480像素，原点在（0，0）。那么这个 <code>View</code> 就变成了整个坐标系平面的观察口，它展示的只是整个平面的一小部分。位于该 <code>View</code> 边界外的区域依然存在，只是被隐藏起来了。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-ce142480ad4ae548.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>一个 <code>View</code> 提供了其所在平面的一个观察口，<code>View</code> 的 <code>bounds</code> 矩形描述了这个可是区域的位置和大小。</p>
+<p>接下来我们来试着修改 <code>bounds</code> 的原点坐标：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">CGRect bounds = mainView.bounds;</div><div class="line">bounds.origin = CGPointMake(0, 100);</div><div class="line">mainView.bounds = bounds;</div></pre></td></tr></table></figure>
+<p>当我们把 <code>bound</code> 原点设为（0，100）后，整个画面看起来就像这样：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-615c7c579a14e6f6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>修改 <code>bounds</code> 的原点就相当与在平面上移动这个可视区域。</p>
+<p>看起来好像是这个 <code>View</code> 向下移动了100像素，在这个 <code>View</code> 自己的坐标系中这确实没错。不过这个 <code>View</code> 真正位于屏幕上的位置（更准确的说在其父 <code>View</code> 上的位置）其实没有改变，因为这是由 <code>View</code> 的 <code>frame</code> 属性决定的，它并没有改变：</p>
+<blockquote>
+<p>frame矩形…定义了这个View在其父View坐标系中的位置和大小。</p>
+</blockquote>
+<p>由于 <code>View</code> 的位置是相对固定的，你可以把整个坐标平面想象成我们可以上下拖动的透明幕布，把这个 <code>View</code> 想象成我们观察坐标平面的窗口。调整 <code>View</code> 的 <code>Bounds</code> 属性就相当于拖动这个幕布，那么下方的内容就能在我们 <code>View</code> 中被观察到：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-660f880bec22bb97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>修改 <code>bounds</code> 的原点坐标也相当于把整个坐标系向上拖动，因为 <code>View</code> 的 <code>frame</code> 没由变过，所以它相对于父 <code>View</code> 的位置没有变化过。</p>
+<p>其实这就是 <code>UIScrollView</code> 滑动时所发生的事情。注意从一个用户的角度来看，他以为时这个 <code>View</code> 中的子 <code>View</code> 在移动，其实他们的在坐标系中位置（他们的 <code>frame</code> ）没有发生过变化。</p>
+<p>一个 <code>scroll view</code> 并不需要其中子 <code>View</code> 的坐标来使他们滚动，唯一要做的就是改变他的 <code>bounds</code> 属性。知道了这一点，实现一个简单的 <code>scroll view</code> 就没什么困难了。我们用一个 <code>gesture recognizer</code> 来识别用户的拖动操作，根据用户拖动的偏移量来改变 <code>bounds</code> 的原点：</p>
+<p>和真正的 <code>UIScrollView</code> 一样，我们的类也有一个 <code>contentSize</code> 属性，你必须从外部来设置这个值来指定可以滚动的区域，当我们改变 <code>bounds</code> 的大小时我们要确保设置的值是有效的。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;UIScrollView的原理&quot;&gt;&lt;a href=&quot;#UIScrollView的原理&quot; class=&quot;headerlink&quot; title=&quot;UIScrollView的原理&quot;&gt;&lt;/a&gt;UIScrollView的原理&lt;/h1&gt;&lt;p&gt;&lt;code&gt;UIKit&lt;/code&gt;
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>iOS学习笔记 第4期(2017.05.03)</title>
     <link href="https://sunjinshuai.github.io/2017/05/03/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC4%E6%9C%9F-2017-05-03/"/>
     <id>https://sunjinshuai.github.io/2017/05/03/iOS学习笔记-第4期-2017-05-03/</id>
@@ -985,108 +1060,6 @@
     
       &lt;p&gt;&lt;code&gt;Cocoapods&lt;/code&gt;是一个框架依赖管理的一个管理工具，主要是用来管理框架一些开源库在项目中的引用。简而言之就是用来管理你的项目中对开源框架或自己公司子模块的依赖。&lt;/p&gt;
 &lt;p&gt;当然作为开发者来说，入门教程特别简单。但是作为一个开发人员不能只满足于当
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>源码管理工具之git中merge、rebase的区别</title>
-    <link href="https://sunjinshuai.github.io/2016/08/04/%E6%BA%90%E7%A0%81%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E4%B9%8Bgit%E4%B8%ADmerge%E3%80%81rebase%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
-    <id>https://sunjinshuai.github.io/2016/08/04/源码管理工具之git中merge、rebase的区别/</id>
-    <published>2016-08-04T06:15:32.000Z</published>
-    <updated>2017-08-04T07:43:29.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>一般在公司git整合分支一般有两种方法——快速向前合并<code>git rebase</code>和三路合并<code>git merge</code>。其实在开发中，<code>git rebase</code>和<code>git merge</code>表达都是一个意思，即，将一个分支合并到另一个分支。</p>
-<p>当开发一个新功能，一般我们会在<code>develop</code>分支上创建<code>featrue</code>分支：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-b6359864017521dc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>当我们这个新功能开发测试完毕之后，首先要把<code>featrue</code>分支合并到<code>develop</code>分支上，一般会根据实际情况选择是否使用<code>git merge</code>还是<code>git rebase</code>。</p>
-<p><strong><code>git merge</code></strong><br>根据分支合并的原则，<code>git</code>会自动根据两个分支的共同祖和两个分支的最新提交<code>commit</code>记录进行一个三方合并，然后将合并中修改的内容生成一个新的<code>commit</code>记录。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git checkout feature</div><div class="line">git merge master</div></pre></td></tr></table></figure>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-2fb4e523cea0a269.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p><strong><code>git merge</code>是一个安全的操作</strong></p>
-<p><strong><code>git rebase</code></strong></p>
-<p>它会把整个<code>feature</code>分支移动到<code>develop</code>分支的后面，有效地把所有<code>develop</code>分支上新的提交并入过来。但是，<code>git rebase</code>为原分支上每一个提交创建一个新的提交，重写了项目历史，并且不会带来合并提交。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git checkout feature</div><div class="line">git rebase master</div></pre></td></tr></table></figure>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-93bdffa37317c083.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p><strong><code>git rebase</code>最大的特点就是让你的项目历史提交记录会非常整洁。</strong><br>首先，它不像<code>git merge</code>那样引入不必要的合并提交。其次，如上图所示，<code>git rebase</code>使项目历史提交记录呈现出一条直线。你可以从项目终点到起点浏览而不需要任何的分叉，可以让你更容易的使用<code>git log</code>查看项目的提交记录。</p>
-<p><strong><code>git rebase</code>缺点就是安全性和可跟踪性。</strong></p>
-<p><code>git rebase</code>的黄金法则：绝对不要在公共的分支上使用。如果你把<code>master</code>分支<code>rebase</code>到你的<code>feature</code>分支上：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-aa37afc6fe4ff411.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>这次<code>rebase</code>将<code>master</code>分支上的所有提交都移到了<code>feature</code>分支后面。<br>问题是它只发生在你的代码仓库中，而其他所有的开发者还在原来的<code>master</code>上工作。因为<code>rebase</code>引起了新的提交，所以<code>git</code>会认为你的<code>master</code>分支和其他人的<code>master</code>已经分叉了。</p>
-<p>同步两个<code>master</code>分支的唯一办法是把它们<code>merge</code>到一起，导致一个额外的合并提交和两堆包含同样更改的提交。</p>
-<p><strong><code>git rebase</code>不适用于公共的分支上。</strong></p>
-<p>总结：选择<code>git merge</code>还是<code>git rebase</code>？</p>
-<ul>
-<li><p><code>git merge</code>是一个合并操作，会采用三路合并的方式将两个分支的修改合并在一起，默认操作的情况下会提交合并中修改的内容，生成一个新的<code>commit</code>记录。</p>
-</li>
-<li><p><code>git rebase</code>并没有进行合并操作，只是提取了当前分支的修改，将其复制在了目标分支的最新提交后面，为原分支上每一个提交创建一个新的提交。</p>
-</li>
-<li><p><code>git merge</code>与<code>git rebase</code>都是非常强大的分支整合命令，没有优劣之分，使用哪一个应由项目和团队的开发需求决定。</p>
-</li>
-</ul>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;一般在公司git整合分支一般有两种方法——快速向前合并&lt;code&gt;git rebase&lt;/code&gt;和三路合并&lt;code&gt;git merge&lt;/code&gt;。其实在开发中，&lt;code&gt;git rebase&lt;/code&gt;和&lt;code&gt;git merge&lt;/code&gt;表达都是一个
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>iOS学习笔记 第3期(2016.08.03)</title>
-    <link href="https://sunjinshuai.github.io/2016/08/03/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC3%E6%9C%9F-2016-08-03/"/>
-    <id>https://sunjinshuai.github.io/2016/08/03/iOS学习笔记-第3期-2016-08-03/</id>
-    <published>2016-08-03T02:25:15.000Z</published>
-    <updated>2017-08-19T05:34:32.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>本期主要记录了以下几个问题：</p>
-<ul>
-<li>数组容错处理</li>
-<li>Foundation中的断言处理</li>
-<li>文本计算的坑</li>
-<li>UITableview的headerView和footerView高度的设置</li>
-<li>UIWebView底部的黑条</li>
-</ul>
-<h4 id="数组容错处理"><a href="#数组容错处理" class="headerlink" title="数组容错处理"></a>数组容错处理</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">/*!</div><div class="line"> @method objectAtIndexCheck:</div><div class="line"> @abstract 检查是否越界和NSNull如果是返回nil</div><div class="line"> @result 返回对象</div><div class="line"> */</div><div class="line">- (id)objectAtIndexCheck:(NSUInteger)index;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">- (id)objectAtIndexCheck:(NSUInteger)index</div><div class="line">&#123;</div><div class="line">    if (index &gt;= [self count]) &#123;</div><div class="line">        return nil;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    id value = [self objectAtIndex:index];</div><div class="line">    if (value == [NSNull null]) &#123;</div><div class="line">        return nil;</div><div class="line">    &#125;</div><div class="line">    return value;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="Foundation中的断言处理"><a href="#Foundation中的断言处理" class="headerlink" title="Foundation中的断言处理"></a>Foundation中的断言处理</h4><p><code>Foundation</code>中定义了两组断言相关的宏，分别是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NSAssert / NSCAssert</div><div class="line">NSParameterAssert / NSCParameterAssert</div></pre></td></tr></table></figure></p>
-<p>这两组宏主要在功能和语义上有所差别，这些区别主要有以下两点：</p>
-<ul>
-<li>如果我们需要确保方法或函数的输入参数的正确性，则应该在方法(函数)的顶部使用<code>NSParameterAssert / NSCParameterAssert</code>；而在其它情况下，使用<code>NSAssert / NSCAssert</code>。</li>
-<li>另一个不同是介于<code>C</code>和<code>Objective-C</code>之间。<code>NSAssert / NSParameterAssert</code>应该用于<code>Objective-C</code>的上下文(方法)中，而<code>NSCAssert / NSCParameterAssert</code>应该用于<code>C</code>的上下文(函数)中。</li>
-</ul>
-<p>当断言失败时，通常是会抛出一个如下所示的异常：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">*** Terminating app due to uncaught exception &apos;NSInternalInconsistencyException&apos;, reason: &apos;true is not equal to false&apos;</div></pre></td></tr></table></figure></p>
-<p><code>Foundation</code>为了处理断言，专门定义了一个<code>NSAssertionHandler</code>来处理断言的失败情况。<code>NSAssertionHandler</code>对象是自动创建的，用于处理失败的断言。当断言失败时，会传递一个字符串给<code>NSAssertionHandler</code>对象来描述失败的原因。每个线程都有自己的<code>NSAssertionHandler</code>对象。当调用时，一个断言处理器会打印包含方法和类(或函数)的错误消息，并引发一个<code>NSInternalInconsistencyException</code>异常。就像上面所看到的一样。</p>
-<p>我们很少直接去调用<code>NSAssertionHandler</code>的断言处理方法，通常都是自动调用的。</p>
-<p><code>NSAssertionHandler</code>提供的方法并不多，就三个，如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">// 返回与当前线程的NSAssertionHandler对象。</div><div class="line">// 如果当前线程没有相关的断言处理器，则该方法会创建一个并指定给当前线程</div><div class="line">+ (NSAssertionHandler *)currentHandler</div><div class="line">// 当NSCAssert或NSCParameterAssert断言失败时，会调用这个方法</div><div class="line">- (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)object lineNumber:(NSInteger)fileName description:(NSString *)line, format,...</div><div class="line">// 当NSAssert或NSParameterAssert断言失败时，会调用这个方法</div><div class="line">- (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format, ...</div></pre></td></tr></table></figure></p>
-<p>另外，还定义了一个常量字符串，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NSString * const NSAssertionHandlerKey;</div></pre></td></tr></table></figure></p>
-<p>主要是用于在线程的<code>threadDictionary</code>字典中获取或设置断言处理器。</p>
-<p><code>Xcode</code>已经默认将<code>release</code>环境下的断言取消了, 免除了忘记关闭断言造成的程序不稳定. 所以不用担心在开发时候大胆使用。</p>
-<p>自定义<code>NSAssertionHandler</code><br><code>NSAssertionHandler</code>实例是自动创建的，用于处理错误断言。如果<code>NSAssert</code>和<code>NSCAssert</code>条件评估为错误，会向<code>NSAssertionHandler</code>实例发送一个表示错误的字符串。每个线程都有它自己的<code>NSAssertionHandler</code>实例。<br>我们可以自定义处理方法，从而使用断言的时候，控制台输出错误，但是程序不会直接崩溃。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">#import &quot;MyAssertHandler.h&quot;</div><div class="line"></div><div class="line">@implementation MyAssertHandler</div><div class="line"></div><div class="line">//处理Objective-C的断言</div><div class="line">- (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format,...</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;NSAssert Failure: Method %@ for object %@ in %@#%li&quot;, NSStringFromSelector(selector), object, fileName, (long)line);</div><div class="line">&#125;</div><div class="line">//处理C的断言</div><div class="line">- (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format,...</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;NSCAssert Failure: Function (%@) in %@#%li&quot;, functionName, fileName, (long)line);</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure></p>
-<p>给线程添加处理类</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">- (BOOL)application:(UIApplication *)application</div><div class="line">didFinishLaunchingWithOptions:(NSDictionary *)launchOptions</div><div class="line">&#123;</div><div class="line">  NSAssertionHandler *assertionHandler = [[LoggingAssertionHandler alloc] init];</div><div class="line">  [[[NSThread currentThread] threadDictionary] setValue:assertionHandler</div><div class="line">                                                 forKey:NSAssertionHandlerKey];</div><div class="line">  // ...</div><div class="line">  return YES;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>自定义<code>NSAssertionHandler</code>后,程序能够获得断言失败后的信息,但是程序可以继续运行,不会强制退出程序。</p>
-<h4 id="文本计算的坑"><a href="#文本计算的坑" class="headerlink" title="文本计算的坑"></a>文本计算的坑</h4><p>一般在开发的时候，很多时候需要先计算出文本在某字体下的宽高，再设置控件的frame。有时候文本计算得到的width和height是小数，有可能最后得到的结果不准确，那么控件的frame也不准确。所以我们经常做的一件事就是<code>Category</code>，即给<code>NSString</code>扩展方法，使用新增的方法统一计算文本的大小，在这些方法中使用ceil()将小数点后数据除去，使得计算的结果小数点后都是0。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">// 单行的</div><div class="line">- (CGSize)textSizeWithFont:(UIFont *)font &#123;</div><div class="line">   CGSize textSize = [self sizeWithAttributes:@&#123;NSFontAttributeName:font&#125;];</div><div class="line">   textSize = CGSizeMake((int)ceil(textSize.width), (int)ceil(textSize.height));</div><div class="line">   return textSize;</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 根据字体、行数、行间距和constrainedWidth计算多行文本占据的size</div><div class="line">- (CGSize)textSizeWithFont:(UIFont*)font</div><div class="line">             numberOfLines:(NSInteger)numberOfLines</div><div class="line">               lineSpacing:(CGFloat)lineSpacing</div><div class="line">          constrainedWidth:(CGFloat)constrainedWidth</div><div class="line">          isLimitedToLines:(BOOL *)isLimitedToLines &#123;</div><div class="line"></div><div class="line">    if (self.length == 0) &#123;</div><div class="line">        return CGSizeZero;</div><div class="line">    &#125;</div><div class="line">    CGFloat oneLineHeight = font.lineHeight;</div><div class="line">    CGSize textSize = [self boundingRectWithSize:CGSizeMake(constrainedWidth, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@&#123;NSFontAttributeName:font&#125; context:nil].size;</div><div class="line"></div><div class="line">    CGFloat rows = textSize.height / oneLineHeight;</div><div class="line">    CGFloat realHeight = oneLineHeight;</div><div class="line">    // 0 不限制行数</div><div class="line">    if (numberOfLines == 0) &#123;</div><div class="line">        if (rows &gt;= 1) &#123;</div><div class="line">            realHeight = (rows * oneLineHeight) + (rows - 1) * lineSpacing;</div><div class="line">        &#125;</div><div class="line">    &#125; else &#123;</div><div class="line">        if (rows &gt; numberOfLines) &#123;</div><div class="line">            rows = numberOfLines;</div><div class="line">            if (isLimitedToLines) &#123;</div><div class="line">                *isLimitedToLines = YES;  //被限制</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        realHeight = (rows * oneLineHeight) + (rows - 1) * lineSpacing;</div><div class="line">    &#125;</div><div class="line">    return CGSizeMake(ceil(constrainedWidth),ceil(realHeight));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="UITableview的headerView和footerView高度的设置"><a href="#UITableview的headerView和footerView高度的设置" class="headerlink" title="UITableview的headerView和footerView高度的设置"></a>UITableview的headerView和footerView高度的设置</h4><p>一般在项目中使用<code>UITableview</code>的<code>headerView</code>和<code>footerView</code>的时候都会遇到一个问题，即给<code>headerView</code>和<code>footerView</code>高度设置0的时候，发现不好使。经过查阅资料得知如果给<code>headerView</code>和<code>footerView</code>高度设置0，则会被设置成为默认值。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section &#123;</div><div class="line">    return CGFLOAT_MIN;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section &#123;</div><div class="line">    return CGFLOAT_MIN;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="UIWebView底部的黑条"><a href="#UIWebView底部的黑条" class="headerlink" title="UIWebView底部的黑条"></a>UIWebView底部的黑条</h4><p>一般我使用<code>UIWebView</code>的时候会发现，<code>UIWebView</code>底部的黑条很难看，特别是在底部还有透明控件的时候，隐藏的做法其实很简单，只需要将<code>opaque</code>设为NO，背景色设为<code>clearColor</code>即可。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本期主要记录了以下几个问题：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;数组容错处理&lt;/li&gt;
-&lt;li&gt;Foundation中的断言处理&lt;/li&gt;
-&lt;li&gt;文本计算的坑&lt;/li&gt;
-&lt;li&gt;UITableview的headerView和footerView高度的设置&lt;/li&gt;
-&lt;li&gt;UIW
     
     </summary>
     

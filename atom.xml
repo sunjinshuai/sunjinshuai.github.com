@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://sunjinshuai.github.io/"/>
-  <updated>2017-12-18T14:24:00.704Z</updated>
+  <updated>2017-12-18T14:16:27.537Z</updated>
   <id>https://sunjinshuai.github.io/</id>
   
   <author>
@@ -14,71 +14,6 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>Mac上更新Ruby</title>
-    <link href="https://sunjinshuai.github.io/2017/12/18/Mac%E4%B8%8A%E6%9B%B4%E6%96%B0Ruby/"/>
-    <id>https://sunjinshuai.github.io/2017/12/18/Mac上更新Ruby/</id>
-    <published>2017-12-18T14:23:32.000Z</published>
-    <updated>2017-12-18T14:24:00.704Z</updated>
-    
-    <content type="html"><![CDATA[<p>在项目中要适配<code>iOS10</code>，要使用<code>cocoapods</code>更新第三方库，而目前使用的<code>ruby</code>版本是<code>Mac</code>系统自带的<code>1.8.7</code>。</p>
-<p>所以需要对<code>ruby</code>进行升级。这里使用<code>rvm</code>对<code>ruby</code>进行升级，升级过程如下：</p>
-<p>1、安装 rvm</p>
-<p>rvm：<code>Ruby Version Manager</code>，<code>Ruby</code>版本管理器，包括<code>Ruby</code>的版本管理和<code>Gem</code>库管理(<code>gemset</code>)。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -L get.rvm.io | bash -s stable</div></pre></td></tr></table></figure>
-<p>等待一段时间后就可以成功安装好<code>rvm</code>。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">source ~/.bashrc</div><div class="line">source ~/.bash_profile</div></pre></td></tr></table></figure>
-<p>测试是否安装正常</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rvm -v</div></pre></td></tr></table></figure>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062a9d0894c480?w=570&amp;h=366&amp;f=png&amp;s=125416" alt="Paste_Image.png"></p>
-<p>2、用<code>rvm</code>升级<code>ruby</code></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062a9d018e4129?w=570&amp;h=366&amp;f=png&amp;s=32111" alt="Paste_Image.png"></p>
-<p>查看当前<code>ruby</code>版本</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ruby -v</div><div class="line">ruby 2.3</div></pre></td></tr></table></figure>
-<p>列出已知的<code>ruby</code>版本</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rvm list known</div></pre></td></tr></table></figure>
-<p>3、安装<code>ruby 2.3</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rvm install 2.3</div></pre></td></tr></table></figure></p>
-<p>安装完成之后<code>ruby -v</code>查看是否安装成功。</p>
-<p>下面总结一下，更新<code>ruby</code>遇到的问题：</p>
-<p>问题一：<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062a9cfc558a94?w=570&amp;h=366&amp;f=png&amp;s=137887" alt="Paste_Image.png"></p>
-<p>意思就是你要安装<code>cocoapods</code>，你的<code>ruby</code> 环境版本必须大于等于<code>2.2.2</code>。</p>
-<p>于是，我输入了<code>gem --version</code>，结果出来的版本号是<code>2.6.0</code>，这明明大于<code>2.2.2</code>，怎么还提示版本太低呢。结果一查才知道<code>rvm</code>是用来管理<code>ruby</code>的，<code>ruby</code>的其中一个“程序”叫<code>rubygems</code>，简称<code>gem</code>，而用来管理项目的<code>gem</code>的，叫<code>bundle</code>。完全是不同的东西，他们相同的只是都可以管理<code>gem</code>，所以说不能用这个。</p>
-<p>输入<code>rvm list</code>，<code>ruby</code>的版本好像是<code>1.9.8</code>，看来是<code>cocoapods</code>没骗我。接下来的工作就是升级<code>cocoapods</code>了。</p>
-<p>解决方法：</p>
-<p>卸载<code>home-brew</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)&quot;</div></pre></td></tr></table></figure></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062a9cfc66f04c?w=570&amp;h=366&amp;f=png&amp;s=123762" alt="Paste_Image.png"></p>
-<p>然后，在执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rvm install 2.3</div></pre></td></tr></table></figure></p>
-<p>这样<code>ruby</code>就升级好了。<br>然后，<code>cocoapods</code>就可以正常安装了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo gem install cocoapods</div></pre></td></tr></table></figure></p>
-<p>问题二：</p>
-<p>在执行<code>rvm install 2.3</code>的时候，报下面这个错误。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062a9d363455f9?w=570&amp;h=366&amp;f=jpeg&amp;s=53061" alt="15C1C2DF7FBC53F7E45BE9C348E1DC31.jpg"><br>解决问题：</p>
-<p>升级安装<code>openssl</code></p>
-<p>首先，来看看我们的<code>openssl</code>的版本和目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">openssl version</div><div class="line">OpenSSL 0.9.8zh 14 Jan 2016</div><div class="line"></div><div class="line">which openssl</div><div class="line">/usr/local/bin/openssl</div></pre></td></tr></table></figure></p>
-<p>通过上面的查看，明显我们的版本号太低了，于是google了下，得到下面的结果。<br>首先更新homebrew<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">brew update</div><div class="line">Updated Homebrew from e3986e9 to 21ce7a5.</div><div class="line">==&gt; Migrating Homebrew to v0.9.9</div><div class="line">...</div></pre></td></tr></table></figure></p>
-<p>看到这个信息，就是成功的在更新了，这个过程可能比较久点。更新完之后，我们开始通过<code>homebrew</code>安装<code>openssl</code>。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ brew install openssl</div><div class="line">==&gt; Downloading https://homebrew.bintray.com/bottles/openssl-1.0.2h.el_capitan.b</div><div class="line">######################################################################## 100.0%</div><div class="line">...</div><div class="line">==&gt; Summary</div><div class="line">🍺  /usr/local/Cellar/openssl/1.0.2h: 1,691 files, 12M</div></pre></td></tr></table></figure>
-<p>当最后显示🍺那个标志，说明我们成功的将<code>openssl</code>安装到<code>/usr/local/Cellar/openssl/1.0.2h</code>。<br>不过，我们还有最后一步，那就是当我们使用<code>openssl</code>时，使用的是我们用<code>homebrew</code>新下载的<code>openssl</code>。<br>直接将<code>openssl</code>软链接到<code>/usr/local/bin/openssl</code>。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">#如果/usr/local/bin/openssl下存在，则先删除 /usr/local/bin/openssl</div><div class="line">$ rm /usr/local/bin/openssl</div><div class="line">#将以前通过homebrew下载的1.0.2e版本的openssl链接到/usr/local/bin/openssl</div><div class="line">$ ln -s /usr/local/Cellar/openssl/1.0.2e/bin/openssl /usr/local/bin/openssl</div><div class="line">$ openssl</div><div class="line">OpenSSL 1.0.2e 3 Dec 2015</div></pre></td></tr></table></figure>
-<p>问题三：</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062a9d3600eaad?w=570&amp;h=366&amp;f=jpeg&amp;s=42144" alt="19851124-DE38-44A5-9948-6F3F4615FE55.png"></p>
-<p>打开<code>/Users/zzh/.rvm/log/1470726877_ruby-2.3.0/package_install_automake.log</code>文件，发现是<code>automake</code>和<code>autoconf</code>虽然安装了，但是没有链接上。</p>
-<p>解决方法：</p>
-<p>于是<a href="http://stackoverflow.com/questions/27832732/error-running-rvm-make-install" target="_blank" rel="external">google</a>了下，得到下面的结果，需要安装rvm额外的文件。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rvm get head</div></pre></td></tr></table></figure>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062a9d3b0b8c86?w=570&amp;h=366&amp;f=png&amp;s=57197" alt="Paste_Image.png"></p>
-<p>真是一步一个坑啊，需要检测<code>rvm</code>运行的环境。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rvm requirements</div></pre></td></tr></table></figure></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;在项目中要适配&lt;code&gt;iOS10&lt;/code&gt;，要使用&lt;code&gt;cocoapods&lt;/code&gt;更新第三方库，而目前使用的&lt;code&gt;ruby&lt;/code&gt;版本是&lt;code&gt;Mac&lt;/code&gt;系统自带的&lt;code&gt;1.8.7&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;所以需要对
-    
-    </summary>
-    
-    
-  </entry>
   
   <entry>
     <title>谈AutoLayout关于update的几个方法</title>
@@ -1096,6 +1031,62 @@
     <summary type="html">
     
       &lt;p&gt;一般在公司git整合分支一般有两种方法——快速向前合并&lt;code&gt;git rebase&lt;/code&gt;和三路合并&lt;code&gt;git merge&lt;/code&gt;。其实在开发中，&lt;code&gt;git rebase&lt;/code&gt;和&lt;code&gt;git merge&lt;/code&gt;表达都是一个
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>iOS学习笔记 第3期(2016.08.03)</title>
+    <link href="https://sunjinshuai.github.io/2016/08/03/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC3%E6%9C%9F-2016-08-03/"/>
+    <id>https://sunjinshuai.github.io/2016/08/03/iOS学习笔记-第3期-2016-08-03/</id>
+    <published>2016-08-03T02:25:15.000Z</published>
+    <updated>2017-08-19T05:34:32.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>本期主要记录了以下几个问题：</p>
+<ul>
+<li>数组容错处理</li>
+<li>Foundation中的断言处理</li>
+<li>文本计算的坑</li>
+<li>UITableview的headerView和footerView高度的设置</li>
+<li>UIWebView底部的黑条</li>
+</ul>
+<h4 id="数组容错处理"><a href="#数组容错处理" class="headerlink" title="数组容错处理"></a>数组容错处理</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">/*!</div><div class="line"> @method objectAtIndexCheck:</div><div class="line"> @abstract 检查是否越界和NSNull如果是返回nil</div><div class="line"> @result 返回对象</div><div class="line"> */</div><div class="line">- (id)objectAtIndexCheck:(NSUInteger)index;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">- (id)objectAtIndexCheck:(NSUInteger)index</div><div class="line">&#123;</div><div class="line">    if (index &gt;= [self count]) &#123;</div><div class="line">        return nil;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    id value = [self objectAtIndex:index];</div><div class="line">    if (value == [NSNull null]) &#123;</div><div class="line">        return nil;</div><div class="line">    &#125;</div><div class="line">    return value;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="Foundation中的断言处理"><a href="#Foundation中的断言处理" class="headerlink" title="Foundation中的断言处理"></a>Foundation中的断言处理</h4><p><code>Foundation</code>中定义了两组断言相关的宏，分别是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NSAssert / NSCAssert</div><div class="line">NSParameterAssert / NSCParameterAssert</div></pre></td></tr></table></figure></p>
+<p>这两组宏主要在功能和语义上有所差别，这些区别主要有以下两点：</p>
+<ul>
+<li>如果我们需要确保方法或函数的输入参数的正确性，则应该在方法(函数)的顶部使用<code>NSParameterAssert / NSCParameterAssert</code>；而在其它情况下，使用<code>NSAssert / NSCAssert</code>。</li>
+<li>另一个不同是介于<code>C</code>和<code>Objective-C</code>之间。<code>NSAssert / NSParameterAssert</code>应该用于<code>Objective-C</code>的上下文(方法)中，而<code>NSCAssert / NSCParameterAssert</code>应该用于<code>C</code>的上下文(函数)中。</li>
+</ul>
+<p>当断言失败时，通常是会抛出一个如下所示的异常：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">*** Terminating app due to uncaught exception &apos;NSInternalInconsistencyException&apos;, reason: &apos;true is not equal to false&apos;</div></pre></td></tr></table></figure></p>
+<p><code>Foundation</code>为了处理断言，专门定义了一个<code>NSAssertionHandler</code>来处理断言的失败情况。<code>NSAssertionHandler</code>对象是自动创建的，用于处理失败的断言。当断言失败时，会传递一个字符串给<code>NSAssertionHandler</code>对象来描述失败的原因。每个线程都有自己的<code>NSAssertionHandler</code>对象。当调用时，一个断言处理器会打印包含方法和类(或函数)的错误消息，并引发一个<code>NSInternalInconsistencyException</code>异常。就像上面所看到的一样。</p>
+<p>我们很少直接去调用<code>NSAssertionHandler</code>的断言处理方法，通常都是自动调用的。</p>
+<p><code>NSAssertionHandler</code>提供的方法并不多，就三个，如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">// 返回与当前线程的NSAssertionHandler对象。</div><div class="line">// 如果当前线程没有相关的断言处理器，则该方法会创建一个并指定给当前线程</div><div class="line">+ (NSAssertionHandler *)currentHandler</div><div class="line">// 当NSCAssert或NSCParameterAssert断言失败时，会调用这个方法</div><div class="line">- (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)object lineNumber:(NSInteger)fileName description:(NSString *)line, format,...</div><div class="line">// 当NSAssert或NSParameterAssert断言失败时，会调用这个方法</div><div class="line">- (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format, ...</div></pre></td></tr></table></figure></p>
+<p>另外，还定义了一个常量字符串，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NSString * const NSAssertionHandlerKey;</div></pre></td></tr></table></figure></p>
+<p>主要是用于在线程的<code>threadDictionary</code>字典中获取或设置断言处理器。</p>
+<p><code>Xcode</code>已经默认将<code>release</code>环境下的断言取消了, 免除了忘记关闭断言造成的程序不稳定. 所以不用担心在开发时候大胆使用。</p>
+<p>自定义<code>NSAssertionHandler</code><br><code>NSAssertionHandler</code>实例是自动创建的，用于处理错误断言。如果<code>NSAssert</code>和<code>NSCAssert</code>条件评估为错误，会向<code>NSAssertionHandler</code>实例发送一个表示错误的字符串。每个线程都有它自己的<code>NSAssertionHandler</code>实例。<br>我们可以自定义处理方法，从而使用断言的时候，控制台输出错误，但是程序不会直接崩溃。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">#import &quot;MyAssertHandler.h&quot;</div><div class="line"></div><div class="line">@implementation MyAssertHandler</div><div class="line"></div><div class="line">//处理Objective-C的断言</div><div class="line">- (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format,...</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;NSAssert Failure: Method %@ for object %@ in %@#%li&quot;, NSStringFromSelector(selector), object, fileName, (long)line);</div><div class="line">&#125;</div><div class="line">//处理C的断言</div><div class="line">- (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format,...</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;NSCAssert Failure: Function (%@) in %@#%li&quot;, functionName, fileName, (long)line);</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure></p>
+<p>给线程添加处理类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">- (BOOL)application:(UIApplication *)application</div><div class="line">didFinishLaunchingWithOptions:(NSDictionary *)launchOptions</div><div class="line">&#123;</div><div class="line">  NSAssertionHandler *assertionHandler = [[LoggingAssertionHandler alloc] init];</div><div class="line">  [[[NSThread currentThread] threadDictionary] setValue:assertionHandler</div><div class="line">                                                 forKey:NSAssertionHandlerKey];</div><div class="line">  // ...</div><div class="line">  return YES;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>自定义<code>NSAssertionHandler</code>后,程序能够获得断言失败后的信息,但是程序可以继续运行,不会强制退出程序。</p>
+<h4 id="文本计算的坑"><a href="#文本计算的坑" class="headerlink" title="文本计算的坑"></a>文本计算的坑</h4><p>一般在开发的时候，很多时候需要先计算出文本在某字体下的宽高，再设置控件的frame。有时候文本计算得到的width和height是小数，有可能最后得到的结果不准确，那么控件的frame也不准确。所以我们经常做的一件事就是<code>Category</code>，即给<code>NSString</code>扩展方法，使用新增的方法统一计算文本的大小，在这些方法中使用ceil()将小数点后数据除去，使得计算的结果小数点后都是0。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">// 单行的</div><div class="line">- (CGSize)textSizeWithFont:(UIFont *)font &#123;</div><div class="line">   CGSize textSize = [self sizeWithAttributes:@&#123;NSFontAttributeName:font&#125;];</div><div class="line">   textSize = CGSizeMake((int)ceil(textSize.width), (int)ceil(textSize.height));</div><div class="line">   return textSize;</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 根据字体、行数、行间距和constrainedWidth计算多行文本占据的size</div><div class="line">- (CGSize)textSizeWithFont:(UIFont*)font</div><div class="line">             numberOfLines:(NSInteger)numberOfLines</div><div class="line">               lineSpacing:(CGFloat)lineSpacing</div><div class="line">          constrainedWidth:(CGFloat)constrainedWidth</div><div class="line">          isLimitedToLines:(BOOL *)isLimitedToLines &#123;</div><div class="line"></div><div class="line">    if (self.length == 0) &#123;</div><div class="line">        return CGSizeZero;</div><div class="line">    &#125;</div><div class="line">    CGFloat oneLineHeight = font.lineHeight;</div><div class="line">    CGSize textSize = [self boundingRectWithSize:CGSizeMake(constrainedWidth, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@&#123;NSFontAttributeName:font&#125; context:nil].size;</div><div class="line"></div><div class="line">    CGFloat rows = textSize.height / oneLineHeight;</div><div class="line">    CGFloat realHeight = oneLineHeight;</div><div class="line">    // 0 不限制行数</div><div class="line">    if (numberOfLines == 0) &#123;</div><div class="line">        if (rows &gt;= 1) &#123;</div><div class="line">            realHeight = (rows * oneLineHeight) + (rows - 1) * lineSpacing;</div><div class="line">        &#125;</div><div class="line">    &#125; else &#123;</div><div class="line">        if (rows &gt; numberOfLines) &#123;</div><div class="line">            rows = numberOfLines;</div><div class="line">            if (isLimitedToLines) &#123;</div><div class="line">                *isLimitedToLines = YES;  //被限制</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        realHeight = (rows * oneLineHeight) + (rows - 1) * lineSpacing;</div><div class="line">    &#125;</div><div class="line">    return CGSizeMake(ceil(constrainedWidth),ceil(realHeight));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="UITableview的headerView和footerView高度的设置"><a href="#UITableview的headerView和footerView高度的设置" class="headerlink" title="UITableview的headerView和footerView高度的设置"></a>UITableview的headerView和footerView高度的设置</h4><p>一般在项目中使用<code>UITableview</code>的<code>headerView</code>和<code>footerView</code>的时候都会遇到一个问题，即给<code>headerView</code>和<code>footerView</code>高度设置0的时候，发现不好使。经过查阅资料得知如果给<code>headerView</code>和<code>footerView</code>高度设置0，则会被设置成为默认值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section &#123;</div><div class="line">    return CGFLOAT_MIN;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section &#123;</div><div class="line">    return CGFLOAT_MIN;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="UIWebView底部的黑条"><a href="#UIWebView底部的黑条" class="headerlink" title="UIWebView底部的黑条"></a>UIWebView底部的黑条</h4><p>一般我使用<code>UIWebView</code>的时候会发现，<code>UIWebView</code>底部的黑条很难看，特别是在底部还有透明控件的时候，隐藏的做法其实很简单，只需要将<code>opaque</code>设为NO，背景色设为<code>clearColor</code>即可。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本期主要记录了以下几个问题：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;数组容错处理&lt;/li&gt;
+&lt;li&gt;Foundation中的断言处理&lt;/li&gt;
+&lt;li&gt;文本计算的坑&lt;/li&gt;
+&lt;li&gt;UITableview的headerView和footerView高度的设置&lt;/li&gt;
+&lt;li&gt;UIW
     
     </summary>
     

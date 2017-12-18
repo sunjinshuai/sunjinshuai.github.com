@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> XXX软件已损坏，打不开，您应该将它移到废纸篓解决方案 · 孙金帅的技术博客</title><meta name="description" content="XXX软件已损坏，打不开，您应该将它移到废纸篓解决方案 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunjinshuai" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">XXX软件已损坏，打不开，您应该将它移到废纸篓解决方案</h1><div class="post-info">2017年4月15日</div><div class="post-content"><p>如果从第三方渠道下载的<code>Mac</code>软件，安装有时候会提示<strong>“XXX软件已损坏，打不开，您应该将它移到废纸篓”</strong>的提示，瞬间头大，仔细想肯定不会是<code>Mac</code>软件本身的问题，而是<code>Mac</code>系统的一个安全机制问题，按照如下方法操作，即打开安装使用<code>Mac</code>软件，再也不用头疼半天，一遍一遍的下载重试。</p>
+<ul>
+<li>首先需要打开系统偏好设置，选择安全与隐私；</li>
+<li>然后点击左下角锁形按钮，这时会提示需要输入用户名和密码；</li>
+<li>选择”任何来源”，然后点击允许来自任何来源，这样设置之后，再重新安装<code>Mac</code>软件，如果<code>Mac</code>软件本身没有问题，就不会出现”软件已损坏”的提示了。</li>
+</ul>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062a8cc92ac349?w=1240&amp;h=1008&amp;f=png&amp;s=200300" alt="image.png"></p>
+<p>针对，<code>macOS Sierra</code>系统的说明</p>
+<p>若已安装了<code>macOS Sierra</code>则有可能会出现从第三方渠道下载安装的<code>Mac</code>软件<strong>“XXX软件已损坏，打不开，您应该将它移到废纸篓”</strong>的提示。原因是因为<code>macOS Sierra</code>系统屏蔽了任何来源的设置，需要打开”允许任何来源”才能安装。</p>
+<ul>
+<li>打开终端（按F4启动Launchpad，终端默认在“其他”中）</li>
+<li>输入代码：<code>sudo spctl --master-disable</code></li>
+<li>按回车输入自己电脑密码，再次回车。</li>
+<li>打开系统偏好设置—&gt;安全性与隐私，若显示任何来源，大功告成；</li>
+</ul>
+<p>终于解决了这头疼的问题。</p>
+</div></article></div></main><footer><div class="paginator"><a href="/2017/05/03/iOS学习笔记-第4期-2017-05-03/" class="prev">上一篇</a><a href="/2017/03/18/iOS之使用Cocoapods创建私有仓库/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2017/04/15/XXX软件已损坏，打不开，您应该将它移到废纸篓解决方案/';
+var disqus_title = 'XXX软件已损坏，打不开，您应该将它移到废纸篓解决方案';
+var disqus_url = 'https://sunjinshuai.github.io/2017/04/15/XXX软件已损坏，打不开，您应该将它移到废纸篓解决方案/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2017 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

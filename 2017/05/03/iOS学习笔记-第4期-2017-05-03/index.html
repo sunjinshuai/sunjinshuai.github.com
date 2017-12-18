@@ -57,7 +57,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#define WeakObj(o) autoreleasepool&#123;&#125; __weak typeof(o) o##Weak = o;</div><div class="line">#define StrongObj(o) autoreleasepool&#123;&#125; __strong typeof(o) o = o##Weak;</div></pre></td></tr></table></figure>
 <p>使用上看起来是这样:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@WeakObj(self);</div><div class="line">[var setBlock:^&#123;</div><div class="line">    @StrongObj(self);</div><div class="line">    [self doSomething];</div><div class="line">&#125;];</div></pre></td></tr></table></figure>
-</div></article></div></main><footer><div class="paginator"><a href="/2017/08/08/iOS之iconfont实战/" class="prev">上一篇</a><a href="/2017/03/18/iOS之使用Cocoapods创建私有仓库/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+</div></article></div></main><footer><div class="paginator"><a href="/2017/08/08/iOS之iconfont实战/" class="prev">上一篇</a><a href="/2017/04/15/XXX软件已损坏，打不开，您应该将它移到废纸篓解决方案/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
 var disqus_identifier = '2017/05/03/iOS学习笔记-第4期-2017-05-03/';
 var disqus_title = 'iOS学习笔记 第4期(2017.05.03)';
 var disqus_url = 'https://sunjinshuai.github.io/2017/05/03/iOS学习笔记-第4期-2017-05-03/';

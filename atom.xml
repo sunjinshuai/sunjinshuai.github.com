@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://sunjinshuai.github.io/"/>
-  <updated>2017-11-29T15:37:01.651Z</updated>
+  <updated>2017-12-18T14:02:38.944Z</updated>
   <id>https://sunjinshuai.github.io/</id>
   
   <author>
@@ -14,6 +14,158 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>App的生命周期</title>
+    <link href="https://sunjinshuai.github.io/2017/12/18/App%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"/>
+    <id>https://sunjinshuai.github.io/2017/12/18/App的生命周期/</id>
+    <published>2017-12-18T14:02:28.000Z</published>
+    <updated>2017-12-18T14:02:38.944Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="iOS程序的启动执行顺序"><a href="#iOS程序的启动执行顺序" class="headerlink" title="iOS程序的启动执行顺序"></a>iOS程序的启动执行顺序</h4><p>程序启动顺序图<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062685cbe0f2c8?w=990&amp;h=717&amp;f=png&amp;s=115346" alt="iOS启动原理图"></p>
+<p>具体执行流程<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions &#123;</div><div class="line">NSLog(@&quot;--- %s ---&quot;,__func__);//__func__打印方法名</div><div class="line">return YES;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">- (void)applicationWillResignActive:(UIApplication *)application &#123;</div><div class="line">NSLog(@&quot;--- %s ---&quot;,__func__);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">- (void)applicationDidEnterBackground:(UIApplication *)application &#123;</div><div class="line">NSLog(@&quot;--- %s ---&quot;,__func__);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">- (void)applicationWillEnterForeground:(UIApplication *)application &#123;</div><div class="line">NSLog(@&quot;--- %s ---&quot;,__func__);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">- (void)applicationDidBecomeActive:(UIApplication *)application &#123;</div><div class="line">NSLog(@&quot;--- %s ---&quot;,__func__);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application &#123;</div><div class="line">NSLog(@&quot;--- %s ---&quot;,__func__);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)applicationWillTerminate:(UIApplication *)application &#123;</div><div class="line">NSLog(@&quot;--- %s ---&quot;,__func__);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>启动程序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">-[AppDelegate application:didFinishLaunchingWithOptions:]</div><div class="line">-[AppDelegate applicationDidBecomeActive:]</div></pre></td></tr></table></figure>
+<p>按下 <code>Command + H + SHIFT</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">-[AppDelegate applicationWillResignActive:]</div><div class="line">-[AppDelegate applicationDidEnterBackground:]</div></pre></td></tr></table></figure></p>
+<p>重新点击 进入程序<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">-[AppDelegate applicationWillEnterForeground:]</div><div class="line">-[AppDelegate applicationDidBecomeActive:]</div></pre></td></tr></table></figure></p>
+<p>内存警告<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-[AppDelegate applicationDidReceiveMemoryWarning:]</div></pre></td></tr></table></figure></p>
+<h4 id="UIViewController-的生命周期"><a href="#UIViewController-的生命周期" class="headerlink" title="UIViewController 的生命周期"></a><code>UIViewController</code> 的生命周期</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div></pre></td><td class="code"><pre><div class="line">// 非storyBoard(xib或非xib)都走这个方法</div><div class="line">- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil &#123;</div><div class="line">NSLog(@&quot;%s&quot;, __FUNCTION__);</div><div class="line">if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) &#123;</div><div class="line"></div><div class="line">&#125;</div><div class="line">return self;</div><div class="line">&#125;</div><div class="line"></div><div class="line">// storyBoard走这个方法</div><div class="line">- (instancetype)initWithCoder:(NSCoder *)aDecoder &#123;</div><div class="line">NSLog(@&quot;%s&quot;, __FUNCTION__);</div><div class="line">if (self = [super initWithCoder:aDecoder]) &#123;</div><div class="line"></div><div class="line">&#125;</div><div class="line">return self;</div><div class="line">&#125;</div><div class="line"></div><div class="line">// xib 加载 完成</div><div class="line">- (void)awakeFromNib &#123;</div><div class="line">[super awakeFromNib];</div><div class="line">NSLog(@&quot;%s&quot;, __FUNCTION__);</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 加载视图(默认从nib)</div><div class="line">- (void)loadView &#123;</div><div class="line">NSLog(@&quot;%s&quot;, __FUNCTION__);</div><div class="line">self.view = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];</div><div class="line">self.view.backgroundColor = [UIColor redColor];</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 视图控制器中的视图加载完成，viewController自带的view加载完成</div><div class="line">- (void)viewDidLoad &#123;</div><div class="line">NSLog(@&quot;%s&quot;, __FUNCTION__);</div><div class="line">[super viewDidLoad];</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">// 视图将要出现</div><div class="line">- (void)viewWillAppear:(BOOL)animated &#123;</div><div class="line">NSLog(@&quot;%s&quot;, __FUNCTION__);</div><div class="line">[super viewWillAppear:animated];</div><div class="line">&#125;</div><div class="line"></div><div class="line">// view 即将布局其 Subviews</div><div class="line">- (void)viewWillLayoutSubviews &#123;</div><div class="line">NSLog(@&quot;%s&quot;, __FUNCTION__);</div><div class="line">[super viewWillLayoutSubviews];</div><div class="line">&#125;</div><div class="line"></div><div class="line">// view 已经布局其 Subviews</div><div class="line">- (void)viewDidLayoutSubviews &#123;</div><div class="line">NSLog(@&quot;%s&quot;, __FUNCTION__);</div><div class="line">[super viewDidLayoutSubviews];</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 视图已经出现</div><div class="line">- (void)viewDidAppear:(BOOL)animated &#123;</div><div class="line">NSLog(@&quot;%s&quot;, __FUNCTION__);</div><div class="line">[super viewDidAppear:animated];</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 视图将要消失</div><div class="line">- (void)viewWillDisappear:(BOOL)animated &#123;</div><div class="line">NSLog(@&quot;%s&quot;, __FUNCTION__);</div><div class="line">[super viewWillDisappear:animated];</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 视图已经消失</div><div class="line">- (void)viewDidDisappear:(BOOL)animated &#123;</div><div class="line">NSLog(@&quot;%s&quot;, __FUNCTION__);</div><div class="line">[super viewDidDisappear:animated];</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 出现内存警告</div><div class="line">- (void)didReceiveMemoryWarning &#123;</div><div class="line">NSLog(@&quot;%s&quot;, __FUNCTION__);</div><div class="line">[super didReceiveMemoryWarning];</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 视图被销毁</div><div class="line">- (void)dealloc &#123;</div><div class="line">NSLog(@&quot;%s&quot;, __FUNCTION__);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>分析</p>
+<ul>
+<li><p><code>initWithNibName:bundle:</code><br>初始化<code>UIViewController</code>，执行关键数据初始化操作，非<code>StoryBoard</code>创建<code>UIViewController</code>都会调用这个方法。<br><strong>注意: 不要在这里做<code>View</code>相关操作，<code>View</code>在<code>loadView</code>方法中才初始化。</strong></p>
+</li>
+<li><p><code>initWithCoder:</code><br>如果使用<code>StoryBoard</code>进行视图管理，程序不会直接初始化一个<code>UIViewController</code>，<code>StoryBoard</code>会自动初始化或在<code>segue</code>被触发时自动初始化，因此方法<code>initWithNibName:bundle</code>不会被调用，但是<code>initWithCoder</code>会被调用。</p>
+</li>
+<li><p><code>awakeFromNib</code><br>当<code>awakeFromNib</code>方法被调用时，所有视图的<code>outlet</code>和<code>action</code>已经连接，但还没有被确定，这个方法可以算作适合视图控制器的实例化配合一起使用的，因为有些需要根据用户喜好来进行设置的内容，无法存在<code>storyBoard</code>或<code>xib</code>中，所以可以在<code>awakeFromNib</code>方法中被加载进来。</p>
+</li>
+<li><p><code>loadView</code><br>当执行到<code>loadView</code>方法时，如果视图控制器是通过<code>nib</code>创建，那么视图控制器已经从<code>nib</code>文件中被解档并创建好了，接下来任务就是对<code>view</code>进行初始化。<br><code>loadView</code>方法在<code>UIViewController</code>对象的<code>view</code>被访问且为空的时候调用。这是它与<code>awakeFromNib</code>方法的一个区别。<br>假设我们在处理内存警告时释放<code>view</code>属性：<code>self.view = nil</code>。因此<code>loadView</code>方法在视图控制器的生命周期内可能被调用多次。<br><code>loadView</code>方法不应该直接被调用，而是由系统调用，它会加载或创建一个<code>view</code>并把它赋值给<code>UIViewController</code>的<code>view</code>属性。<br>在创建<code>view</code>的过程中，首先会根据<code>nibName</code>去找对应的<code>nib</code>文件然后加载。如果<code>nibName</code>为空或找不到对应的nib文件，则会创建一个空视图(这种情况一般是纯代码)<br><strong>注意:在重写loadView方法的时候，不要调用父类的方法。</strong></p>
+</li>
+<li><p><code>viewDidLoad</code><br>当<code>loadView</code>将<code>view</code>载入内存中，会进一步调用<code>viewDidLoad</code>方法来进行进一步设置。此时，视图层次已经放到内存中，通常，我们对于各种初始化数据的载入，初始设定、修改约束、移除视图等很多操作都可以这个方法中实现。</p>
+</li>
+<li><p><code>viewWillAppear</code><br>系统在载入所有的数据后，将会在屏幕上显示视图，这时会先调用这个方法，通常我们会在这个方法对即将显示的视图做进一步的设置。比如，设置设备不同方向时该如何显示；设置状态栏方向、设置视图显示样式等。<br>另一方面，当APP有多个视图时，上下级视图切换是也会调用这个方法，如果在调入视图时，需要对数据做更新，就只能在这个方法内实现。</p>
+</li>
+<li><p><code>viewWillLayoutSubviews</code><br><code>view</code>即将布局其<code>Subviews</code>。 比如<code>view</code>的<code>bounds</code>改变了(例如:状态栏从不显示到显示,视图方向变化)，要调整<code>Subviews</code>的位置，在调整之前要做的工作可以放在该方法中实现</p>
+</li>
+<li><p><code>viewDidLayoutSubviews</code><br><code>view</code>已经布局其<code>Subviews</code>，这里可以放置调整完成之后需要做的工作。</p>
+</li>
+<li><p><code>viewDidAppear</code><br>在<code>view</code>被添加到视图层级中以及多视图，上下级视图切换时调用这个方法，在这里可以对正在显示的视图做进一步的设置。</p>
+</li>
+<li><p><code>viewWillDisappear</code><br>在视图切换时，当前视图在即将被移除、或被覆盖是，会调用该方法，此时还没有调用<code>removeFromSuperview</code>。</p>
+</li>
+<li><p><code>viewDidDisappear</code><br><code>view</code>已经消失或被覆盖，此时已经调用<code>removeFromSuperView</code>;</p>
+</li>
+<li><p><code>dealloc</code><br>视图被销毁，此次需要对你在<code>init</code>和<code>viewDidLoad</code>中创建的对象进行释放。</p>
+</li>
+<li><p><code>didReceiveMemoryWarning</code><br>在内存足够的情况下，app的视图通常会一直保存在内存中，但是如果内存不够，一些没有正在显示的viewController就会收到内存不足的警告，然后就会释放自己拥有的视图，以达到释放内存的目的。但是系统只会释放内存，并不会释放对象的所有权，所以通常我们需要在这里将不需要显示在内存中保留的对象释放它的所有权，将其指针置nil。</p>
+</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h4 id=&quot;iOS程序的启动执行顺序&quot;&gt;&lt;a href=&quot;#iOS程序的启动执行顺序&quot; class=&quot;headerlink&quot; title=&quot;iOS程序的启动执行顺序&quot;&gt;&lt;/a&gt;iOS程序的启动执行顺序&lt;/h4&gt;&lt;p&gt;程序启动顺序图&lt;br&gt;&lt;img src=&quot;https://u
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>谈谈关于Autolayout的调试</title>
+    <link href="https://sunjinshuai.github.io/2017/12/18/%E8%B0%88%E8%B0%88%E5%85%B3%E4%BA%8EAutolayout%E7%9A%84%E8%B0%83%E8%AF%95/"/>
+    <id>https://sunjinshuai.github.io/2017/12/18/谈谈关于Autolayout的调试/</id>
+    <published>2017-12-18T14:01:37.000Z</published>
+    <updated>2017-12-18T14:01:51.919Z</updated>
+    
+    <content type="html"><![CDATA[<p>关于Autolayout的调试</p>
+<p>刚开始使用Autolayout遇到下面的警告人容易让人气馁。经常不知所措而放弃了使用Autolayout。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Unable to simultaneously satisfy constraints.</div><div class="line">Probably at least one of the constraints in the following list is one you don&apos;t want.</div><div class="line">Try this:</div><div class="line"></div><div class="line">(1) look at each constraint and try to figure out which you don&apos;t expect;</div><div class="line">(2) find the code that added the unwanted constraint or constraints and fix it.</div><div class="line">(Note: If you&apos;re seeing NSAutoresizingMaskLayoutConstraints that you don&apos;t understand, refer to the documentation for the UIView property translatesAutoresizingMaskIntoConstraints)</div><div class="line"></div><div class="line">(...........)</div><div class="line"></div><div class="line"></div><div class="line">Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.</div><div class="line">The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in &lt;UIKit/UIView.h&gt; may also be helpful.</div></pre></td></tr></table></figure></p>
+<p>正如输出中所述，<code>Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger</code>，现在介绍下使用<code>UIViewAlertForUnsatisfiableConstraints</code>的调试方法。</p>
+<p>在<code>UIViewAlertForUnsatisfiableConstraints</code>添加<code>symbolic breakpoint</code>：</p>
+<ul>
+<li>打开断点导航（cmd+7）</li>
+<li>点击左下角的+按钮</li>
+<li>选择Add Symbolic Breakpoint</li>
+<li>在Symbol添加UIViewAlertForUnsatisfiableConstraints</li>
+</ul>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/160626459b406d9c?w=510&amp;h=225&amp;f=png&amp;s=26048" alt="image.png"><br>再次调试的时候就可以通过LLDB来调试了，然并卵，如果你不知道LLDB的话。</p>
+<p>所以交给你一个小技巧，添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">po [[UIWindow keyWindow] _autolayoutTrace] // OC项目</div><div class="line">expr -l objc++ -O -- [[UIWindow keyWindow] _autolayoutTrace] // Swift项目</div></pre></td></tr></table></figure></p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/1606264628b9c7d9?w=510&amp;h=269&amp;f=png&amp;s=31349" alt="image.png"></p>
+<p>这样就可以直接看到输出：<br>(lldb) po [[UIWindow keyWindow] _autolayoutTrace]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">UIWindow:0x7f9481c93360</div><div class="line">|   •UIView:0x7f9481c9d680</div><div class="line">|   |   *UIView:0x7f9481c9d990- AMBIGUOUS LAYOUT for UIView:0x7f9481c9d990.minX&#123;id: 13&#125;, UIView:0x7f9481c9d990.minY&#123;id: 16&#125;</div><div class="line">|   |   *_UILayoutGuide:0x7f9481c9e160- AMBIGUOUS LAYOUT for _UILayoutGuide:0x7f9481c9e160.minY&#123;id: 17&#125;</div><div class="line">|   |   *_UILayoutGuide:0x7f9481c9ebb0- AMBIGUOUS LAYOUT for _UILayoutGuide:0x7f9481c9ebb0.minY&#123;id: 27&#125;</div></pre></td></tr></table></figure></p>
+<p>其中AMBIGUOUS相关的视图就是约束有问题的。0x7f9481c9d990就是有问题视图的首地址。</p>
+<p>当然进一步的调试需要LLDB的命令。比如，打印视图对象<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(lldb) po 0x7f9481c9d990</div><div class="line">&lt;UIView: 0x7f9481c9d990; frame = (0 0; 768 359); autoresize = RM+BM; layer = &lt;CALayer: 0x7fc82d338960&gt;&gt;</div></pre></td></tr></table></figure></p>
+<p>改变颜色：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(lldb) expr ((UIView *)0x174197010).backgroundColor = [UIColor redColor]</div><div class="line">(UICachedDeviceRGBColor *) $4 = 0x0000000174469cc0</div></pre></td></tr></table></figure></p>
+<p>剩下的就是去代码中找到这个视图，然后修改其约束了。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;关于Autolayout的调试&lt;/p&gt;
+&lt;p&gt;刚开始使用Autolayout遇到下面的警告人容易让人气馁。经常不知所措而放弃了使用Autolayout。&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gut
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>iOS多线程之二：NSThread的使用</title>
+    <link href="https://sunjinshuai.github.io/2017/12/18/iOS%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B9%8B%E4%BA%8C%EF%BC%9ANSThread%E7%9A%84%E4%BD%BF%E7%94%A8/"/>
+    <id>https://sunjinshuai.github.io/2017/12/18/iOS多线程之二：NSThread的使用/</id>
+    <published>2017-12-18T14:00:52.000Z</published>
+    <updated>2017-12-18T14:01:05.036Z</updated>
+    
+    <content type="html"><![CDATA[<p>NSThread<br>NSThread封装性最差，最偏向于底层，主要基于thread使用，生命周期需要手动管理，所以这套方案也是偶尔用用，比如 [NSThread currentThread]，它可以获取当前线程类，你就可以知道当前线程的各种属性，用于调试十分方便。</p>
+<p>一、线程创建</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">// 创建并自动启动</div><div class="line">[NSThread detachNewThreadSelector:@selector(threadAlloc:) toTarget:self withObject:nil];</div><div class="line"></div><div class="line">// 先创建线程，再启动</div><div class="line">NSThread *newThread = [[NSThread alloc] initWithTarget:self selector:@selector(run:) object:obj];</div><div class="line">[newThread run];</div><div class="line"></div><div class="line">// ios(10.0)，线程的创建，线程创建后直接运行</div><div class="line">[NSThread detachNewThreadWithBlock:^&#123;</div><div class="line">[do something];</div><div class="line">&#125;];</div><div class="line"></div><div class="line">[NSThread detachNewThreadSelector:@selector(run:) toTarget:self withObject:obj];</div></pre></td></tr></table></figure>
+<p><img src="https://user-gold-cdn.xitu.io/2017/10/23/b99d29bda1bf4201f75954bb76d32fbc" alt="Paste_Image.png"></p>
+<p>二、线程之间的通讯</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">// 在主线程中运行方法，wait表示是否阻塞这个方法的调用，如果为YES则等待主线程中运行方法结束，一般可用于在子线程中调用UI方法。</div><div class="line">- (void)performSelectorOnMainThread:(SEL)aSelector withObject:(nullable id)arg waitUntilDone:(BOOL)wait modes:(nullable NSArray&lt;NSString *&gt; *)array;</div><div class="line"></div><div class="line">// 隐含产生新线程</div><div class="line">- (void)performSelectorInBackground:(SEL)aSelector withObject:(nullable id)arg;</div><div class="line"></div><div class="line">// 在指定线程中执行，但该线程必须具备run loop。</div><div class="line">- (void)performSelector:(SEL)aSelector onThread:(NSThread *)thr withObject:(nullable id)arg waitUntilDone:(BOOL)wait modes:(nullable NSArray&lt;NSString *&gt; *)array;</div></pre></td></tr></table></figure>
+<p>三、NSThread的其它一些常用的方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">+ (NSThread *)currentThread;                     // 获得当前线程</div><div class="line">+ (void)sleepForTimeInterval:(NSTimeInterval)ti; // 线程休眠</div><div class="line">+ (NSThread *)mainThread;                        // 主线程，亦即UI线程了</div><div class="line">+ (BOOL)isMainThread;                            // 判断当前线程是否是主线程</div><div class="line">+ (BOOL)isMultiThreaded;                         // 判断当前线程是否是多线程</div><div class="line">+ (void)sleepUntilDate:(NSDate *)date;           // 当前线程休眠到指定日期</div><div class="line">+ (void)exit;                                    // 强行退出当前线程</div><div class="line">+ (double)threadPriority;                        // 获取当前线程线程优先级</div><div class="line">+ (BOOL)setThreadPriority:(double)p;             // 给当前线程设定优先级，调度优先级的取值范围是0.0 ~ 1.0，默认0.5，值越大，优先级越高。</div><div class="line">+ (NSArray *)callStackReturnAddresses            // 线程的调用都会有函数的调用函数的调用就会有栈返回地址的记录，在这里返回的是函 数调用返回的虚拟地址，说白了就是在该线程中函数调用的虚拟地址的数组</div><div class="line">+ (NSArray *)callStackSymbols                    // 同上面的方法一样，只不过返回的是该线程调用函数的名字数字</div><div class="line">+ (BOOL)isMainThread;                            // 当前线程是否主线程</div><div class="line">- (BOOL)isMainThread;</div><div class="line">- (BOOL)isExecuting;                             // 线程是否正在运行</div><div class="line">- (BOOL)isFinished;                              // 线程是否已结束</div><div class="line">- (void)cancel                                   // 终止线程循环</div><div class="line">- (void)start                                    // 开启线程循环</div><div class="line">- (void)isCancelled;                             // 判断线程是否撤销</div><div class="line">- (void)setName:(NSString *)n;                   // 设置线程名称</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;NSThread&lt;br&gt;NSThread封装性最差，最偏向于底层，主要基于thread使用，生命周期需要手动管理，所以这套方案也是偶尔用用，比如 [NSThread currentThread]，它可以获取当前线程类，你就可以知道当前线程的各种属性，用于调试十分方便。&lt;/p
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>iOS多线程之一：基本概念</title>
+    <link href="https://sunjinshuai.github.io/2017/12/18/iOS%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B9%8B%E4%B8%80%EF%BC%9A%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/"/>
+    <id>https://sunjinshuai.github.io/2017/12/18/iOS多线程之一：基本概念/</id>
+    <published>2017-12-18T14:00:10.000Z</published>
+    <updated>2017-12-18T14:00:28.593Z</updated>
+    
+    <content type="html"><![CDATA[<p>计算机操作系统都有的基本概念，以下概念简单方式来描述。</p>
+<p><code>进程</code>：就是一个正在执行的程序。<br><code>线程</code>：是执行程序最基本的单元，它有自己栈和寄存器。</p>
+<blockquote>
+<p>进程和线程的区别<br>进程和线程的主要差别在于它们是不同的操作系统资源管理方式，进程有独立的地址空间，一个进程崩溃后，在保护模式下不会对其它进程产生影响，而线程只是一个进程中的不同执行路径。线程有自己的堆栈和局部变量，但线程之间没有单独的地址空间，一个线程死掉就等于整个进程死掉，所以多进程的程序要比多线程的程序健壮，但在进程切换时，耗费资源较大，效率要差一些。但对于一些要求同时进行并且又要共享某些变量的并发操作，只能用线程，不能用进程。</p>
+</blockquote>
+<p><code>并发</code>：多个任务同时发生，需要被处理。比如，田径赛场上的起跑线上有多个运动员等待起跑。<br><code>并行</code>：在某一个时间能够同时处理多个任务。比如，火车站开放了多个检票口，同一时间能够服务多个旅客。<br><code>串行</code>：线程执行只能依次逐一先后有序的执行，串行中，一个任务的执行必须以上一个任务执行结束为前提。</p>
+<blockquote>
+<p>串行和并行主要区别在于一个任务的执行是否以上一个任务的完成为前提。串行中，一个任务的执行必须以上一个任务执行结束为前提，并行中，一个任务的执行与上一个任务的执行状态无关。以排队买票为例，串行像单个买票队伍，单个卖票窗口，必须一个一个来，串行像单个买票队伍，多个卖票窗口，多个人可以同时买票。</p>
+</blockquote>
+<p><code>同步</code>：就是顺序往下执行。举例：烧完水后泡茶<br><code>异步</code>：就是几件事情同时在执行。烧水的时候拿出茶具，洗茶具，然后泡茶。其中烧水和拿茶具，洗茶具是同时进行的。</p>
+<p>二、iOS多线程方案</p>
+<p>在<code>iOS</code>中其实目前有4套多线程方案，他们分别是：<br>1、pthreads<br>2、NSThread<br>3、GCD<br>4、NSOperation &amp; NSOperationQueue</p>
+<p>参考：(<a href="http://www.cnblogs.com/lmule/archive/2010/08/18/1802774.html" target="_blank" rel="external">http://www.cnblogs.com/lmule/archive/2010/08/18/1802774.html</a>)</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;计算机操作系统都有的基本概念，以下概念简单方式来描述。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;进程&lt;/code&gt;：就是一个正在执行的程序。&lt;br&gt;&lt;code&gt;线程&lt;/code&gt;：是执行程序最基本的单元，它有自己栈和寄存器。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;进程和线程的区别&lt;br
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>Mac安装Jenkins系列</title>
@@ -961,250 +1113,6 @@
       &lt;p&gt;&lt;code&gt;Category&lt;/code&gt;是&lt;code&gt;Objective-C 2.0&lt;/code&gt;之后添加的特性，一般我们使用&lt;code&gt;Category&lt;/code&gt;的场景主要可以动态地为已经存在的类扩展新的方法。这样做的好处就是：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;可以减少臃
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>iOS RunTime之五：Category不能动态添加成员变量</title>
-    <link href="https://sunjinshuai.github.io/2016/06/20/iOS-RunTime%E4%B9%8B%E4%BA%94%EF%BC%9ACategory%E4%B8%8D%E8%83%BD%E5%8A%A8%E6%80%81%E6%B7%BB%E5%8A%A0%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F/"/>
-    <id>https://sunjinshuai.github.io/2016/06/20/iOS-RunTime之五：Category不能动态添加成员变量/</id>
-    <published>2016-06-20T14:32:02.000Z</published>
-    <updated>2017-08-17T03:59:21.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>面试题：为什么<code>Category</code>中不能动态添加成员变量？</p>
-<p>解答：</p>
-<p>很多人在面试的时候都会被问到<code>Category</code>，既然允许用<code>Category</code>给类增加方法和属性，那为什么不允许增加成员变量？</p>
-<p>在<code>Objective-C</code>提供的<code>runtime</code>函数中，确实有一个<code>class_addIvar()</code>函数用于给类添加成员变量，但是阅读过苹果的官方文档的人应该会看到：</p>
-<blockquote>
-<p>This function may only be called after objc_allocateClassPair and before objc_registerClassPair. Adding an instance variable to an existing class is not supported.</p>
-</blockquote>
-<p>大概的意思说，这个函数只能在“构建一个类的过程中”调用。一旦完成类定义，就不能再添加成员变量了。经过编译的类在程序启动后就被<code>runtime</code>加载，没有机会调用<code>addIvar</code>。程序在运行时动态构建的类需要在调用<code>objc_registerClassPair</code>之后才可以被使用，同样没有机会再添加成员变量。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-3e956669e49c0239.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p>从运行结果中看出，<strong>你不能为一个类动态的添加成员变量，可以给类动态增加方法和属性。</strong></p>
-<p><strong>因为方法和属性并不“属于”类实例，而成员变量“属于”类实例。</strong> 我们所说的“类实例”概念，指的是一块内存区域，包含了<code>isa</code>指针和所有的成员变量。所以假如允许动态修改类成员变量布局，已经创建出的类实例就不符合类定义了，变成了无效对象。但方法定义是在<code>objc_class</code>中管理的，不管如何增删类方法，都不影响类实例的内存布局，已经创建出的类实例仍然可正常使用。</p>
-<p>同理：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-6594de971343a76f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p>某一个类的分类是在<code>runTime</code>时，被动态的添加到类的结构中。<br>想了解分类是如何加载的请看<a href="https://sunjinshuai.github.io/2016/09/21/iOS-RunTime%E4%B9%8B%E5%85%AD%EF%BC%9ACategory/">iOS RunTime之六：Category</a></p>
-<p>如果有觉得上述我讲的不对的地方欢迎指出，大家多多交流沟通。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;面试题：为什么&lt;code&gt;Category&lt;/code&gt;中不能动态添加成员变量？&lt;/p&gt;
-&lt;p&gt;解答：&lt;/p&gt;
-&lt;p&gt;很多人在面试的时候都会被问到&lt;code&gt;Category&lt;/code&gt;，既然允许用&lt;code&gt;Category&lt;/code&gt;给类增加方法和属性，那为什么不允
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>iOS RunTime之四：消息转发</title>
-    <link href="https://sunjinshuai.github.io/2016/06/14/iOS-RunTime%E4%B9%8B%E5%9B%9B%EF%BC%9A%E6%B6%88%E6%81%AF%E8%BD%AC%E5%8F%91/"/>
-    <id>https://sunjinshuai.github.io/2016/06/14/iOS-RunTime之四：消息转发/</id>
-    <published>2016-06-14T12:32:02.000Z</published>
-    <updated>2017-08-17T03:54:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>消息发送和消息转发流程可以概括为：</p>
-<ul>
-<li>消息发送是<code>Runtime</code>通过<code>selector</code>快速查找<code>IMP</code>的过程，有了函数指针就可以执行对应的方法实现；</li>
-<li>消息转发是在查找<code>IMP</code>失败后执行一系列转发流程的慢速通道，如果不作转发处理，则会打日志和抛出异常。</li>
-</ul>
-<p>首先，了解一下下面的几个词：</p>
-<h4 id="动态方法解析"><a href="#动态方法解析" class="headerlink" title="动态方法解析"></a>动态方法解析</h4><p>一般我们写代码的时候有可能会用到<code>@dynamic</code>，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">@dynamic propertyName;</div></pre></td></tr></table></figure></p>
-<p>这表明我们会为这个属性动态提供存取方法，也就是说编译器不会再默认为我们生成<code>set</code>和<code>get</code>方法，而需要我们动态提供。我们可以通过分别重载<code>resolveInstanceMethod:</code>和<code>resolveClassMethod:</code>方法分别添加实例方法实现和类方法实现。</p>
-<p>因为当<code>Runtime</code>系统在<code>Cache</code>和方法分发表中找不到要执行的方法时，<code>Runtime</code>会调用<code>resolveInstanceMethod:</code>或<code>resolveClassMethod:</code>来给程序员一次动态添加方法实现的机会。</p>
-<p>我们需要用<code>class_addMethod</code>函数完成向特定类添加特定方法实现的操作：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">void dynamicMethodIMP(id self, SEL _cmd) &#123;</div><div class="line">    // implementation ....</div><div class="line">&#125;</div><div class="line"></div><div class="line">+ (BOOL)resolveInstanceMethod:(SEL)aSEL</div><div class="line">&#123;</div><div class="line">    if (aSEL == @selector(resolveThisMethodDynamically)) &#123;</div><div class="line">          class_addMethod([self class], aSEL, (IMP) dynamicMethodIMP, &quot;v@:&quot;);</div><div class="line">          return YES;</div><div class="line">    &#125;</div><div class="line">    return [super resolveInstanceMethod:aSEL];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>注意：</p>
-<ul>
-<li><p><a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html" target="_blank" rel="external">v@:</a>表示每一个方法会默认隐藏两个参数，<code>self</code>、<code>_cmd</code>，<code>self</code>代表方法调用者，<code>_cmd</code>代表这个方法的<code>SEL</code>，签名类型就是用来描述这个方法的返回值、参数的，<code>v</code>代表返回值为<code>void</code>，<code>@</code>表示<code>self</code>，<code>:</code>表示<code>_cmd</code>。</p>
-</li>
-<li><p>动态方法解析会在消息转发机制浸入前执行。如果<code>respondsToSelector:</code>或<code>instancesRespondToSelector:</code>方法被执行，动态方法解析器将会被首先给予一个提供该方法选择器对应的<code>IMP</code>的机会。如果你想让该方法选择器被传送到转发机制，那么就让<code>resolveInstanceMethod:</code>返回<code>NO</code>。</p>
-</li>
-</ul>
-<h4 id="self和-cmd"><a href="#self和-cmd" class="headerlink" title="self和_cmd"></a>self和_cmd</h4><p>我们经常在方法中使用<code>self</code>关键字来引用实例本身，但从没有想过为什么<code>self</code>就能取到调用当前方法的对象吧。其实<code>self</code>的内容是在方法运行时被偷偷的动态传入的。</p>
-<p>在讲消息发送的时候，我们知道当<code>objc_msgSend</code>找到方法对应的实现时，它将直接调用该方法实现，并将消息中所有的参数都传递给方法实现,同时,它还将传递两个隐藏的参数:</p>
-<ul>
-<li>接收消息的对象（也就是<code>self</code>指向的内容）</li>
-<li>方法选择器（<code>_cmd</code>指向的内容）</li>
-</ul>
-<p>之所以说它们是隐藏的是因为在源代码方法的定义中并没有声明这两个参数。它们是在代码被编译时被插入实现中的。尽管这些参数没有被明确声明，在源代码中我们仍然可以引用它们。在这两个参数中，<code>self</code>更有用。实际上，它是在方法实现中访问消息接收者对象的实例变量的途径。</p>
-<p>而当方法中的<code>super</code>关键字接收到消息时，编译器会创建一个<code>objc_super</code>结构体：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-a6558105047e321a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p><strong>这个结构体指明了消息应该被传递给特定超类的定义。</strong><br>但<code>receiver</code>仍然是<code>self</code>本身，这点需要注意，因为当我们想通过<code>[super class]</code>获取超类时，编译器只是将指向<code>self</code>的<code>id</code>指针和<code>class</code>的<code>SEL</code>传递给了<code>objc_msgSendSuper</code>函数，因为只有在<code>NSObject</code>类找到<code>class</code>方法，然后<code>class</code>方法调用<code>object_getClass()</code>，接着调用<code>objc_msgSend(objc_super-&gt;receiver, @selector(class))</code>，传入的第一个参数是指向<code>self</code>的<code>id</code>指针，与调用<code>[self class]</code>相同，所以我们得到的永远都是<code>self</code>的类型。</p>
-<h4 id="消息转发"><a href="#消息转发" class="headerlink" title="消息转发"></a>消息转发</h4><p>接下来，我们要通过一个小例子来简单、通俗的理解一下什么是消息转发以及如何消息转发，希望看完这篇文章时大家会彻底的明白<code>OC</code>的消息。</p>
-<p>上一篇<a href="https://sunjinshuai.github.io/2016/09/20/iOS-RunTime%E4%B9%8B%E4%B8%89%EF%BC%9A%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81/">消息发送</a>，我们知道<code>Objective-C</code>语言动态语言。比如<code>Car</code>这个对象里面只声明没有实现函数名为<code>fly</code>的函数，编译器编译的时候会不会通过呢。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-d0dcfa5deda2eb1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p>通过运行程序，可以看出在语言中<code>Objective-C</code>只声明并且没有实现方法编译器依然能够通过，但是运行期间则会因为获取不到实际执行的方法而抛出异常。</p>
-<ul>
-<li>动态方法解析</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel</div><div class="line">+ (BOOL)resolveClassMethod:(SEL)sel</div></pre></td></tr></table></figure>
-<ul>
-<li>重定向</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">- (id)forwardingTargetForSelector:(SEL)aSelector</div></pre></td></tr></table></figure>
-<p>在消息转发机制执行前，<code>Runtime</code>系统会再给我们一次偷梁换柱的机会，即通过重载<code>- (id)forwardingTargetForSelector:(SEL)aSelector</code>方法替换消息的接受者为其他对象：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">- (id)forwardingTargetForSelector:(SEL)aSelector</div><div class="line">&#123;</div><div class="line">    if(aSelector == @selector(mysteriousMethod:))&#123;</div><div class="line">        return alternateObject;</div><div class="line">    &#125;</div><div class="line">    return [super forwardingTargetForSelector:aSelector];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<ul>
-<li>转发</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector;</div><div class="line">- (void)forwardInvocation:(NSInvocation *)anInvocation;</div></pre></td></tr></table></figure>
-<p>当动态方法解析不作处理返回<code>NO</code>时，消息转发机制会被触发。在这时<code>forwardInvocation:</code>方法会被执行。</p>
-<p>该消息的唯一参数是个<code>NSInvocation</code>类型的对象——该对象封装了原始的消息和消息的参数。我们可以实现<code>forwardInvocation:</code>方法来对不能处理的消息做一些默认的处理，也可以将消息转发给其他对象来处理，而不抛出错误。</p>
-<p>这里需要注意的是参数<code>anInvocation</code>是从哪的来的呢？其实在<code>forwardInvocation:</code>消息发送前，<code>Runtime</code>系统会向对象发送<code>methodSignatureForSelector:</code>消息，并取到返回的方法签名用于生成<code>NSInvocation</code>对象。所以我们在重写<code>forwardInvocation:</code>的同时也要重写<code>methodSignatureForSelector:</code>方法，否则会抛异常。</p>
-<p>当一个对象由于没有相应的方法实现而无法响应某消息时，运行时系统将通过<code>forwardInvocation:</code>消息通知该对象。每个对象都从<code>NSObject</code>类中继承了<code>forwardInvocation:</code>方法。然而，<code>NSObject</code>中的方法实现只是简单地调用了<code>doesNotRecognizeSelector:</code>。通过实现我们自己的<code>forwardInvocation:</code>方法，我们可以在该方法实现中将消息转发给其它对象。</p>
-<p><code>forwardInvocation:</code>方法就像一个不能识别的消息的分发中心，将这些消息转发给不同接收对象。或者它也可以象一个运输站将所有的消息都发送给同一个接收对象。它可以将一个消息翻译成另外一个消息，或者简单的”吃掉“某些消息，因此没有响应也没有错误。</p>
-<p><code>forwardInvocation:</code>方法也可以对不同的消息提供同样的响应，这一切都取决于方法的具体实现。该方法所提供是将不同的对象链接到消息链的能力。</p>
-<p>注意：<br><code>forwardInvocation:</code>方法只有在消息接收对象中无法正常响应消息时才会被调用。 所以，如果我们希望一个对象将<code>negotiate</code>消息转发给其它对象，则这个对象不能有<code>negotiate</code>方法。否则，<code>forwardInvocation:</code>将不可能会被调用。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-9fb706d219d3b412.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<h4 id="消息转发验证"><a href="#消息转发验证" class="headerlink" title="消息转发验证"></a>消息转发验证</h4><p><img src="http://upload-images.jianshu.io/upload_images/588630-d0dcfa5deda2eb1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p>1、动态解析<br>我们在<code>Car</code>类的<code>.m</code>文件里面，通过上面介绍<strong>动态解析</strong>可以知道，可以重载<code>resolveInstanceMethod:</code>和<code>resolveClassMethod:</code>方法分别添加实例方法实现和类方法实现。因为当<code>Runtime</code>系统在<code>Cache</code>和方法分发表中找不到要执行的方法时，<code>Runtime</code>会调用<code>resolveInstanceMethod:</code>或<code>resolveClassMethod:</code>来给程序员一次动态添加方法实现的机会。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-99c60c3aca2ed76e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p>2、重定向<br>我们新建一个<code>Person</code>类，为了让运行时系统能够运行到<code>forwardingTargetForSelector:</code>方法，我们先在<code>resolveInstanceMethod:</code>中返回<code>NO</code>，代码如下：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-8bd42146a3282f8f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-4b2354c9f3aee51a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p>从运行结果中看出，我们执行<code>[person fly]</code>方法，控制台中打出<code>Car</code>的<code>run</code>方法，最终也实现了消息的转发。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Person *person = [[Person alloc] init];</div><div class="line">[person fly];</div></pre></td></tr></table></figure>
-<p>3、转发<br>如果我们都不实现<code>forwardingTargetForSelector</code>，系统就会方法<code>methodSignatureForSelector</code>和<code>forwardInvocation</code>来实现转发，代码如下：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-f758b33e20dff7fa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p>从运行结果中看出，我们执行<code>[person fly]</code>方法，控制台中打出<code>Car</code>的<code>run</code>方法，最终也实现了消息的转发。</p>
-<p>注意：</p>
-<ul>
-<li><code>methodSignatureForSelector</code>用来生成方法签名，这个签名就是给<code>forwardInvocation</code>中的参数<code>NSInvocation</code>调用的。</li>
-<li><code>unrecognized selector sent to instance</code>，原来就是因为<code>methodSignatureForSelector</code>这个方法中，由于没有找到<code>fly</code>对应的实现方法，所以返回了一个空的方法签名，最终导致程序报错崩溃。</li>
-</ul>
-<p>以上就是消息的转发，如果有觉得上述我讲的不对的地方欢迎指出，大家多多交流沟通。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;消息发送和消息转发流程可以概括为：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;消息发送是&lt;code&gt;Runtime&lt;/code&gt;通过&lt;code&gt;selector&lt;/code&gt;快速查找&lt;code&gt;IMP&lt;/code&gt;的过程，有了函数指针就可以执行对应的方法实现；&lt;/li&gt;
-&lt;li&gt;消息转发是
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>iOS RunTime之三：消息发送</title>
-    <link href="https://sunjinshuai.github.io/2016/06/12/iOS-RunTime%E4%B9%8B%E4%B8%89%EF%BC%9A%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81/"/>
-    <id>https://sunjinshuai.github.io/2016/06/12/iOS-RunTime之三：消息发送/</id>
-    <published>2016-06-12T12:32:02.000Z</published>
-    <updated>2017-08-17T08:30:37.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>由上面一章中，我们了解了什么是<a href="https://sunjinshuai.github.io/2016/06/11/iOS-RunTime%E4%B9%8B%E4%BA%8C%EF%BC%9A%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">RunTime的数据结构</a>，下面了解一下<code>Runtime</code>的消息发送。</p>
-<p>我们知道<code>[object doSomething]</code>被编译器转化为:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">id objc_msgSend(id self, SEL op, ...) &#123;</div><div class="line">    if (!self) return nil;</div><div class="line">	IMP imp = class_getMethodImplementation(self-&gt;isa, SEL op);</div><div class="line">	imp(self, op, ...); //调用这个函数，伪代码...</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 查找IMP</div><div class="line">IMP class_getMethodImplementation(Class cls, SEL sel) &#123;</div><div class="line">    if (!cls || !sel) return nil;</div><div class="line">    IMP imp = lookUpImpOrNil(cls, sel);</div><div class="line">    if (!imp) return _objc_msgForward; //这个是用于消息转发的</div><div class="line">    return imp;</div><div class="line">&#125;</div><div class="line"></div><div class="line">IMP lookUpImpOrNil(Class cls, SEL sel) &#123;</div><div class="line">    if (!cls-&gt;initialize()) &#123;</div><div class="line">        _class_initialize(cls);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    Class curClass = cls;</div><div class="line">    IMP imp = nil;</div><div class="line">    do &#123; //先查缓存,缓存没有时重建,仍旧没有则向父类查询</div><div class="line">        if (!curClass) break;</div><div class="line">        if (!curClass-&gt;cache) fill_cache(cls, curClass);</div><div class="line">        imp = cache_getImp(curClass, sel);</div><div class="line">        if (imp) break;</div><div class="line">    &#125; while (curClass = curClass-&gt;superclass);</div><div class="line"></div><div class="line">    return imp;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>在<code>Objective-C</code>中，消息直到运行时才会绑定到方法的实现上。编译器会把代码中<code>[object doSomething]</code>转换成<code>objc_msgSend</code>消息函数，这个函数完成了动态绑定的所有事情，它的运行流程如下:</p>
-<ul>
-<li>检查<code>selector</code>是否需要忽略。</li>
-<li>检查<code>target</code>是否为<code>nil</code>。如果为<code>nil</code>，直接<code>cleanup</code>，然后<code>return</code>。(这就是我们可以向<code>nil</code>发送消息的原因。)</li>
-<li>然后在<code>target</code>的<code>Class</code>中根据<code>Selector</code>去找<code>IMP</code>。</li>
-</ul>
-<p>寻找<code>IMP</code>的过程:</p>
-<ul>
-<li>先从当前<code>class</code>的<code>cache</code>方法列表（<code>cache methodLists</code>）里去找。</li>
-<li>如果找到了，跳到对应函数实现。</li>
-<li>如果没找到，就从<code>class</code>的方法列表（<code>methodLists</code>）里找。</li>
-<li>如果还找不到，就到<code>super class</code>的方法列表里找，直到找到基类（<code>NSObject</code>）为止。</li>
-<li>最后再找不到，就会进入动态方法解析和消息转发的机制。</li>
-</ul>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-695c1539e166418f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p>注意:</p>
-<ul>
-<li>这里说的分发表其实就是<code>Class</code>中的方法列表，它将方法选择器和方法实现地质联系起来。</li>
-<li>消息的发送其实就是先确定<code>object</code>接受者对象，然后根据<code>isa</code>指针查找其方法然后跳转过去并执行。</li>
-<li>但是编译期间，是无法确定<code>object</code>接受者对象。<strong>只有在程序运行期间，<code>object</code>接受者对象才能得到确定</strong>。这种在运行期间才确定<code>object</code>接受者对象，<code>Objective-C</code>称为动态绑定。</li>
-<li>消息发送这种工作机制明显区别另一著名面向对象编程语言——<code>C++</code>或者<code>Java</code>。<code>C++</code>或者<code>Java</code>调用对象的函数，<strong>函数与对象之间的关系，在编译期间就必须严格确定</strong>。比如<code>Car</code>这个对象里面没有定义函数名为<code>fly</code>的函数，编译器不会通过，而是会报错。<code>Objective-C</code>如果向<code>Car</code>这个对象发送字符串为<code>fly</code>的<code>selector</code>，即使<code>car</code>没有实现<code>fly</code>方法，编译器依然能够通过，但是运行期间则会因为获取不到实际执行的方法而抛出异常。</li>
-<li>消息发送的设计使得编译期间<code>Objective-C</code>非常包容对象所属的类。在<code>Objective-C</code>语言中你可以向任何包括空指针<code>nil</code>在内的对象发你想发的消息。</li>
-<li>消息发送的机制使得在不重新编译的情况下，<strong>在运行期间，干预或者说<code>hook</code>原来的<code>target</code>（方法、变量等）变得更易于实现，更有实际应用价值</strong>，这个是需要依赖于消息发送和动态绑定的实现机制——<code>Runtime</code>。</li>
-</ul>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;由上面一章中，我们了解了什么是&lt;a href=&quot;https://sunjinshuai.github.io/2016/06/11/iOS-RunTime%E4%B9%8B%E4%BA%8C%EF%BC%9A%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>iOS RunTime之二：数据结构</title>
-    <link href="https://sunjinshuai.github.io/2016/06/11/iOS-RunTime%E4%B9%8B%E4%BA%8C%EF%BC%9A%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
-    <id>https://sunjinshuai.github.io/2016/06/11/iOS-RunTime之二：数据结构/</id>
-    <published>2016-06-11T14:56:47.000Z</published>
-    <updated>2017-08-17T02:20:54.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>由上面一章中,我们了解了什么是<a href="https://sunjinshuai.github.io/2016/06/10/iOS-RunTime%E4%B9%8B%E4%B8%80%EF%BC%9A%E7%AE%80%E4%BB%8B/">RunTime</a>，<code>RunTime</code>用来做什么，下面了解一下<code>Runtime</code>数据结构。</p>
-<p>我们知道在<code>Objective-C</code>中，使用<code>[object doSomething]</code>语法并不会马上执行<code>object</code>接受者对象的<code>doSomething</code>方法的代码，而是向<code>object</code>接受者对发送一条<code>doSomething</code>消息，这条消息可能由<code>object</code>接受者对来处理，也可能由转发给其他对象来处理，也有可能假装没有接收到这条消息而没有处理。</p>
-<p>其实<code>[object doSomething]</code>被编译器转化为:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">id objc_msgSend ( id self, SEL op, ... );</div></pre></td></tr></table></figure>
-<p>下面从两个数据结构<code>id</code>和<code>SEL</code>来逐步分析和理解<code>Runtime</code>有哪些重要的数据结构。</p>
-<h4 id="id"><a href="#id" class="headerlink" title="id"></a><strong>id</strong></h4><p><code>objc_msgSend</code>方法里面的第一个参数的数据类型<code>id</code>，通用类型指针，能够表示任何对象。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-f1fa24b64e56b099.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p>查看源文件，可以看出<code>id</code>其实就是一个指向<code>objc_object</code>结构体指针，它包含一个<code>Class isa</code>成员，根据<code>Class isa</code>指针就可以找到对象所属的类。</p>
-<h4 id="Class"><a href="#Class" class="headerlink" title="Class"></a><strong>Class</strong></h4><p>从源文件看出，<code>Objective-C</code>的对象就是一个包含<code>isa</code>指针的数据结构，而<code>isa</code>指针的数据类型是<code>Class</code>，<code>Class</code>表示对象所属的类。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-b56425997d122083.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p>从源文件看出，<code>Class</code>其实就是一个<code>objc_class</code>结构体指针。<code>objc_class</code>结构体定义如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">isa：在Objective-C中，所有的类自身也是一个对象，即类对象。在这个类对象里面也有一个isa指针，它指向metaClass(元类)。</div><div class="line">super_class：指向该类的父类，如果该类已经是最顶层的根类(如NSObject)，则super_class为NULL。</div><div class="line">name：这个类的类名。</div><div class="line">version：提供类的版本信息，这对于对象的序列化非常有用，它可是让我们识别出不同类定义版本中实例变量布局的改变。</div><div class="line">info：类信息，供运行期使用的一些位标识。</div><div class="line">instance_size：该类的实例变量大小。</div><div class="line">ivars：该类的成员变量链表。</div><div class="line">methodLists：方法定义的链表。</div><div class="line">protocols：协议链表。</div><div class="line">cache：一个接收者对象接收到一个消息时，它会根据isa指针去查找能够响应这个消息的对象。在实际使用中，这个对象只有一部分方法是常用的，很多方法其实很少用或者根本用不上。这种情况下，如果每次消息来时，我们都是methodLists中遍历一遍，性能势必很差。这时，cache就派上用场了。在我们每次调用过一个方法后，这个方法就会被缓存到cache列表中，下次调用的时候runtime就会优先去cache中查找，如果cache没有，才去methodLists中查找方法。这样，对于那些经常用到的方法的调用，但提高了调用的效率。</div></pre></td></tr></table></figure>
-<p>注意：</p>
-<ul>
-<li>在面向对象设计中，一切都是对象，<code>Class</code>在设计中本身也是一个对象。</li>
-<li>由此可见，结构体<code>objc_class</code>也是继承<code>objc_object</code>，说明<code>Class</code>在设计中本身也是一个对象。</li>
-</ul>
-<h4 id="元类（Meta-Class）"><a href="#元类（Meta-Class）" class="headerlink" title="元类（Meta Class）"></a><strong>元类（Meta Class）</strong></h4><p>在<code>Objective-C</code>中，所有的类自身也是一个对象，这个对象里面也有一个<code>isa</code>指针，它指向<code>metaClass</code>(元类)，向这个对象发送消息（即调用类方法）。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-05d97aac774b34a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p>从图中看出：</p>
-<ul>
-<li>当我们向一个对象发送消息时，<code>isa</code>指针会在这个对象所属的这个类的方法列表中查找方法；</li>
-<li>向一个类发送消息时，<code>isa</code>指针会在这个类的<code>meta-class</code>的方法列表中查找。<code>meta-class</code>之所以重要，是因为它存储着一个类的所有类方法。</li>
-<li>每个类都会有一个单独的<code>meta-class</code>，因为每个类的类方法基本不可能完全相同。</li>
-</ul>
-<blockquote>
-<p>Objective-C的设计者让所有的meta-class的isa指向基类的meta-class，以此作为它们的所属类。即，任何NSObject继承体系下的meta-class都使用NSObject的meta-class作为自己的所属类，而基类的meta-class的isa指针是指向它自己，这样就形成了一个完美的闭环。</p>
-</blockquote>
-<h4 id="SEL"><a href="#SEL" class="headerlink" title="SEL"></a><strong>SEL</strong></h4><p><code>objc_msgSend</code>函数第二个参数类型为<code>SEL</code>，它是<code>selector</code>在<code>Objc</code>中的表示类型（<code>Swift</code>中是<code>Selector</code>类）。<code>selector</code>是方法选择器，可以理解为区分方法的<code>id</code>，而这个<code>id</code>的数据结构是<code>SEL</code>，即表示一个方法的<code>selector</code>的指针。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-f1c54b79137a3a1c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<ul>
-<li>方法的<code>selector</code>用于表示运行时方法的名字，<code>Objective-C</code>在编译时，会依据每一个方法的名字、参数序列，生成一个唯一的整型标识(<code>int</code>类型的地址)，这个标识就是<code>SEL</code>。</li>
-<li>在<code>Objective-C</code>中，只要方法名相同，那么方法的<code>SEL</code>就是一样的，每一个方法都对应着一个<code>SEL</code>，所以在<code>Objective-C</code>中，同一个类中或者这个类的继承体系中，不能存在2个同名的方法，不同的类可以拥有相同的<code>selector</code>，不同的类的实例对象执行相同的<code>selector</code>，会在各自的方法列表中根据<code>selector</code>去寻找对应的<code>IMP</code>。</li>
-<li>在本质上，<code>SEL</code>只是一个指向方法的指针（被<code>hash</code>化得<code>KEY</code>值），能提高方法的查询速度。</li>
-</ul>
-<h4 id="IMP"><a href="#IMP" class="headerlink" title="IMP"></a><strong>IMP</strong></h4><p><code>IMP</code>就是<code>implementation</code>的缩写，本质就是一个函数指针，这个被指向的函数包含一个接收消息的对象<code>id</code>，调用方法的<code>SEL</code>，以及一些方法参数，并返回一个<code>id</code>。因此我们可以通过<code>SEL</code>获得它所对应的<code>IMP</code>，在取得了函数指针之后，也就意味着我们取得了需要执行方法的代码入口，这样我们就可以像普通的<code>C</code>语言函数调用一样使用这个函数指针。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-36d603b62e4690d6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p><code>SEL</code>就是为了查找方法的最终实现<code>IMP</code>的，由于每个方法对应唯一的<code>SEL</code>，因此我们可以通过<code>SEL</code>方便快速准确地获得它所对应的<code>IMP</code>。</p>
-<h4 id="Method"><a href="#Method" class="headerlink" title="Method"></a><strong>Method</strong></h4><p><code>Method</code>是一种代表类中的某个方法的类型。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-c75430d85b645678.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p>而<code>objc_method</code>在上面的方法列表中提到过，它存储了方法名，方法类型和方法实现：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-382fc04a120fc065.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p>注意：</p>
-<ul>
-<li>方法名类型为<code>SEL</code>，前面提到过相同名字的方法即使在不同类中定义，它们的方法选择器也相同。</li>
-<li>方法类型<code>method_types</code>是个<code>char</code>指针，其实存储着方法的参数类型和返回值类型。</li>
-<li><code>method_imp</code>指向了方法的实现，本质上是一个函数指针。</li>
-</ul>
-<h4 id="Ivar"><a href="#Ivar" class="headerlink" title="Ivar"></a><strong>Ivar</strong></h4><p><code>Ivar</code>是一种代表类中实例变量的类型。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-dcb54cf3c9cc43ae.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-4f01a318d7041fb7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<h4 id="Cache"><a href="#Cache" class="headerlink" title="Cache"></a><strong>Cache</strong></h4><p><img src="http://upload-images.jianshu.io/upload_images/588630-72e7a54f147a8948.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
-<p><strong><code>Cache</code>其实就是一个存储<code>Method</code>的链表，主要是为了优化方法调用的性能。</strong></p>
-<p>当对象<code>receiver</code>调用方法<code>message</code>时，首先根据对象<code>receiver</code>的<code>isa</code>指针查找到它对应的类，然后在类的<code>methodLists</code>中搜索方法，如果没有找到，就使用<code>super_class</code>指针到父类中的<code>methodLists</code>查找，一旦找到就调用方法。如果没有找到，有可能消息转发，也可能忽略它。但这样查找方式效率太低，因为往往一个类大概只有20%的方法经常被调用，占总调用次数的80%。所以使用<code>Cache</code>来缓存经常调用的方法，当调用方法时，优先在<code>Cache</code>查找，如果没有找到，再到<code>methodLists</code>查找。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;由上面一章中,我们了解了什么是&lt;a href=&quot;https://sunjinshuai.github.io/2016/06/10/iOS-RunTime%E4%B9%8B%E4%B8%80%EF%BC%9A%E7%AE%80%E4%BB%8B/&quot;&gt;RunTime&lt;/a&gt;，&lt;
     
     </summary>
     

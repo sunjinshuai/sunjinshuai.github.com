@@ -487,6 +487,95 @@
   </entry>
   
   <entry>
+    <title>MarkDown 语法</title>
+    <link href="https://sunjinshuai.github.io/2017/01/09/MarkDown-%E8%AF%AD%E6%B3%95/"/>
+    <id>https://sunjinshuai.github.io/2017/01/09/MarkDown-语法/</id>
+    <published>2017-01-09T14:06:33.000Z</published>
+    <updated>2018-06-09T14:08:52.691Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># This is an H1</div><div class="line">## This is an H2</div><div class="line">###### This is an H6</div></pre></td></tr></table></figure>
+<h4 id="文本块"><a href="#文本块" class="headerlink" title="文本块"></a>文本块</h4><p>使用一对各三个的反引号(<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div></pre></td></tr></table></figure></p>
+<p>我是文本块<br>我是文本块<br>我是文本块<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#### 文字高亮</div><div class="line">文字高亮功能能使行内部分文字高亮，使用一对反引号(`)，例如：</div><div class="line"></div><div class="line">`文字高亮`</div><div class="line"></div><div class="line">#### 引用块</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,<br>consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.<br>Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.</p>
+<p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse<br>id sem consectetuer libero luctus adipiscing.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#### 换行</div><div class="line"></div><div class="line">直接回车不能换行，</div><div class="line">可以在上一行文本后面补两个空格，</div><div class="line">这样下一行的文本就换行了，或者就是在两行文本直接加一个空行，也能实现换行效果，但是这个行间距有点大。</div><div class="line"></div><div class="line">#### 列表</div><div class="line">##### 无序列表</div></pre></td></tr></table></figure></p>
+</blockquote>
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">##### 有序列表</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<ol>
+<li>Bird</li>
+<li>McHale</li>
+<li>Parish<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#### 横线</div><div class="line">下面每一行都会得到一个水平线</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<hr>
+<h2 id=""><a href="#" class="headerlink" title="___"></a>___</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">***</div><div class="line">___</div><div class="line">---</div><div class="line"></div><div class="line">#### 链接</div></pre></td></tr></table></figure>
+<p>这是一个 <a href="http://example.com/" title="Title" target="_blank" rel="external">连接显示文字</a> 行内链接。<br><a href="http://example.net/" target="_blank" rel="external">连接显示文字</a> 没有title属性。<br><a href="http://example.com/" target="_blank" rel="external">http://example.com/</a> 自动链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#### 强调</div></pre></td></tr></table></figure></p>
+<p><em>single asterisks</em><br><em>single underscores</em><br><strong>double asterisks</strong><br><strong>double underscores</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#### 图片</div><div class="line">##### 行内图片</div></pre></td></tr></table></figure></p>
+<p><img src="/path/to/img.jpg" alt="Alt text"><br><img src="/path/to/img.jpg" alt="Alt text" title="Optional title"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">##### 引用图片</div></pre></td></tr></table></figure></p>
+<p>![Alt text][id]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#### 表格</div></pre></td></tr></table></figure></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Left-Aligned</th>
+<th style="text-align:center">Center Aligned</th>
+<th style="text-align:right">Right Aligned</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">col 3 is</td>
+<td style="text-align:center">some wordy text</td>
+<td style="text-align:right">$1600</td>
+</tr>
+<tr>
+<td style="text-align:left">col 2 is</td>
+<td style="text-align:center">centered</td>
+<td style="text-align:right">$12</td>
+</tr>
+<tr>
+<td style="text-align:left">zebra stripes</td>
+<td style="text-align:center">are neat</td>
+<td style="text-align:right">$1</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">| Left-Aligned | Center Aligned | Right Aligned |</div><div class="line">| :------------ |:---------------:| -----:|</div><div class="line">| col 3 is | some wordy text | $1600 |</div><div class="line">| col 2 is | centered | $12 |</div><div class="line">| zebra stripes | are neat | $1 |</div><div class="line"></div><div class="line">#### 删除线</div><div class="line"></div><div class="line">文本两端加上两个~~即可，例如：</div><div class="line"></div><div class="line">~~删除我~~</div></pre></td></tr></table></figure>
+<p><del>删除我</del><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">### github 特有的特性</div><div class="line"></div><div class="line">复选框列表</div><div class="line">在列表符号后面加上 `[]` 或者 `[x]` 代表选中或者未选中情况</div></pre></td></tr></table></figure></p>
+<ul>
+<li>[x] C</li>
+<li>[x] C++</li>
+<li>[x] Java</li>
+<li>[x] Qt</li>
+<li>[x] Android</li>
+<li>[ ] C#</li>
+<li>[ ] .NET<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">* [x] C</div><div class="line">* [x] C++</div><div class="line">* [x] Java</div><div class="line">* [x] Qt</div><div class="line">* [x] Android</div><div class="line">* [ ] C#</div><div class="line">* [ ] .NET</div><div class="line"></div><div class="line">#### emoji表情</div><div class="line"></div><div class="line">github 的 Markdown 语法支持添加 emoji 表情，输入不同的符号码（两个冒号包围的字符）可以显示出不同的表情。</div><div class="line"></div><div class="line">比如，:blush:</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>:blush:<br>```</p>
+<h4 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h4><ul>
+<li>Markdown官网：<a href="http://daringfireball.net/projects/markdown/" target="_blank" rel="external">http://daringfireball.net/projects/markdown/</a></li>
+<li>中文参考：<a href="http://markdown.tw/" target="_blank" rel="external">http://markdown.tw/</a></li>
+</ul>
+<h4 id="在线编辑器"><a href="#在线编辑器" class="headerlink" title="在线编辑器"></a>在线编辑器</h4><ul>
+<li><a href="http://marxi.co/" target="_blank" rel="external">http://marxi.co/</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h4 id=&quot;标题&quot;&gt;&lt;a href=&quot;#标题&quot; class=&quot;headerlink&quot; title=&quot;标题&quot;&gt;&lt;/a&gt;标题&lt;/h4&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div c
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>iOS之使用Cocoapods创建公有仓库踩坑记</title>
     <link href="https://sunjinshuai.github.io/2016/12/08/iOS%E4%B9%8B%E4%BD%BF%E7%94%A8Cocoapods%E5%88%9B%E5%BB%BA%E5%85%AC%E6%9C%89%E4%BB%93%E5%BA%93%E8%B8%A9%E5%9D%91%E8%AE%B0/"/>
     <id>https://sunjinshuai.github.io/2016/12/08/iOS之使用Cocoapods创建公有仓库踩坑记/</id>
@@ -1059,62 +1148,6 @@
     <summary type="html">
     
       &lt;p&gt;一般在公司git整合分支一般有两种方法——快速向前合并&lt;code&gt;git rebase&lt;/code&gt;和三路合并&lt;code&gt;git merge&lt;/code&gt;。其实在开发中，&lt;code&gt;git rebase&lt;/code&gt;和&lt;code&gt;git merge&lt;/code&gt;表达都是一个
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>iOS学习笔记 第3期(2016.08.03)</title>
-    <link href="https://sunjinshuai.github.io/2016/08/03/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC3%E6%9C%9F-2016-08-03/"/>
-    <id>https://sunjinshuai.github.io/2016/08/03/iOS学习笔记-第3期-2016-08-03/</id>
-    <published>2016-08-03T02:25:15.000Z</published>
-    <updated>2017-08-19T05:34:32.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>本期主要记录了以下几个问题：</p>
-<ul>
-<li>数组容错处理</li>
-<li>Foundation中的断言处理</li>
-<li>文本计算的坑</li>
-<li>UITableview的headerView和footerView高度的设置</li>
-<li>UIWebView底部的黑条</li>
-</ul>
-<h4 id="数组容错处理"><a href="#数组容错处理" class="headerlink" title="数组容错处理"></a>数组容错处理</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">/*!</div><div class="line"> @method objectAtIndexCheck:</div><div class="line"> @abstract 检查是否越界和NSNull如果是返回nil</div><div class="line"> @result 返回对象</div><div class="line"> */</div><div class="line">- (id)objectAtIndexCheck:(NSUInteger)index;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">- (id)objectAtIndexCheck:(NSUInteger)index</div><div class="line">&#123;</div><div class="line">    if (index &gt;= [self count]) &#123;</div><div class="line">        return nil;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    id value = [self objectAtIndex:index];</div><div class="line">    if (value == [NSNull null]) &#123;</div><div class="line">        return nil;</div><div class="line">    &#125;</div><div class="line">    return value;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="Foundation中的断言处理"><a href="#Foundation中的断言处理" class="headerlink" title="Foundation中的断言处理"></a>Foundation中的断言处理</h4><p><code>Foundation</code>中定义了两组断言相关的宏，分别是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NSAssert / NSCAssert</div><div class="line">NSParameterAssert / NSCParameterAssert</div></pre></td></tr></table></figure></p>
-<p>这两组宏主要在功能和语义上有所差别，这些区别主要有以下两点：</p>
-<ul>
-<li>如果我们需要确保方法或函数的输入参数的正确性，则应该在方法(函数)的顶部使用<code>NSParameterAssert / NSCParameterAssert</code>；而在其它情况下，使用<code>NSAssert / NSCAssert</code>。</li>
-<li>另一个不同是介于<code>C</code>和<code>Objective-C</code>之间。<code>NSAssert / NSParameterAssert</code>应该用于<code>Objective-C</code>的上下文(方法)中，而<code>NSCAssert / NSCParameterAssert</code>应该用于<code>C</code>的上下文(函数)中。</li>
-</ul>
-<p>当断言失败时，通常是会抛出一个如下所示的异常：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">*** Terminating app due to uncaught exception &apos;NSInternalInconsistencyException&apos;, reason: &apos;true is not equal to false&apos;</div></pre></td></tr></table></figure></p>
-<p><code>Foundation</code>为了处理断言，专门定义了一个<code>NSAssertionHandler</code>来处理断言的失败情况。<code>NSAssertionHandler</code>对象是自动创建的，用于处理失败的断言。当断言失败时，会传递一个字符串给<code>NSAssertionHandler</code>对象来描述失败的原因。每个线程都有自己的<code>NSAssertionHandler</code>对象。当调用时，一个断言处理器会打印包含方法和类(或函数)的错误消息，并引发一个<code>NSInternalInconsistencyException</code>异常。就像上面所看到的一样。</p>
-<p>我们很少直接去调用<code>NSAssertionHandler</code>的断言处理方法，通常都是自动调用的。</p>
-<p><code>NSAssertionHandler</code>提供的方法并不多，就三个，如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">// 返回与当前线程的NSAssertionHandler对象。</div><div class="line">// 如果当前线程没有相关的断言处理器，则该方法会创建一个并指定给当前线程</div><div class="line">+ (NSAssertionHandler *)currentHandler</div><div class="line">// 当NSCAssert或NSCParameterAssert断言失败时，会调用这个方法</div><div class="line">- (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)object lineNumber:(NSInteger)fileName description:(NSString *)line, format,...</div><div class="line">// 当NSAssert或NSParameterAssert断言失败时，会调用这个方法</div><div class="line">- (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format, ...</div></pre></td></tr></table></figure></p>
-<p>另外，还定义了一个常量字符串，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NSString * const NSAssertionHandlerKey;</div></pre></td></tr></table></figure></p>
-<p>主要是用于在线程的<code>threadDictionary</code>字典中获取或设置断言处理器。</p>
-<p><code>Xcode</code>已经默认将<code>release</code>环境下的断言取消了, 免除了忘记关闭断言造成的程序不稳定. 所以不用担心在开发时候大胆使用。</p>
-<p>自定义<code>NSAssertionHandler</code><br><code>NSAssertionHandler</code>实例是自动创建的，用于处理错误断言。如果<code>NSAssert</code>和<code>NSCAssert</code>条件评估为错误，会向<code>NSAssertionHandler</code>实例发送一个表示错误的字符串。每个线程都有它自己的<code>NSAssertionHandler</code>实例。<br>我们可以自定义处理方法，从而使用断言的时候，控制台输出错误，但是程序不会直接崩溃。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">#import &quot;MyAssertHandler.h&quot;</div><div class="line"></div><div class="line">@implementation MyAssertHandler</div><div class="line"></div><div class="line">//处理Objective-C的断言</div><div class="line">- (void)handleFailureInMethod:(SEL)selector object:(id)object file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format,...</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;NSAssert Failure: Method %@ for object %@ in %@#%li&quot;, NSStringFromSelector(selector), object, fileName, (long)line);</div><div class="line">&#125;</div><div class="line">//处理C的断言</div><div class="line">- (void)handleFailureInFunction:(NSString *)functionName file:(NSString *)fileName lineNumber:(NSInteger)line description:(NSString *)format,...</div><div class="line">&#123;</div><div class="line">    NSLog(@&quot;NSCAssert Failure: Function (%@) in %@#%li&quot;, functionName, fileName, (long)line);</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure></p>
-<p>给线程添加处理类</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">- (BOOL)application:(UIApplication *)application</div><div class="line">didFinishLaunchingWithOptions:(NSDictionary *)launchOptions</div><div class="line">&#123;</div><div class="line">  NSAssertionHandler *assertionHandler = [[LoggingAssertionHandler alloc] init];</div><div class="line">  [[[NSThread currentThread] threadDictionary] setValue:assertionHandler</div><div class="line">                                                 forKey:NSAssertionHandlerKey];</div><div class="line">  // ...</div><div class="line">  return YES;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>自定义<code>NSAssertionHandler</code>后,程序能够获得断言失败后的信息,但是程序可以继续运行,不会强制退出程序。</p>
-<h4 id="文本计算的坑"><a href="#文本计算的坑" class="headerlink" title="文本计算的坑"></a>文本计算的坑</h4><p>一般在开发的时候，很多时候需要先计算出文本在某字体下的宽高，再设置控件的frame。有时候文本计算得到的width和height是小数，有可能最后得到的结果不准确，那么控件的frame也不准确。所以我们经常做的一件事就是<code>Category</code>，即给<code>NSString</code>扩展方法，使用新增的方法统一计算文本的大小，在这些方法中使用ceil()将小数点后数据除去，使得计算的结果小数点后都是0。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">// 单行的</div><div class="line">- (CGSize)textSizeWithFont:(UIFont *)font &#123;</div><div class="line">   CGSize textSize = [self sizeWithAttributes:@&#123;NSFontAttributeName:font&#125;];</div><div class="line">   textSize = CGSizeMake((int)ceil(textSize.width), (int)ceil(textSize.height));</div><div class="line">   return textSize;</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 根据字体、行数、行间距和constrainedWidth计算多行文本占据的size</div><div class="line">- (CGSize)textSizeWithFont:(UIFont*)font</div><div class="line">             numberOfLines:(NSInteger)numberOfLines</div><div class="line">               lineSpacing:(CGFloat)lineSpacing</div><div class="line">          constrainedWidth:(CGFloat)constrainedWidth</div><div class="line">          isLimitedToLines:(BOOL *)isLimitedToLines &#123;</div><div class="line"></div><div class="line">    if (self.length == 0) &#123;</div><div class="line">        return CGSizeZero;</div><div class="line">    &#125;</div><div class="line">    CGFloat oneLineHeight = font.lineHeight;</div><div class="line">    CGSize textSize = [self boundingRectWithSize:CGSizeMake(constrainedWidth, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@&#123;NSFontAttributeName:font&#125; context:nil].size;</div><div class="line"></div><div class="line">    CGFloat rows = textSize.height / oneLineHeight;</div><div class="line">    CGFloat realHeight = oneLineHeight;</div><div class="line">    // 0 不限制行数</div><div class="line">    if (numberOfLines == 0) &#123;</div><div class="line">        if (rows &gt;= 1) &#123;</div><div class="line">            realHeight = (rows * oneLineHeight) + (rows - 1) * lineSpacing;</div><div class="line">        &#125;</div><div class="line">    &#125; else &#123;</div><div class="line">        if (rows &gt; numberOfLines) &#123;</div><div class="line">            rows = numberOfLines;</div><div class="line">            if (isLimitedToLines) &#123;</div><div class="line">                *isLimitedToLines = YES;  //被限制</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        realHeight = (rows * oneLineHeight) + (rows - 1) * lineSpacing;</div><div class="line">    &#125;</div><div class="line">    return CGSizeMake(ceil(constrainedWidth),ceil(realHeight));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="UITableview的headerView和footerView高度的设置"><a href="#UITableview的headerView和footerView高度的设置" class="headerlink" title="UITableview的headerView和footerView高度的设置"></a>UITableview的headerView和footerView高度的设置</h4><p>一般在项目中使用<code>UITableview</code>的<code>headerView</code>和<code>footerView</code>的时候都会遇到一个问题，即给<code>headerView</code>和<code>footerView</code>高度设置0的时候，发现不好使。经过查阅资料得知如果给<code>headerView</code>和<code>footerView</code>高度设置0，则会被设置成为默认值。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section &#123;</div><div class="line">    return CGFLOAT_MIN;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section &#123;</div><div class="line">    return CGFLOAT_MIN;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="UIWebView底部的黑条"><a href="#UIWebView底部的黑条" class="headerlink" title="UIWebView底部的黑条"></a>UIWebView底部的黑条</h4><p>一般我使用<code>UIWebView</code>的时候会发现，<code>UIWebView</code>底部的黑条很难看，特别是在底部还有透明控件的时候，隐藏的做法其实很简单，只需要将<code>opaque</code>设为NO，背景色设为<code>clearColor</code>即可。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本期主要记录了以下几个问题：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;数组容错处理&lt;/li&gt;
-&lt;li&gt;Foundation中的断言处理&lt;/li&gt;
-&lt;li&gt;文本计算的坑&lt;/li&gt;
-&lt;li&gt;UITableview的headerView和footerView高度的设置&lt;/li&gt;
-&lt;li&gt;UIW
     
     </summary>
     

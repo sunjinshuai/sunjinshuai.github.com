@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://sunjinshuai.github.io/"/>
-  <updated>2017-12-18T14:16:27.537Z</updated>
+  <updated>2018-06-09T04:48:50.559Z</updated>
   <id>https://sunjinshuai.github.io/</id>
   
   <author>
@@ -16,13 +16,31 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>谈AutoLayout关于update的几个方法</title>
-    <link href="https://sunjinshuai.github.io/2017/12/18/%E8%B0%88AutoLayout%E5%85%B3%E4%BA%8Eupdate%E7%9A%84%E5%87%A0%E4%B8%AA%E6%96%B9%E6%B3%95/"/>
-    <id>https://sunjinshuai.github.io/2017/12/18/谈AutoLayout关于update的几个方法/</id>
+    <title>谈谈 Autolayout</title>
+    <link href="https://sunjinshuai.github.io/2017/12/18/%E8%B0%88%E8%B0%88%20Autolayout/"/>
+    <id>https://sunjinshuai.github.io/2017/12/18/谈谈 Autolayout/</id>
     <published>2017-12-18T14:16:11.000Z</published>
-    <updated>2017-12-18T14:16:27.537Z</updated>
+    <updated>2018-06-09T04:48:50.559Z</updated>
     
-    <content type="html"><![CDATA[<p>UIView是我们经常使用的一个基本控件，其中有几个基本的布局方法需要清楚。</p>
+    <content type="html"><![CDATA[<h4 id="关于Autolayout的调试"><a href="#关于Autolayout的调试" class="headerlink" title="关于Autolayout的调试"></a>关于Autolayout的调试</h4><p>刚开始使用 Autolayout 遇到下面的警告人容易让人气馁，经常不知所措而放弃了使用 Autolayout。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">Unable to simultaneously satisfy constraints.</div><div class="line">Probably at least one of the constraints in the following list is one you don&apos;t want.</div><div class="line">Try this:</div><div class="line"></div><div class="line">(1) look at each constraint and try to figure out which you don&apos;t expect;</div><div class="line">(2) find the code that added the unwanted constraint or constraints and fix it.</div><div class="line">(Note: If you&apos;re seeing NSAutoresizingMaskLayoutConstraints that you don&apos;t understand, refer to the documentation for the UIView property translatesAutoresizingMaskIntoConstraints)</div><div class="line">(...........)</div><div class="line"></div><div class="line">Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.</div><div class="line">The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in &lt;UIKit/UIView.h&gt; may also be helpful.</div></pre></td></tr></table></figure></p>
+<p>正如输出中所述，<code>Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger</code>，现在介绍下使用 <code>UIViewAlertForUnsatisfiableConstraints</code> 的调试方法。</p>
+<p>在 <code>UIViewAlertForUnsatisfiableConstraints</code> 添加 <code>symbolic breakpoint</code>：</p>
+<ul>
+<li>打开断点导航（cmd+7）</li>
+<li>点击左下角的+按钮</li>
+<li>选择Add Symbolic Breakpoint</li>
+<li>在Symbol添加UIViewAlertForUnsatisfiableConstraints</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-352497a3fe02d591?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>再次调试的时候就可以通过 lldb 来调试了，然并卵，如果你不知道 lldb 的话。</p>
+<p>所以交给你一个小技巧，添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">po [[UIWindow keyWindow] _autolayoutTrace] // OC项目</div><div class="line">expr -l objc++ -O -- [[UIWindow keyWindow] _autolayoutTrace] // Swift项目</div></pre></td></tr></table></figure></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-14bda92176ecfd3a?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>这样就可以直接看到输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">(lldb) po [[UIWindow keyWindow] _autolayoutTrace]</div><div class="line">UIWindow:0x7f9481c93360</div><div class="line">|   •UIView:0x7f9481c9d680</div><div class="line">|   |   *UIView:0x7f9481c9d990- AMBIGUOUS LAYOUT for UIView:0x7f9481c9d990.minX&#123;id: 13&#125;, UIView:0x7f9481c9d990.minY&#123;id: 16&#125;</div><div class="line">|   |   *_UILayoutGuide:0x7f9481c9e160- AMBIGUOUS LAYOUT for _UILayoutGuide:0x7f9481c9e160.minY&#123;id: 17&#125;</div><div class="line">|   |   *_UILayoutGuide:0x7f9481c9ebb0- AMBIGUOUS LAYOUT for _UILayoutGuide:0x7f9481c9ebb0.minY&#123;id: 27&#125;</div></pre></td></tr></table></figure></p>
+<p>其中 AMBIGUOUS 相关的视图就是约束有问题的。0x7f9481c9d990就是有问题视图的首地址。</p>
+<p>当然进一步的调试需要 lldb 的命令。比如，打印视图对象<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(lldb) po 0x7f9481c9d990</div><div class="line">&lt;UIView: 0x7f9481c9d990; frame = (0 0; 768 359); autoresize = RM+BM; layer = &lt;CALayer: 0x7fc82d338960&gt;&gt;</div></pre></td></tr></table></figure></p>
+<p>改变颜色：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(lldb) expr ((UIView *)0x174197010).backgroundColor = [UIColor redColor]</div><div class="line">(UICachedDeviceRGBColor *) $4 = 0x0000000174469cc0</div></pre></td></tr></table></figure></p>
+<p>剩下的就是去代码中找到这个视图，然后修改其约束了。</p>
+<h4 id="AutoLayout-关于-update-的几个方法"><a href="#AutoLayout-关于-update-的几个方法" class="headerlink" title="AutoLayout 关于 update 的几个方法"></a>AutoLayout 关于 update 的几个方法</h4><p>UIView 是我们经常使用的一个基本控件，其中有几个基本的布局方法需要清楚。</p>
 <ul>
 <li><p><code>layoutSubViews：</code><br>添加子视图常重写这个方法，这个方法是用来重新布局子视图的，常用于对子视图布局，或者在其他方法中调用以达到重新布局的作用。</p>
 </li>
@@ -45,14 +63,23 @@
 <li>旋转<code>Screen</code>会触发父<code>UIView</code>上的<code>layoutSubviews</code>。</li>
 <li>改变一个<code>UIView</code>大小的时候也会触发父<code>UIView</code>上的<code>layoutSubviews</code>。</li>
 </ul>
-<p><strong>注意：layoutSubViews在drawRect之前调用。</strong></p>
+<p><strong>注意：layoutSubViews 在 drawRect 之前调用。</strong></p>
+<h4 id="AutoLayout-与-Frame"><a href="#AutoLayout-与-Frame" class="headerlink" title="AutoLayout 与 Frame"></a>AutoLayout 与 Frame</h4><p>在使用 AutoLayout 的时候可能也会同时也会用到 frame，比如需要用到 layer 的时候，想让 layer 的尺寸是由其它视图尺寸设定的，而这个视图又是由约束控制布局的，如果将 layer 的初始化与 view 的初始化放在一个方法中；<br>比如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">layer.bounds = CGRectMake(0,0,view.bounds.size.widith * 0.5,50)</div></pre></td></tr></table></figure></p>
+<p>那么很可能拿到 layer 的宽度是0。</p>
+<p>比如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">UIView *redView = [[UIView alloc] init];</div><div class="line">redView.backgroundColor = [UIColor redColor];</div><div class="line">[self.view addSubview:redView];</div><div class="line">self.redView = redView;</div><div class="line">    </div><div class="line">// 设置约束</div><div class="line">[redView mas_makeConstraints:^(MASConstraintMaker *make) &#123;</div><div class="line">  make.centerX.equalTo(self.view.mas_centerX);</div><div class="line">  make.centerY.equalTo(self.view.mas_centerY);</div><div class="line">  make.size.mas_equalTo(CGSizeMake(150, 80));</div><div class="line">&#125;];</div><div class="line">    </div><div class="line">NSLog(@&quot;self.view 的尺寸%@，redView 的尺寸%@&quot;,self.view,redView);</div><div class="line">2017-06-08 15:32:51.815107+0800 MasonryDemo[42940:1076244] self.view 的尺寸&lt;UIView: 0x7fd8cd408960; frame = (0 0; 414 736); autoresize = W+H; layer = &lt;CALayer: 0x604000227200&gt;&gt;，redView 的尺寸&lt;UIView: 0x7fd8cd407650; frame = (0 0; 0 0); layer = &lt;CALayer: 0x6040002274a0&gt;&gt;</div></pre></td></tr></table></figure></p>
+<p>这个时候，看到为什么设置了约束，而打印出来的 frame 是 (0 0; 0 0)，是因为约束被设置之后它并不会立即对 view 作出改变，而是要等到 layout 时，才会对视图的尺寸进行修改，而 layout 通常是在视图已经加载到父视图上面时做出响应。</p>
+<p>所以如果在 viewDidLoad 中设置了约束，那么要等到 viewDidAppear 时 view 的尺寸才会真正改变。</p>
+<p>解决办法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">- (void)testLayout &#123;</div><div class="line">    </div><div class="line">    UIView *redView = [[UIView alloc] init];</div><div class="line">    redView.backgroundColor = [UIColor redColor];</div><div class="line">    [self.view addSubview:redView];</div><div class="line">    self.redView = redView;</div><div class="line">    </div><div class="line">    // 设置约束</div><div class="line">    [redView mas_makeConstraints:^(MASConstraintMaker *make) &#123;</div><div class="line">        make.centerX.equalTo(self.view.mas_centerX);</div><div class="line">        make.centerY.equalTo(self.view.mas_centerY);</div><div class="line">        make.size.mas_equalTo(CGSizeMake(150, 80));</div><div class="line">    &#125;];</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)viewDidLayoutSubviews &#123;</div><div class="line">    [super viewDidLayoutSubviews];</div><div class="line">    </div><div class="line">    NSLog(@&quot;self.view 的尺寸%@，redView 的尺寸%@&quot;,self.view,self.redView);</div><div class="line">&#125;</div><div class="line"></div><div class="line">2017-06-08 15:50:41.621147+0800 MasonryDemo[43363:1089098] self.view 的尺寸&lt;UIView: 0x7fe412f0f780; frame = (0 0; 414 736); autoresize = W+H; layer = &lt;CALayer: 0x604000238b00&gt;&gt;，redView 的尺寸&lt;UIView: 0x7fe412e045b0; frame = (132 328; 150 80); layer = &lt;CALayer: 0x60000003c460&gt;&gt;</div></pre></td></tr></table></figure></p>
+<p>1、把获取 frame 的设置写到 layoutSubviews 中或者写到 viewDidLayoutSubviews 中即可。因为 layout 约束生效时 view 的 center 或者 bounds 就会被修改，当 center 或者 bounds 被修改时layoutSubview 就会被调用，随后 viewDidLayoutSubviews 就回被调用。这个时候，设置约束的视图 frame 就不再是 (0,0,0,0) 了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">- (void)testLayout &#123;</div><div class="line">    </div><div class="line">    UIView *redView = [[UIView alloc] init];</div><div class="line">    redView.backgroundColor = [UIColor redColor];</div><div class="line">    [self.view addSubview:redView];</div><div class="line">    self.redView = redView;</div><div class="line">    </div><div class="line">    // 设置约束</div><div class="line">    [redView mas_makeConstraints:^(MASConstraintMaker *make) &#123;</div><div class="line">        make.centerX.equalTo(self.view.mas_centerX);</div><div class="line">        make.centerY.equalTo(self.view.mas_centerY);</div><div class="line">        make.size.mas_equalTo(CGSizeMake(150, 80));</div><div class="line">    &#125;];</div><div class="line">    [redView setNeedsLayout];</div><div class="line">    [redView layoutIfNeeded];</div><div class="line">    NSLog(@&quot;self.view 的尺寸%@，redView 的尺寸%@&quot;,self.view,redView);</div><div class="line">&#125;</div><div class="line">2017-06-08 15:52:32.749105+0800 MasonryDemo[43419:1090641] self.view 的尺寸&lt;UIView: 0x7fe36440b5f0; frame = (0 0; 414 736); autoresize = W+H; layer = &lt;CALayer: 0x604000422100&gt;&gt;，redView 的尺寸&lt;UIView: 0x7fe364405040; frame = (-75 -40; 150 80); layer = &lt;CALayer: 0x6040004207a0&gt;&gt;</div></pre></td></tr></table></figure>
+<p>2、如果将约束和 frame 写在同一方法中，写完约束就设置 frame，而不是想把 frame 的设置放到 layoutSubview 中，比如设置好约束后马上就想根据约束的结果计算高度，那么必须在设置完约束之后手动调用<br>setNeedsLayout 和 layoutIfNeeded 方法，让视图立即 layout，更新 frame，<strong>但是这个时候就可以拿到真实的 size 并不能拿到真实的 center ，不建议这么使用</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">- (void)testLayout &#123;</div><div class="line">    </div><div class="line">    UIView *redView = [[UIView alloc] init];</div><div class="line">    redView.backgroundColor = [UIColor redColor];</div><div class="line">    [self.view addSubview:redView];</div><div class="line">    self.redView = redView;</div><div class="line">    </div><div class="line">    // 设置约束</div><div class="line">    [redView mas_makeConstraints:^(MASConstraintMaker *make) &#123;</div><div class="line">        make.centerX.equalTo(self.view.mas_centerX);</div><div class="line">        make.centerY.equalTo(self.view.mas_centerY);</div><div class="line">        make.size.mas_equalTo(CGSizeMake(150, 80));</div><div class="line">    &#125;];</div><div class="line">   </div><div class="line">    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^&#123;</div><div class="line">        NSLog(@&quot;self.view 的尺寸%@，redView 的尺寸%@&quot;,self.view,redView);</div><div class="line">    &#125;);</div><div class="line">&#125;</div><div class="line">2017-06-08 15:55:56.282546+0800 MasonryDemo[43500:1092911] self.view 的尺寸&lt;UIView: 0x7fda85e0d540; frame = (0 0; 414 736); autoresize = W+H; layer = &lt;CALayer: 0x600000233620&gt;&gt;，redView 的尺寸&lt;UIView: 0x7fda85e0c770; frame = (132 328; 150 80); layer = &lt;CALayer: 0x600000233540&gt;&gt;</div></pre></td></tr></table></figure>
+<p>3、在 dispatch_after 里面可以拿到真实的 frame ，或许是因为设置约束和获取 frame 不在同一个 runloop 的原因吧。</p>
 ]]></content>
     
     <summary type="html">
     
-      &lt;p&gt;UIView是我们经常使用的一个基本控件，其中有几个基本的布局方法需要清楚。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;code&gt;layoutSubViews：&lt;/code&gt;&lt;br&gt;添加子视图常重写这个方法，这个方法是用来重新布局子视图的，常用于对子视图布局，或者在其他方法中调用以
+      &lt;h4 id=&quot;关于Autolayout的调试&quot;&gt;&lt;a href=&quot;#关于Autolayout的调试&quot; class=&quot;headerlink&quot; title=&quot;关于Autolayout的调试&quot;&gt;&lt;/a&gt;关于Autolayout的调试&lt;/h4&gt;&lt;p&gt;刚开始使用 Autolayout 遇
     
     </summary>
     
@@ -216,43 +243,6 @@
     
       &lt;p&gt;面试题：&lt;br&gt;如何在项目中处理页面中的多个网络请求。&lt;br&gt;在开发中很多时候会有这样的场景，同一个界面有多个请求，而且要在这几个请求都成功返回的时候再去进行下一操作，对于这种场景，如何来设计请求操作呢？今天我们就来讨论一下有哪几种方案。&lt;/p&gt;
 &lt;p&gt;分析：&lt;br&gt;在网络
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>谈谈关于Autolayout的调试</title>
-    <link href="https://sunjinshuai.github.io/2017/10/15/%E8%B0%88%E8%B0%88%E5%85%B3%E4%BA%8EAutolayout%E7%9A%84%E8%B0%83%E8%AF%95/"/>
-    <id>https://sunjinshuai.github.io/2017/10/15/谈谈关于Autolayout的调试/</id>
-    <published>2017-10-15T14:01:37.000Z</published>
-    <updated>2017-12-18T14:18:22.655Z</updated>
-    
-    <content type="html"><![CDATA[<p>关于Autolayout的调试</p>
-<p>刚开始使用Autolayout遇到下面的警告人容易让人气馁。经常不知所措而放弃了使用Autolayout。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">Unable to simultaneously satisfy constraints.</div><div class="line">Probably at least one of the constraints in the following list is one you don&apos;t want.</div><div class="line">Try this:</div><div class="line"></div><div class="line">(1) look at each constraint and try to figure out which you don&apos;t expect;</div><div class="line">(2) find the code that added the unwanted constraint or constraints and fix it.</div><div class="line">(Note: If you&apos;re seeing NSAutoresizingMaskLayoutConstraints that you don&apos;t understand, refer to the documentation for the UIView property translatesAutoresizingMaskIntoConstraints)</div><div class="line"></div><div class="line">(...........)</div><div class="line"></div><div class="line"></div><div class="line">Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger.</div><div class="line">The methods in the UIConstraintBasedLayoutDebugging category on UIView listed in &lt;UIKit/UIView.h&gt; may also be helpful.</div></pre></td></tr></table></figure></p>
-<p>正如输出中所述，<code>Make a symbolic breakpoint at UIViewAlertForUnsatisfiableConstraints to catch this in the debugger</code>，现在介绍下使用<code>UIViewAlertForUnsatisfiableConstraints</code>的调试方法。</p>
-<p>在<code>UIViewAlertForUnsatisfiableConstraints</code>添加<code>symbolic breakpoint</code>：</p>
-<ul>
-<li>打开断点导航（cmd+7）</li>
-<li>点击左下角的+按钮</li>
-<li>选择Add Symbolic Breakpoint</li>
-<li>在Symbol添加UIViewAlertForUnsatisfiableConstraints</li>
-</ul>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/160626459b406d9c?w=510&amp;h=225&amp;f=png&amp;s=26048" alt="image.png"><br>再次调试的时候就可以通过LLDB来调试了，然并卵，如果你不知道LLDB的话。</p>
-<p>所以交给你一个小技巧，添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">po [[UIWindow keyWindow] _autolayoutTrace] // OC项目</div><div class="line">expr -l objc++ -O -- [[UIWindow keyWindow] _autolayoutTrace] // Swift项目</div></pre></td></tr></table></figure></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/1606264628b9c7d9?w=510&amp;h=269&amp;f=png&amp;s=31349" alt="image.png"></p>
-<p>这样就可以直接看到输出：<br>(lldb) po [[UIWindow keyWindow] _autolayoutTrace]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">UIWindow:0x7f9481c93360</div><div class="line">|   •UIView:0x7f9481c9d680</div><div class="line">|   |   *UIView:0x7f9481c9d990- AMBIGUOUS LAYOUT for UIView:0x7f9481c9d990.minX&#123;id: 13&#125;, UIView:0x7f9481c9d990.minY&#123;id: 16&#125;</div><div class="line">|   |   *_UILayoutGuide:0x7f9481c9e160- AMBIGUOUS LAYOUT for _UILayoutGuide:0x7f9481c9e160.minY&#123;id: 17&#125;</div><div class="line">|   |   *_UILayoutGuide:0x7f9481c9ebb0- AMBIGUOUS LAYOUT for _UILayoutGuide:0x7f9481c9ebb0.minY&#123;id: 27&#125;</div></pre></td></tr></table></figure></p>
-<p>其中AMBIGUOUS相关的视图就是约束有问题的。0x7f9481c9d990就是有问题视图的首地址。</p>
-<p>当然进一步的调试需要LLDB的命令。比如，打印视图对象<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(lldb) po 0x7f9481c9d990</div><div class="line">&lt;UIView: 0x7f9481c9d990; frame = (0 0; 768 359); autoresize = RM+BM; layer = &lt;CALayer: 0x7fc82d338960&gt;&gt;</div></pre></td></tr></table></figure></p>
-<p>改变颜色：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(lldb) expr ((UIView *)0x174197010).backgroundColor = [UIColor redColor]</div><div class="line">(UICachedDeviceRGBColor *) $4 = 0x0000000174469cc0</div></pre></td></tr></table></figure></p>
-<p>剩下的就是去代码中找到这个视图，然后修改其约束了。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;关于Autolayout的调试&lt;/p&gt;
-&lt;p&gt;刚开始使用Autolayout遇到下面的警告人容易让人气馁。经常不知所措而放弃了使用Autolayout。&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gut
     
     </summary>
     
@@ -1060,6 +1050,52 @@
     
       &lt;p&gt;&lt;code&gt;Cocoapods&lt;/code&gt;是一个框架依赖管理的一个管理工具，主要是用来管理框架一些开源库在项目中的引用。简而言之就是用来管理你的项目中对开源框架或自己公司子模块的依赖。&lt;/p&gt;
 &lt;p&gt;当然作为开发者来说，入门教程特别简单。但是作为一个开发人员不能只满足于当
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>源码管理工具之git中merge、rebase的区别</title>
+    <link href="https://sunjinshuai.github.io/2016/08/04/%E6%BA%90%E7%A0%81%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E4%B9%8Bgit%E4%B8%ADmerge%E3%80%81rebase%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
+    <id>https://sunjinshuai.github.io/2016/08/04/源码管理工具之git中merge、rebase的区别/</id>
+    <published>2016-08-04T06:15:32.000Z</published>
+    <updated>2017-08-04T07:43:29.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>一般在公司git整合分支一般有两种方法——快速向前合并<code>git rebase</code>和三路合并<code>git merge</code>。其实在开发中，<code>git rebase</code>和<code>git merge</code>表达都是一个意思，即，将一个分支合并到另一个分支。</p>
+<p>当开发一个新功能，一般我们会在<code>develop</code>分支上创建<code>featrue</code>分支：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-b6359864017521dc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>当我们这个新功能开发测试完毕之后，首先要把<code>featrue</code>分支合并到<code>develop</code>分支上，一般会根据实际情况选择是否使用<code>git merge</code>还是<code>git rebase</code>。</p>
+<p><strong><code>git merge</code></strong><br>根据分支合并的原则，<code>git</code>会自动根据两个分支的共同祖和两个分支的最新提交<code>commit</code>记录进行一个三方合并，然后将合并中修改的内容生成一个新的<code>commit</code>记录。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git checkout feature</div><div class="line">git merge master</div></pre></td></tr></table></figure>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-2fb4e523cea0a269.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><strong><code>git merge</code>是一个安全的操作</strong></p>
+<p><strong><code>git rebase</code></strong></p>
+<p>它会把整个<code>feature</code>分支移动到<code>develop</code>分支的后面，有效地把所有<code>develop</code>分支上新的提交并入过来。但是，<code>git rebase</code>为原分支上每一个提交创建一个新的提交，重写了项目历史，并且不会带来合并提交。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git checkout feature</div><div class="line">git rebase master</div></pre></td></tr></table></figure>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-93bdffa37317c083.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><strong><code>git rebase</code>最大的特点就是让你的项目历史提交记录会非常整洁。</strong><br>首先，它不像<code>git merge</code>那样引入不必要的合并提交。其次，如上图所示，<code>git rebase</code>使项目历史提交记录呈现出一条直线。你可以从项目终点到起点浏览而不需要任何的分叉，可以让你更容易的使用<code>git log</code>查看项目的提交记录。</p>
+<p><strong><code>git rebase</code>缺点就是安全性和可跟踪性。</strong></p>
+<p><code>git rebase</code>的黄金法则：绝对不要在公共的分支上使用。如果你把<code>master</code>分支<code>rebase</code>到你的<code>feature</code>分支上：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-aa37afc6fe4ff411.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>这次<code>rebase</code>将<code>master</code>分支上的所有提交都移到了<code>feature</code>分支后面。<br>问题是它只发生在你的代码仓库中，而其他所有的开发者还在原来的<code>master</code>上工作。因为<code>rebase</code>引起了新的提交，所以<code>git</code>会认为你的<code>master</code>分支和其他人的<code>master</code>已经分叉了。</p>
+<p>同步两个<code>master</code>分支的唯一办法是把它们<code>merge</code>到一起，导致一个额外的合并提交和两堆包含同样更改的提交。</p>
+<p><strong><code>git rebase</code>不适用于公共的分支上。</strong></p>
+<p>总结：选择<code>git merge</code>还是<code>git rebase</code>？</p>
+<ul>
+<li><p><code>git merge</code>是一个合并操作，会采用三路合并的方式将两个分支的修改合并在一起，默认操作的情况下会提交合并中修改的内容，生成一个新的<code>commit</code>记录。</p>
+</li>
+<li><p><code>git rebase</code>并没有进行合并操作，只是提取了当前分支的修改，将其复制在了目标分支的最新提交后面，为原分支上每一个提交创建一个新的提交。</p>
+</li>
+<li><p><code>git merge</code>与<code>git rebase</code>都是非常强大的分支整合命令，没有优劣之分，使用哪一个应由项目和团队的开发需求决定。</p>
+</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;一般在公司git整合分支一般有两种方法——快速向前合并&lt;code&gt;git rebase&lt;/code&gt;和三路合并&lt;code&gt;git merge&lt;/code&gt;。其实在开发中，&lt;code&gt;git rebase&lt;/code&gt;和&lt;code&gt;git merge&lt;/code&gt;表达都是一个
     
     </summary>
     

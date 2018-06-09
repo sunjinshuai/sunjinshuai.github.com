@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> iOS之真机测试 · 孙金帅的技术博客</title><meta name="description" content="iOS之真机测试 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunjinshuai" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">iOS之真机测试</h1><div class="post-info">2015年4月19日</div><div class="post-content"><p>开发者在进行iOS开发的时候，不可避免要进行真机测试。如果想要进行真机调试，需要有一个开发者账号。</p>
+<ul>
+<li>个人的<code>99$</code>申请简单，付钱就行，688人民币;</li>
+<li>企业的<code>99$</code>申请复杂，需要<code>&quot;邓白氏&quot;</code>认证，可以确认企业是合法有效的，可以管理团队开发;</li>
+<li>商业的<code>299$</code>也需要邓白氏认证，开发的应用，不能够上架（不经过苹果的审核）！专门给企业级用户定制应用程序使用！</li>
+</ul>
+<h4 id="真机测试步骤"><a href="#真机测试步骤" class="headerlink" title="真机测试步骤"></a>真机测试步骤</h4><ul>
+<li>创建<code>App ID</code></li>
+<li>创建<code>CSR</code>证书</li>
+<li>创建<code>CER</code>开发者证书</li>
+<li>注册<code>Identifiers</code></li>
+<li>注册<code>Devices</code></li>
+<li>创建<code>Provisioning Profiles</code>文件</li>
+<li>设置<code>Xcode</code>然后真机调试</li>
+</ul>
+<h5 id="创建App-ID"><a href="#创建App-ID" class="headerlink" title="创建App ID"></a>创建<code>App ID</code></h5><p>打开苹果<a href="https://developer.apple.com/" target="_blank" rel="external">开发者官网</a>，点击<code>&quot;Account&quot;</code>登录会员中心。</p>
+<h5 id="创建证书"><a href="#创建证书" class="headerlink" title="创建证书"></a>创建证书</h5><p><img src="http://upload-images.jianshu.io/upload_images/588630-fa4c95b763f36c87.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>登录钥匙串访问–&gt;钥匙串访问–&gt;证书助理–&gt;从证书颁发机构请求证书，保存在本地。</p>
+<h5 id="创建CER开发者证书"><a href="#创建CER开发者证书" class="headerlink" title="创建CER开发者证书"></a>创建<code>CER</code>开发者证书</h5><p>登录开发者中心</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-e7daf11ce3d16623.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-fe5fb51044779bbf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>注意：</p>
+<ul>
+<li><code>Develpment</code>开发者测试的真机证书</li>
+<li><code>Production</code>商品化的证书，上架，发布</li>
+</ul>
+<p>创建开发者测试的真机证书(发布和上架证书)</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-1703d1e7278f30c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>点击<code>Continue</code></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-81d586e26d8f04fa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>点击<code>Continue</code></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-8327c7cc937c1c7a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>点击<code>choose File..</code>选择上传创建好的证书请求文件：<code>CertificateSigningRequest.certSigningRequest</code>文件，点击<code>Generate</code>。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-28241ce9dd6c1778.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>双击安装，如果安装不上，可以直接将证书文件拖拽到钥匙串访问的列表中。</p>
+<h5 id="注册Identifiers"><a href="#注册Identifiers" class="headerlink" title="注册Identifiers"></a>注册<code>Identifiers</code></h5><p>注册<code>Identifiers</code>，告诉苹果那一个应用程序需要调试。<br><img src="http://upload-images.jianshu.io/upload_images/588630-7b1b431cab21e0a0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>点击+<br><img src="http://upload-images.jianshu.io/upload_images/588630-5defc2dd21cb326a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>注意：<br><code>App ID Description</code>：<code>Identifiers</code>描述，用于区分其他的<code>Identifiers</code>。<br><code>Explicit App ID</code>：唯一的<code>Identifiers</code><br><code>Wildcard App ID</code>：通配<code>Identifiers</code>，多个应用程序可以使用。</p>
+<p>点击<code>Register</code></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-6b28e4a752c7f5da.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>点击<code>Done</code><br><img src="http://upload-images.jianshu.io/upload_images/588630-18b4829aff9f9be5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><code>Identifiers</code>注册成功<br><img src="http://upload-images.jianshu.io/upload_images/588630-36e9c6bde8603c68.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h5 id="注册Devices"><a href="#注册Devices" class="headerlink" title="注册Devices"></a>注册<code>Devices</code></h5><p>注册<code>Devices</code>，告诉苹果哪些真机能够调试开发。每个开发者，最多只能添加100台设备！</p>
+<p>但是苹果并没有提供删除设备ID的功能，仅仅是可以禁止(生成配置文件时不选择设备ID)某台设备调试。在一年有效期内，即便删除了设备，名额仍然会被占用！会在下一次交款后，被禁止的设备会自动清空。</p>
+<p>每一个设备的唯一标示符号，能够唯一准确的定位到一台设备，只能在真机测试添加设备时使用！如果在程序中获取唯一标示，将会导致无法上架。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-bbfcc16c8041eb45.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>填写测试机的名称和<code>UDID</code><br><img src="http://upload-images.jianshu.io/upload_images/588630-4abe0e48a94a869f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h5 id="创建Provisioning-Profiles文件"><a href="#创建Provisioning-Profiles文件" class="headerlink" title="创建Provisioning Profiles文件"></a>创建<code>Provisioning Profiles</code>文件</h5><p>创建<code>Provisioning Profiles</code>文件，用来描述那台电脑开发，能够开发哪个应用程序，在哪台真机上调试。</p>
+<p>创建开发者测试的真机<code>Provisioning Profiles</code>(发布和上架证书)</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-61c27630d56d6e4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>然后点击右上角 + 号<br><img src="http://upload-images.jianshu.io/upload_images/588630-a9d2ee3939e5abab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>注意：<br><code>iOS App Development</code>：真机测试的<code>Provisioning Profiles</code><br><code>App Store</code>：发布的<code>Provisioning Profiles</code><br><code>Ad Hoc</code>：打包的<code>Provisioning Profiles</code></p>
+<p>在<code>App ID</code>这个选项栏里面找到你刚刚注册的<code>Identifiers</code>，点击<code>Continue</code></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-0a9534133b222daf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>选择描述文件所对应的证书。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-172ae116cb2d95f8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>选择描述文件所对应的测试设备。<br><img src="http://upload-images.jianshu.io/upload_images/588630-5db4000dcabe5b9b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>为选择描述文件所对应的测试设备。<br><img src="http://upload-images.jianshu.io/upload_images/588630-b9da325eacf67e11.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>为选择描述文件命名。<br><img src="http://upload-images.jianshu.io/upload_images/588630-d80af1d4c788d1a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><code>Download</code>刚注册的<code>Provisioning Profiles</code>，然后点击Done，双击就添加到Xcode中。</p>
+<h5 id="设置Xcode然后真机调试"><a href="#设置Xcode然后真机调试" class="headerlink" title="设置Xcode然后真机调试"></a>设置<code>Xcode</code>然后真机调试</h5><p>打开<code>Xcode</code>选择相应的调试证书<br><img src="http://upload-images.jianshu.io/upload_images/588630-2fc3971a42871f7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>注意：<br>选择证书时，可以根据<code>release</code>和<code>debug</code>对应不同状态的证书。例如<code>release</code>对应发布证书，<code>debug</code>对应调试证书。</p>
+<p>在团队开发中，如果证书是其他人申请的，可以通过在钥匙串中导出.P12证书来进行真机测试。P12文件中，包含有创建证书时的私钥，和苹果签名的信息，可以给其他人使用“双击”安装；</p>
+<p>iOS之真机测试其实很简单，只要有开发者账号，进行傻瓜式安装就可以了。</p>
+</div></article></div></main><footer><div class="paginator"><a href="/2015/05/05/Object-C编码规范/" class="prev">上一篇</a><a href="/2015/04/05/HEXO搭建个人博客/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2015/04/19/iOS之真机测试/';
+var disqus_title = 'iOS之真机测试';
+var disqus_url = 'https://sunjinshuai.github.io/2015/04/19/iOS之真机测试/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2018 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

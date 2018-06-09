@@ -25,10 +25,10 @@
 <p><img src="http://upload-images.jianshu.io/upload_images/588630-dee057a3614a9d88.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>注意：<br>在一个多线程的程序中，发送方发送通知的线程通常就是监听者接受通知的线程，这可能和监听者注册时的线程不一样。</p>
 <h4 id="通知的原理："><a href="#通知的原理：" class="headerlink" title="通知的原理："></a>通知的原理：</h4><p>在发送通知的子线程处理通知的事件时，将 <code>NSNotification</code> 暂存，然后通过 <code>MachPort</code> 往相应线程的 <code>RunLoop</code> 中发送事件。相应的线程收到该事件后，取出在队列中暂存的 <code>NSNotification</code> , 然后在当前线程中调用处理通知的方法。<br><img src="http://upload-images.jianshu.io/upload_images/588630-7ddc2c7fab912f4d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-</div></article></div></main><footer><div class="paginator"><a href="/2016/11/17/iOS多线程之一：基本概念/" class="prev">上一篇</a><a href="/2016/10/16/探索通知的原理/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
-var disqus_identifier = '2016/10/17/通知中心-NSNotificationCenter-的实现原理/';
+</div></article></div></main><footer><div class="paginator"><a href="/2016/11/17/iOS多线程之一：基本概念/" class="prev">上一篇</a><a href="/2016/10/06/AutoreleasePool的实现原理/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2016/10/17/探索通知的原理/';
 var disqus_title = '探索通知的原理';
-var disqus_url = 'https://sunjinshuai.github.io/2016/10/17/通知中心-NSNotificationCenter-的实现原理/';
+var disqus_url = 'https://sunjinshuai.github.io/2016/10/17/探索通知的原理/';
 (function() {
     var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
     dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';

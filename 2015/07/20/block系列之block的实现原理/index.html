@@ -42,7 +42,7 @@
 <p>此时，<code>__main_block_desc_0</code>多了两个成员函数：<code>copy</code>和<code>dispose</code>，分别指向<code>__main_block_copy_0</code>和<code>__main_block_dispose_0</code>。</p>
 <p>当<code>block</code>从栈上被<code>copy</code>到堆上时，会调用<code>__main_block_copy_0</code>将<code>__block</code>类型的成员变量i从栈上复制到堆上；而当<code>block</code>被释放时，相应地会调用<code>__main_block_dispose_0</code>来释放<code>__block</code>类型的成员变量i。如果栈上和堆上同时对该变量进行操作，<code>__forwarding</code>的作用就体现出来了，当一个<code>__block</code>变量从栈上被复制到堆上时，栈上的那个<code>__Block_byref_i_0</code>结构体中的<code>__forwarding</code>指针也会指向堆上的结构。</p>
 <h4 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h4><p><a href="http://blog.csdn.net/jasonblog/article/details/7756763" target="_blank" rel="external">iOS中block实现的探究</a></p>
-</div></article></div></main><footer><div class="paginator"><a href="/2015/08/07/探索通知的原理/" class="prev">上一篇</a><a href="/2015/07/17/block系列之block的存储域/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+</div></article></div></main><footer><div class="paginator"><a href="/2015/10/05/iOS学习笔记-第1期-2015-10-05/" class="prev">上一篇</a><a href="/2015/07/17/block系列之block的存储域/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
 var disqus_identifier = '2015/07/20/block系列之block的实现原理/';
 var disqus_title = 'block系列之block的实现原理';
 var disqus_url = 'https://sunjinshuai.github.io/2015/07/20/block系列之block的实现原理/';

@@ -301,12 +301,12 @@
   
   <entry>
     <title>iOS AutoLayout 中 Label 的抗拉伸和抗压缩</title>
-    <link href="https://sunjinshuai.github.io/2017/07/18/iOS-AutoLayout-%E4%B8%AD-Label-%E7%9A%84%E6%8A%97%E6%8B%89%E4%BC%B8%E5%92%8C%E6%8A%97%E5%8E%8B%E7%BC%A9/"/>
-    <id>https://sunjinshuai.github.io/2017/07/18/iOS-AutoLayout-中-Label-的抗拉伸和抗压缩/</id>
+    <link href="https://sunjinshuai.github.io/2017/07/18/%E6%B5%85%E8%B0%88%20iOS%20AutoLayout%20%E4%B8%AD%20Label%20%E7%9A%84%E6%8A%97%E6%8B%89%E4%BC%B8%E5%92%8C%E6%8A%97%E5%8E%8B%E7%BC%A9/"/>
+    <id>https://sunjinshuai.github.io/2017/07/18/浅谈 iOS AutoLayout 中 Label 的抗拉伸和抗压缩/</id>
     <published>2017-07-17T16:42:23.000Z</published>
-    <updated>2017-12-18T14:43:09.406Z</updated>
+    <updated>2018-06-09T07:14:13.603Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="iOS-AutoLayout中Label的”抗拉伸”和”抗压缩”"><a href="#iOS-AutoLayout中Label的”抗拉伸”和”抗压缩”" class="headerlink" title="iOS AutoLayout中Label的”抗拉伸”和”抗压缩”"></a>iOS AutoLayout中Label的”抗拉伸”和”抗压缩”</h1><h4 id="关键词-intrinsic-content-size"><a href="#关键词-intrinsic-content-size" class="headerlink" title="关键词 intrinsic content size"></a>关键词 <code>intrinsic content size</code></h4><p>有些控件能通过自己显示的内容计算出需要的 <code>size</code>，这个自动计算出来 <code>size</code> 就是该控件的固有内容大小。这个大小是和需要显示的内容相关的。<code>UIButton</code>、<code>UILabel</code> 就是具有固有内容大小属性的控件。<code>UIButton</code> 可以根据它的 <code>title</code> 字符串长度和需要显示的 <code>image</code> 来计算需要的 <code>size</code>，<code>UILabel</code> 可以根据它的 <code>text</code> 来计算。</p>
+    <content type="html"><![CDATA[<h4 id="关键词-intrinsic-content-size"><a href="#关键词-intrinsic-content-size" class="headerlink" title="关键词 intrinsic content size"></a>关键词 <code>intrinsic content size</code></h4><p>有些控件能通过自己显示的内容计算出需要的 <code>size</code>，这个自动计算出来 <code>size</code> 就是该控件的固有内容大小。这个大小是和需要显示的内容相关的。<code>UIButton</code>、<code>UILabel</code> 就是具有固有内容大小属性的控件。<code>UIButton</code> 可以根据它的 <code>title</code> 字符串长度和需要显示的 <code>image</code> 来计算需要的 <code>size</code>，<code>UILabel</code> 可以根据它的 <code>text</code> 来计算。</p>
 <p>以 <code>UILable</code> 为例子：<br>在默认情况下，我们没有设置各个布局的优先级，那么他就会优先显示左边的 <code>label</code>，左边的完全显示后剩余的空间都是右边的 <code>label</code>，如果整个空间宽度都不够左边的 <code>label</code> 的话，那么右边的 <code>label</code> 没有显示的机会了。<br>如果我们现在的需求是优先显示右边的 <code>label</code>，左边的 <code>label</code> 内容超出的省略，这时就需要我们调整约束的优先级了。</p>
 <p>原理：</p>
 <ul>
@@ -321,7 +321,7 @@
     
     <summary type="html">
     
-      &lt;h1 id=&quot;iOS-AutoLayout中Label的”抗拉伸”和”抗压缩”&quot;&gt;&lt;a href=&quot;#iOS-AutoLayout中Label的”抗拉伸”和”抗压缩”&quot; class=&quot;headerlink&quot; title=&quot;iOS AutoLayout中Label的”抗拉伸”和”
+      &lt;h4 id=&quot;关键词-intrinsic-content-size&quot;&gt;&lt;a href=&quot;#关键词-intrinsic-content-size&quot; class=&quot;headerlink&quot; title=&quot;关键词 intrinsic content size&quot;&gt;&lt;/a&gt;关键词 &lt;cod
     
     </summary>
     
@@ -329,13 +329,13 @@
   </entry>
   
   <entry>
-    <title>探索 UIScrollView 的原理</title>
-    <link href="https://sunjinshuai.github.io/2017/06/15/%E6%8E%A2%E7%B4%A2-UIScrollView-%E7%9A%84%E5%8E%9F%E7%90%86/"/>
-    <id>https://sunjinshuai.github.io/2017/06/15/探索-UIScrollView-的原理/</id>
+    <title>如何手动实现一个 UIScrollView</title>
+    <link href="https://sunjinshuai.github.io/2017/06/15/%E5%A6%82%E4%BD%95%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%20UIScrollView/"/>
+    <id>https://sunjinshuai.github.io/2017/06/15/如何手动实现一个 UIScrollView/</id>
     <published>2017-06-15T01:43:29.000Z</published>
-    <updated>2017-12-18T14:44:11.752Z</updated>
+    <updated>2018-06-09T07:15:55.139Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="UIScrollView的原理"><a href="#UIScrollView的原理" class="headerlink" title="UIScrollView的原理"></a>UIScrollView的原理</h1><p><code>UIKit</code> 坐标系每一个 <code>View</code> 都定义了他自己的坐标系，如下图所示，<code>x</code> 轴指向右方，<code>y</code> 轴指向下方：</p>
+    <content type="html"><![CDATA[<p><code>UIKit</code> 坐标系每一个 <code>View</code> 都定义了他自己的坐标系，如下图所示，<code>x</code> 轴指向右方，<code>y</code> 轴指向下方：</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/588630-b4be73e8ede40f16.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>注意：<br>这个逻辑坐标系并不关注包含在其中 <code>View</code> 的宽度和高度，整个坐标系没有边界向四周无限延伸。<br>我们在坐标系中放置四个子 <code>View</code>，每一次色块代表一个 <code>View</code>：</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/588630-173b57f84345e191.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
@@ -367,7 +367,8 @@
     
     <summary type="html">
     
-      &lt;h1 id=&quot;UIScrollView的原理&quot;&gt;&lt;a href=&quot;#UIScrollView的原理&quot; class=&quot;headerlink&quot; title=&quot;UIScrollView的原理&quot;&gt;&lt;/a&gt;UIScrollView的原理&lt;/h1&gt;&lt;p&gt;&lt;code&gt;UIKit&lt;/code&gt;
+      &lt;p&gt;&lt;code&gt;UIKit&lt;/code&gt; 坐标系每一个 &lt;code&gt;View&lt;/code&gt; 都定义了他自己的坐标系，如下图所示，&lt;code&gt;x&lt;/code&gt; 轴指向右方，&lt;code&gt;y&lt;/code&gt; 轴指向下方：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://upload-i
     
     </summary>
     

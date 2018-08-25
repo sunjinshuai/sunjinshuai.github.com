@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://sunjinshuai.github.io/"/>
-  <updated>2018-08-25T02:51:53.750Z</updated>
+  <updated>2018-08-25T03:01:40.950Z</updated>
   <id>https://sunjinshuai.github.io/</id>
   
   <author>
@@ -14,6 +14,40 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Flutter 环境搭建</title>
+    <link href="https://sunjinshuai.github.io/2018/07/29/Flutter-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
+    <id>https://sunjinshuai.github.io/2018/07/29/Flutter-环境搭建/</id>
+    <published>2018-07-29T06:44:33.000Z</published>
+    <updated>2018-08-25T03:01:40.950Z</updated>
+    
+    <content type="html"><![CDATA[<p>一、获取Flutter SDK</p>
+<p>要获得 <code>Flutter</code>，请先使用 <code>git</code> 克隆 <code>Flutter</code>，然后将该 <code>flutter</code> 工具添加到您的用户路径。运行 <code>flutter doctor</code> 显示您可能需要安装的剩余依赖项。</p>
+<p>由于国内被墙，需要设置下载镜像：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">export PUB_HOSTED_URL=https://pub.flutter-io.cn //国内用户需要设置</div><div class="line">export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn //国内用户需要设置</div></pre></td></tr></table></figure></p>
+<p>Clone Flutter repo</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone -b beta https://github.com/flutter/flutter.git</div></pre></td></tr></table></figure>
+<p>二、配置环境变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">vim ~/.bash_profile</div><div class="line">export PATH=`pwd`/flutter/bin:$PATH</div><div class="line">(或者)</div><div class="line"># export FLUTTER_HOME=/Users/sunjinshuai/flutter</div><div class="line"># export PATH=$PATH:$FLUTTER_HOME/bin:</div><div class="line">source ~/.bash_profile</div></pre></td></tr></table></figure>
+<p>三、运行 flutter doctor</p>
+<p>查看是否需要安装其它依赖项来完成安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">flutter doctor</div></pre></td></tr></table></figure>
+<p>该命令检查您的环境并在终端窗口中显示报告，仔细检查命令行输出以获取可能需要安装的其他软件或进一步需要执行的任务，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">Doctor summary (to see all details, run flutter doctor -v):</div><div class="line">[✓] Flutter (Channel beta, v0.5.1, on Mac OS X 10.13.6 17G65, locale zh-Hans-CN)</div><div class="line">[✗] Android toolchain - develop for Android devices</div><div class="line">✗ Unable to locate Android SDK.</div><div class="line">Install Android Studio from: https://developer.android.com/studio/index.html</div><div class="line">On first launch it will assist you in installing the Android SDK components.</div><div class="line">(or visit https://flutter.io/setup/#android-setup for detailed instructions).</div><div class="line">If Android SDK has been installed to a custom location, set $ANDROID_HOME to that location.</div><div class="line">[✓] iOS toolchain - develop for iOS devices (Xcode 9.2)</div><div class="line">[✓] Android Studio (version 3.1)</div><div class="line">✗ Flutter plugin not installed; this adds Flutter specific functionality.</div><div class="line">✗ Dart plugin not installed; this adds Dart specific functionality.</div><div class="line">[!] VS Code (version 1.25.1)</div><div class="line">[✓] Connected devices (2 available)</div></pre></td></tr></table></figure>
+<p>解决方法：</p>
+<p>在 <a href="https://github.com/flutter/flutter/issues/13078" target="_blank" rel="external">https://github.com/flutter/flutter/issues/13078</a> 找到了解决方法，其实就是在 <code>bash_profile</code> 添加安卓SDK的环境变量即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">flutter doctor</div><div class="line"></div><div class="line">Doctor summary (to see all details, run flutter doctor -v):</div><div class="line">[✓] Flutter (Channel beta, v0.5.1, on Mac OS X 10.13.6 17G65, locale zh-Hans-CN)</div><div class="line">[!] Android toolchain - develop for Android devices (Android SDK 28.0.1)</div><div class="line">✗ Android licenses not accepted.  To resolve this, run: flutter doctor --android-licenses</div><div class="line">[✓] iOS toolchain - develop for iOS devices (Xcode 9.2)</div><div class="line">[✓] Android Studio (version 3.1)</div><div class="line">✗ Flutter plugin not installed; this adds Flutter specific functionality.</div><div class="line">✗ Dart plugin not installed; this adds Dart specific functionality.</div><div class="line">[!] VS Code (version 1.25.1)</div><div class="line">[✓] Connected devices (2 available)</div><div class="line"></div><div class="line">! Doctor found issues in 2 categories.</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;一、获取Flutter SDK&lt;/p&gt;
+&lt;p&gt;要获得 &lt;code&gt;Flutter&lt;/code&gt;，请先使用 &lt;code&gt;git&lt;/code&gt; 克隆 &lt;code&gt;Flutter&lt;/code&gt;，然后将该 &lt;code&gt;flutter&lt;/code&gt; 工具添加到您的用户路径。运行 &lt;c
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>谈谈 Autolayout</title>
@@ -1165,144 +1199,6 @@
 &lt;li&gt;文本计算的坑&lt;/li&gt;
 &lt;li&gt;UITableview的headerView和footerView高度的设置&lt;/li&gt;
 &lt;li&gt;UIW
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>iOS如何使用TestFlight进行App-Beta版测试</title>
-    <link href="https://sunjinshuai.github.io/2016/07/25/iOS%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8TestFlight%E8%BF%9B%E8%A1%8CApp-Beta%E7%89%88%E6%B5%8B%E8%AF%95/"/>
-    <id>https://sunjinshuai.github.io/2016/07/25/iOS如何使用TestFlight进行App-Beta版测试/</id>
-    <published>2016-07-25T14:26:18.000Z</published>
-    <updated>2018-06-09T07:10:23.913Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote>
-<p>在2014WWDC中库克用了20秒的时间，简短的3句话，介绍了测试版本的TestFlight服务。TestFlight用于将Beta版测试，TestFlight已经被苹果收购，所以不要担心存在第三方测试造成数据泄露问题。TestFlight需要iOS8及以上版本的iOS设备才能运行，所以iOS7及之前的设备就不能安装了。TestFlight整合进了iTunes Connect，开发者可以通过电子邮件来邀请测试员来进行测试，这样开发者就可以更简单地让你的同行非同行、你的上级、你的客户、你所想要一起参与测试的人一起来测试应用。</p>
-</blockquote>
-<p>TestFlight的测试方式分为两种：</p>
-<ul>
-<li>一种是内部测试；</li>
-<li>一种是外部测试。</li>
-</ul>
-<p>从功能上讲，这两种方式都可以为测试人员在测试阶段对你的App进行测试。但是既然分了内部测试和外部测试，他们肯定还是有区别的，所谓的内部主要是指iTunes Connect上在你的开发团队里参与技术开发或者管理的成员。最多可以邀请25个内部成员，而与之相对的外部测试，指的是那些不属于你的团队或者公司的测试者，外部测试人员的上限是2000人。这里有一点需要注意的是，在你邀请外部成员参与测试之前，需要先通过苹果的审核，一般审核会在一天左右。而这一限制在内部成员上就没有，也就是说只要你把你的App上传到iTunes Connect上之后内部成员就可以开始进行内部测试了，无需审核。在邀请发出后，有效测试时间为60天。</p>
-<p>注意：</p>
-<ul>
-<li>现在公司也有使用比较老的测试方法，就是需要提供参与app测试人员的设备UDID，并且开发者需要将这些设备的UDID添加到开发者中心，每次有新的测试人员加入，需要重新生成profiles，重新打包，最可恶的是，只能添加100台设备的限制，总体来说，比较笨拙。</li>
-<li>使用TestFlight测试的好处，只需要参与app测试人员提供一个邮箱，开发者登录iTunes Connect，给测试者发送邀请，测试者接受邀请，然后通过TestFlight，下载安装程序。不需要用户提供设备的UDID，最重要的一点是没有了100台设备的限制，一般内部测试人员最多25个人，外部测试人员最多2000个人，重点是<strong>不需要重新配置证书了，也不需要手动发送ipa包, 直接上传到iTunes即可。</strong></li>
-<li>然而，也有其他公司在使用<strong>蒲公英</strong>等其他参与测试。</li>
-</ul>
-<p>接下来介绍一下TestFlight如何使用：</p>
-<p>一、开发者需要做的事情</p>
-<p>1、进入网址：<a href="https://itunesconnect.apple.com/" target="_blank" rel="external">https://itunesconnect.apple.com</a> 输入账号密码登录iTunes Connect。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c88eda738f1?w=1240&amp;h=757&amp;f=png&amp;s=264305" alt="Paste_Image.png"></p>
-<p>2、成功登录iTunes Connect，点击我的App，进入App列表页</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c88f2b36fba?w=1240&amp;h=757&amp;f=png&amp;s=114351" alt="Paste_Image.png"></p>
-<p>注意：</p>
-<p>如果是初次创建的 App，需要创建一个 iTunes Connect Record。如果你的 App 已经创建好了，可以直接跳过这段，如果你要新建一个 App 的话，可以按照下面的步骤来做：</p>
-<ul>
-<li>登录 <a href="https://itunesconnect.apple.com/" target="_blank" rel="external">iTunes Connect</a> 。</li>
-<li>在 iTunes Connect 的首页，点击‘My Apps’图标。</li>
-<li>开发者第一次进到这里的时候，这里是个空白页。点击左上角的‘+’号按钮，创建一个新的 App 。在你创建了 App 之后，这里会显示你创建的 App 列表。</li>
-</ul>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c88ed2f9690?w=1240&amp;h=407&amp;f=png&amp;s=25733" alt="Paste_Image.png"></p>
-<ul>
-<li><p>选择‘New App’。如果你只是 iOS 平台的开发者，这里不会出现其它的选项（如‘New Mac App’）。<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c891c1662b4?w=574&amp;h=287&amp;f=png&amp;s=17998" alt="Paste_Image.png"></p>
-</li>
-<li><p>填写好如下弹窗内的信息，点击‘Create’按钮完成创建。<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c891bd44df4?w=460&amp;h=525&amp;f=png&amp;s=25214" alt="Paste_Image.png"></p>
-</li>
-<li><p>对于一些必填信息，如果未填写的话，Apple 会在对话框内给出如下提示：<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89215e27c8?w=453&amp;h=525&amp;f=png&amp;s=24156" alt="Paste_Image.png"></p>
-</li>
-<li><p>提交App到iTunes connect。<br>在 Xcode 中配置好版本和证书信息。<br>选中菜单‘Product-&gt;Archive’将当前代码归档，归档完成后会弹出‘Organizer-Archives’对话框。<br>选择‘Validate’按钮来检测该归档文件是否符合要求。<br>验证通过之后，你可以选择‘Submit’来提交这个归档。</p>
-</li>
-</ul>
-<p>3、每当你提交一个新的build之后，在 iTunes Connect的列表中都会对应的增加一个build。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c894b1da7a1?w=246&amp;h=273&amp;f=png&amp;s=15536" alt="Paste_Image.png"></p>
-<p>选择TestFlight，在TestFlight中填写基本信息接收反馈的邮箱地址，隐私政策网址等。<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c894b29a88b?w=1240&amp;h=671&amp;f=png&amp;s=87261" alt="Paste_Image.png"></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c894c64b874?w=1240&amp;h=674&amp;f=png&amp;s=92273" alt="Paste_Image.png"></p>
-<p>Internal Testing：内部测试<br>External Testing：外部测试</p>
-<p>4、邀请测试人员</p>
-<ul>
-<li>内部测试：<br>点击Internal Testers，添加测试人员（一般内部测试人员最多25个人）<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8971b0d4c9?w=1240&amp;h=637&amp;f=png&amp;s=82502" alt="Paste_Image.png"></li>
-</ul>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8972dd4153?w=719&amp;h=678&amp;f=png&amp;s=33222" alt="Paste_Image.png"></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8972e9478b?w=1240&amp;h=591&amp;f=png&amp;s=66166" alt="Paste_Image.png"></p>
-<p>点击Select Version to Test，添加测试版本</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c898b870435?w=1240&amp;h=632&amp;f=png&amp;s=75184" alt="Paste_Image.png"></p>
-<p>选中一个版本，点击OK<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c899566352a?w=646&amp;h=455&amp;f=png&amp;s=42621" alt="Paste_Image.png"></p>
-<p>点击save<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c899748f843?w=1240&amp;h=633&amp;f=png&amp;s=93969" alt="Paste_Image.png"></p>
-<p>点击Start Testing，之后会收到两封邮件，一封是邀请你加入测试组的邮件，点击同意即可，另一封是成功加入测试组的通知，点击start testing然后跳转到有加粗黑色字体的8个字母测试码的页面，下载TestFlight，然后点击Redeem，输入这8个字母即可下载测试app。<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8995757da3?w=499&amp;h=173&amp;f=png&amp;s=17226" alt="Paste_Image.png"></p>
-<p>点击Start Testing<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89b3ff16b3?w=888&amp;h=782&amp;f=png&amp;s=220304" alt="Paste_Image.png"></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89c042e467?w=872&amp;h=568&amp;f=png&amp;s=85650" alt="Paste_Image.png"></p>
-<ul>
-<li>邀请外部测试人员</li>
-</ul>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89c2650bfd?w=1240&amp;h=466&amp;f=png&amp;s=64747" alt="Paste_Image.png"></p>
-<p>点击External Testers，选择添加新测试员，或者使用CSV批量导入邀请外部测试人员。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89c1704a5b?w=1178&amp;h=379&amp;f=png&amp;s=27869" alt="Paste_Image.png"></p>
-<p>输入电子邮件，名称和姓氏可不填，点击添加。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89e862f103?w=801&amp;h=677&amp;f=png&amp;s=35961" alt="Paste_Image.png"></p>
-<p>点击Add Build to Test，添加测试版本<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89e871b440?w=1175&amp;h=318&amp;f=png&amp;s=19991" alt="Paste_Image.png"></p>
-<p>点击Next，进入下一步</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89e92be8c6?w=644&amp;h=460&amp;f=png&amp;s=28775" alt="Paste_Image.png"></p>
-<p>填写测试版本的一些信息，点击Next，进入下一步</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89f54a138b?w=645&amp;h=458&amp;f=png&amp;s=24711" alt="Paste_Image.png"></p>
-<p>填写联系人信息，和 Beta App Review审核的测试账号，点击Next，进入下一步</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a13a35fa6?w=646&amp;h=456&amp;f=png&amp;s=26579" alt="Paste_Image.png"></p>
-<p>填写审核信息，然后点击submit，提交 Beta 审核，目前来看，Beta 审核还是比较快速的，有时候一个工作日就可以通过审核。可能是现在使用 TestFlight 功能的 App 还不太多吧；不知道等 TestFlight 普及之后，随着参与 Beta Review 的 App 越来越多，Beta 审核还能不能一直这么快。<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a0e40939b?w=649&amp;h=453&amp;f=png&amp;s=12644" alt="Paste_Image.png"></p>
-<p>注意：</p>
-<p>还需要一提的是，外部测试人员想要参与测试的话，必须要 App 已经通过了 Beta App Review 才行。审核通过，点击Invite邀请按钮，测试者会收到来自TestFlight Beta Testing的邀请邮件。</p>
-<p>二、开发者需要做的事情</p>
-<p>1、在AppStore上面搜索“TestFlight”</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a1994efa3?w=750&amp;h=1334&amp;f=png&amp;s=347471" alt="41B2276FCDA83285299E76566F7CC7A7.png"></p>
-<p>2、下载TestFlight</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a1c3739b7?w=750&amp;h=1334&amp;f=png&amp;s=345333" alt="F258A6014C8A0B15D16866DDF08EDE25.png"></p>
-<p>3、打开TestFlight进行使用</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a3d2950db?w=640&amp;h=1136&amp;f=jpeg&amp;s=49391" alt="%PIDKXC5O`C%1857`2ZK6W2.jpg"></p>
-<p>注意：</p>
-<ul>
-<li>应用提示是否允许“推送通知”，一般是允许的，提醒测试新版本；</li>
-<li>这时候TestFlight内是没什么内容可看的；</li>
-<li>等待开发者邀请测试。（注意查看关联Apple ID邮箱的邮件，2封邮件）</li>
-</ul>
-<p>4、接受邀请iTunes Connect</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a49954acc?w=893&amp;h=418&amp;f=png&amp;s=80338" alt="Paste_Image.png"></p>
-<p>注意：</p>
-<ul>
-<li>打开邮箱邮件（电脑和手机操作都可以）；</li>
-<li>点击邮件详情里面的“activate your access”，跳转到iTunes Connect登录页；</li>
-<li>登录Apple ID账户，按提示勾选同意协议接受邀请。</li>
-<li>这是第一封邮件，只有邀请加入开发者用户才会收到。只需要接受一次即可。</li>
-</ul>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a45e28243?w=194&amp;h=344&amp;f=png&amp;s=26581" alt="Paste_Image.png"></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a6ec014af?w=195&amp;h=343&amp;f=png&amp;s=31211" alt="Paste_Image.png"></p>
-<p>5、接受TestFlight测试邀请</p>
-<ul>
-<li>打开邮箱邮件（电脑和手机操作都可以，推荐手机操作。）；</li>
-<li>点击邮件详情里面的“Start Testing”；</li>
-<li>打开“TestFlight”（手机操作第2步会自动打开TestFlight）；</li>
-<li>在TestFlight显示App信息，可以接收测试邀请“Accept”。<br>ps：这是第二封邮件，只有邀请加入应用测试的才会收到。只需要接受一次即可。</li>
-</ul>
-<p>电脑操作要有这3步：</p>
-<ul>
-<li>Get TestFlight from the App Store<br>（翻译：到App Store下载TestFlight）</li>
-<li>Open TestFlight and choose Redeem<br>（翻译：打开TestFlight选择Redeem）</li>
-<li>Enter xxxxxx and start testing<br>（翻译：输入验证码，然后开始测试）<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a7694eaa0?w=750&amp;h=1334&amp;f=png&amp;s=192092" alt="7A7E0DE90230E930E93080D40EE3C3A3.png"></li>
-</ul>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a9263322e?w=750&amp;h=1334&amp;f=png&amp;s=126885" alt="56CDFF1CE801FA37ECF0948087D22CED.png"></p>
-<p>6、打开TestFlight，输入验证码，Install应用。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a949d7cf5?w=639&amp;h=1136&amp;f=png&amp;s=95657" alt="A278F5C094C8A1884412D4F2A6434144.png"></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a9cf4f731?w=639&amp;h=1136&amp;f=png&amp;s=103183" alt="35585F326706916C0C05E3680BBEBCC6.png"></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a9bbd3a07?w=639&amp;h=1136&amp;f=png&amp;s=158838" alt="B512850F08A6D399EE6E3DE7F5CF0F8E.png"></p>
-<p>注意：</p>
-<p>安装完应用，会发现右侧有一个橘红色的点点。<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8ab27e8045?w=192&amp;h=345&amp;f=png&amp;s=116152" alt="Paste_Image.png"></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;在2014WWDC中库克用了20秒的时间，简短的3句话，介绍了测试版本的TestFlight服务。TestFlight用于将Beta版测试，TestFlight已经被苹果收购，所以不要担心存在第三方测试造成数据泄露问题。TestFlight需要iO
     
     </summary>
     

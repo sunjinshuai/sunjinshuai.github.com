@@ -18,26 +18,27 @@
 <p>剩下的就是去代码中找到这个视图，然后修改其约束了。</p>
 <h4 id="AutoLayout-关于-update-的几个方法"><a href="#AutoLayout-关于-update-的几个方法" class="headerlink" title="AutoLayout 关于 update 的几个方法"></a>AutoLayout 关于 update 的几个方法</h4><p>UIView 是我们经常使用的一个基本控件，其中有几个基本的布局方法需要清楚。</p>
 <ul>
-<li><p><code>layoutSubViews：</code><br>添加子视图常重写这个方法，这个方法是用来重新布局子视图的，常用于对子视图布局，或者在其他方法中调用以达到重新布局的作用。</p>
-</li>
-<li><p><code>setNeedsLayout</code><br>告知页面需要更新，但是不会立刻开始更新，执行后会立刻调用<code>layoutSubviews</code>。</p>
-</li>
-<li><p><code>layoutIfNeeded</code><br>告知页面布局立刻更新，所以一般都会和<code>setNeedsLayout</code>一起使用。如果希望立刻生成新的<code>frame</code>需要调用此方法，利用这点一般布局动画可以在更新布局后直接使用这个方法让动画生效。</p>
-</li>
-<li><p><code>setNeedsUpdateConstraints</code><br>告知需要更新约束，但是不会立刻开始</p>
-</li>
-<li><p><code>updateConstraintsIfNeeded</code><br>告知立刻更新约束</p>
-</li>
-<li><p><code>updateConstraints</code><br>系统更新约束</p>
-</li>
+<li>layoutSubViews：</li>
 </ul>
-<h4 id="触发layoutSubviews的时机"><a href="#触发layoutSubviews的时机" class="headerlink" title="触发layoutSubviews的时机"></a>触发<code>layoutSubviews</code>的时机</h4><ul>
-<li><code>init</code>方法初始化不会触发<code>layoutSubviews</code>，但是是用<code>initWithFrame</code> 进行初始化时，当<code>rect</code>的值不为<code>CGRectZero</code>时，会触发。</li>
-<li><code>addSubview</code>方法会触发<code>layoutSubviews</code>。</li>
-<li>设置<code>view</code>的<code>Frame</code>会触发<code>layoutSubviews</code>，前提是<code>frame</code>的值设置前后发生了变化。</li>
-<li>滚动一个<code>UIScrollView</code>会触发<code>layoutSubviews</code>。</li>
-<li>旋转<code>Screen</code>会触发父<code>UIView</code>上的<code>layoutSubviews</code>。</li>
-<li>改变一个<code>UIView</code>大小的时候也会触发父<code>UIView</code>上的<code>layoutSubviews</code>。</li>
+<p>当 <code>View</code> 及其所有子视图的 <code>frame</code> 发生改变的时候，会调用 <code>layoutSubviews</code>，所以在需要更新 frame 来重新定位或更改大小时重载它。这个方法很开销很大，因为它会在每个子视图上起作用并且调用它们相应的 <code>layoutSubviews</code> 方法。注意：<strong>最好不要在代码中手动调用 <code>layoutSubviews</code> 方法</strong>。当 <code>layoutSubviews</code> 完成后，在 <code>view</code> 的所有者 <code>view controller</code> 上，会触发  <code>viewDidLayoutSubviews</code> 调用。因为 <code>viewDidLayoutSubviews</code> 是 <code>view</code> 布局更新后会被唯一可靠调用的方法，所以你应该把所有依赖于布局或者大小的代码放在 <code>viewDidLayoutSubviews</code> 中，而不是放在 <code>viewDidLoad</code> 或者 <code>viewDidAppear</code> 中。</p>
+<p>触发 <code>layoutSubviews</code> 的时机：</p>
+<ul>
+<li><code>addSubview</code> 方法会触发 <code>layoutSubviews</code>。</li>
+<li>当 <code>view</code> 的 <code>Frame</code> 发生变化也会触发<code>layoutSubviews</code>。</li>
+<li>滚动一个 <code>UIScrollView</code> 会触发 <code>layoutSubviews</code>。</li>
+<li>旋转屏幕会触发父 <code>View</code> 上的 <code>layoutSubviews</code>。</li>
+<li><p>改变一个 <code>View</code> 大小的时候也会触发父 <code>View</code> 上的 <code>layoutSubviews</code>。</p>
+</li>
+<li><p>setNeedsLayout<br>触发 <code>layoutSubviews</code> 调用的最省资源的方法就是在你的视图上调用 <code>setNeedsLaylout</code> 方法，表示视图的布局需要重新计算。告知页面需要更新，但是不会立刻开始更新视图，视图会在下一个 <code>runloop</code> 中更新，调用 <code>setNeedsLaylout</code> 方法视图被重新绘制并布局之间会有一段任意时间的间隔。</p>
+</li>
+<li><p>layoutIfNeeded<br>调用 <code>layoutIfNeeded</code> 会触发 <code>layoutSubviews</code>，告知页面布局立刻更新，所以一般都会和 <code>setNeedsLayout</code> 一起使用。如果希望立刻生成新的 <code>frame</code> 需要调用此方法，利用这点一般布局动画可以在更新布局后直接使用这个方法让动画生效。</p>
+</li>
+<li><p>setNeedsUpdateConstraints<br>告知需要更新约束，但是不会立刻开始，在下一次 <code>runloop</code> 中更新约束，通过标记 <code>update constraints</code> 来触发 <code>updateConstraints</code>。</p>
+</li>
+<li><p>updateConstraintsIfNeeded<br>告知立刻更新约束，这个方法与 <code>layoutIfNeeded</code> 等价。它会检查 <code>update constraints</code> 标记。如果认为这些约束需要被更新，它会立即触发 <code>updateConstraints</code>，而不会等到 <code>run loop</code> 的末尾。</p>
+</li>
+<li><p>updateConstraints<br>系统更新约束，注意：<strong>最好不要在代码中手动调用 <code>updateConstraints</code> 方法</strong>。通常在 <code>updateConstraints</code> 方法中实现必须要更新的约束，在设置或者解除约束、更改约束的优先级或者常量值，或者从视图层级中移除一个视图时都会设置一个内部的标记 <code>update constarints</code>，这个标记会在下一个更新周期中触发调用 <code>updateConstrains</code>。</p>
+</li>
 </ul>
 <p><strong>注意：layoutSubViews 在 drawRect 之前调用。</strong></p>
 <h4 id="AutoLayout-与-Frame"><a href="#AutoLayout-与-Frame" class="headerlink" title="AutoLayout 与 Frame"></a>AutoLayout 与 Frame</h4><p>在使用 AutoLayout 的时候可能也会同时也会用到 frame，比如需要用到 layer 的时候，想让 layer 的尺寸是由其它视图尺寸设定的，而这个视图又是由约束控制布局的，如果将 layer 的初始化与 view 的初始化放在一个方法中；<br>比如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">layer.bounds = CGRectMake(0,0,view.bounds.size.widith * 0.5,50)</div></pre></td></tr></table></figure></p>

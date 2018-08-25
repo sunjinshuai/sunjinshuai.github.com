@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://sunjinshuai.github.io/"/>
-  <updated>2018-08-25T02:51:53.750Z</updated>
+  <updated>2018-08-25T03:10:44.342Z</updated>
   <id>https://sunjinshuai.github.io/</id>
   
   <author>
@@ -14,6 +14,57 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>手动实现 KVO</title>
+    <link href="https://sunjinshuai.github.io/2018/08/25/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0-KVO/"/>
+    <id>https://sunjinshuai.github.io/2018/08/25/手动实现-KVO/</id>
+    <published>2018-08-25T03:10:20.000Z</published>
+    <updated>2018-08-25T03:10:44.342Z</updated>
+    
+    <content type="html"><![CDATA[<p><code>KVO</code> 全称 <code>KeyValueObserving</code> 是 <code>Objective-C</code> 对观察者模式<code>(Observer Pattern)</code>的实现；<code>KVO</code> 提供一种机制，指定一个被观察对象，当被观察对象的某个属性发生更改时，监听对象会获得通知，并作出相应处理；</p>
+<p>在 <code>MVC</code> 设计架构下的项目，<code>KVO</code> 机制很适合实现 <code>Mode</code> 模型和 <code>View</code> 视图之间的通讯。</p>
+<p><code>KVO</code> 和通知都是 <code>iOS</code> 中观察者模式的一种实现；<br>区别在于，相对于被观察者和观察者之间的关系，<code>KVO</code> 是一对一的，而通知一对多的。</p>
+<h1 id="KVO-实现机制"><a href="#KVO-实现机制" class="headerlink" title="KVO 实现机制"></a>KVO 实现机制</h1><h4 id="使用KVO分为三个步骤："><a href="#使用KVO分为三个步骤：" class="headerlink" title="使用KVO分为三个步骤："></a>使用KVO分为三个步骤：</h4><ul>
+<li>通过 <code>addObserver:forKeyPath:options:context:</code> 方法注册观察者，观察者可以接收 <code>keyPath</code> 属性的变化事件。</li>
+<li>在观察者中实现 <code>observeValueForKeyPath:ofObject:change:context:</code> 方法，当 <code>keyPath</code> 属性发生改变后，<code>KVO</code> 会回调这个方法来通知观察者。</li>
+<li>当观察者不需要监听时，可以调用 <code>removeObserver:forKeyPath:</code> 方法将 <code>KVO</code> 移除。需要注意的是，调用 <code>removeObserver</code> 需要在观察者消失之前，否则会导致 <code>Crash</code>。</li>
+</ul>
+<p><code>KVO</code> 的实现也依赖于 <code>Objective-C</code> 强大的 <code>Runtime</code> ，<code>Apple</code> 的文档有简单提到过 <code>KVO</code> 的实现：</p>
+<blockquote>
+<p>Automatic key-value observing is implemented using a technique called isa-swizzling… When an observer is registered for an attribute of an object the isa pointer of the observed object is modified, pointing to an intermediate class rather than at the true class …</p>
+</blockquote>
+<h4 id="简单概述下-KVO-的实现："><a href="#简单概述下-KVO-的实现：" class="headerlink" title="简单概述下 KVO 的实现："></a>简单概述下 <code>KVO</code> 的实现：</h4><p><strong><code>KVO</code> 是通过 <code>isa-swizzling</code> 技术实现的</strong>，当你观察一个对象时，一个新的类会动态被创建。这个类继承自该对象的原本的类，并重写了被观察属性的 <code>setter</code> 方法。自然，重写的 <code>setter</code> 方法会负责在调用原 <code>setter</code> 方法之前和之后，通知所有观察对象值的更改。最后把这个对象的 <code>isa</code> 指针 ( <code>isa</code> 指针告诉 <code>Runtime</code> 系统这个对象的类是什么 ) 指向这个新创建的子类，对象就神奇的变成了新创建的子类的实例，被观察对象的 <code>isa</code> 指针会指向一个中间类，而不是原来真正的类。</p>
+<h1 id="KVO-缺陷"><a href="#KVO-缺陷" class="headerlink" title="KVO 缺陷"></a><code>KVO</code> 缺陷</h1><p>使用 <code>KVO</code> 时，既需要进行注册成为某个对象属性的观察者，还要在合适的时间点将自己移除，在观察者中实现 <code>observeValueForKeyPath:ofObject:change:context:</code> 方法，并在方法里判断这次是不是自己要观测的属性发生了变化，并且很重要的一点就是 <code>KVO</code> 如果使用不当很容易导致 <code>Crash</code>。例如，重复 <code>addObserver</code> 和 <code>removeObserver</code> 导致的 <code>Crash</code>，<code>Observer</code> 被释放导致的崩溃，<code>keyPath</code> 传错导致的崩溃等。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line">@interface TestKVOViewController ()</div><div class="line"></div><div class="line">@property (nonatomic, strong) Message *message;</div><div class="line"></div><div class="line">@end</div><div class="line"></div><div class="line">@implementation TestKVOViewController</div><div class="line"></div><div class="line">- (void)viewDidLoad &#123;</div><div class="line">    [super viewDidLoad];</div><div class="line">    </div><div class="line">    self.view.backgroundColor = [UIColor whiteColor];</div><div class="line">    </div><div class="line">    Message *message = [[Message alloc] init];</div><div class="line">    [message addObserver:self forKeyPath:@&quot;text&quot; options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];</div><div class="line">    </div><div class="line">    message.text = @&quot;hello object-c&quot;;</div><div class="line">    self.message = message;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary&lt;NSKeyValueChangeKey,id&gt; *)change context:(void *)context &#123;</div><div class="line">    if ([keyPath isEqualToString:@&quot;text&quot;]) &#123;</div><div class="line">        NSLog(@&quot;%@&quot;, change);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)dealloc &#123;</div><div class="line">    [self.message removeObserver:self forKeyPath:@&quot;text&quot;];</div><div class="line">    [self.message removeObserver:self forKeyPath:@&quot;text&quot;];</div><div class="line">&#125;</div><div class="line"></div><div class="line">2017-06-21 12:29:03.397434+0800 ImplementKVO[18119:266230] [general] Caught exception during autorelease pool drain NSRangeException: Cannot remove an observer &lt;TestKVOViewController 0x7faf7b502610&gt; for the key path &quot;text&quot; from &lt;Message 0x60400001eef0&gt; because it is not registered as an observer. userInfo: (null)</div><div class="line">2017-06-21 12:29:03.402598+0800 ImplementKVO[18119:266230] *** Terminating app due to uncaught exception &apos;NSRangeException&apos;, reason: &apos;Cannot remove an observer &lt;TestKVOViewController 0x7faf7b502610&gt; for the key path &quot;text&quot; from &lt;Message 0x60400001eef0&gt; because it is not registered as an observer.&apos;</div><div class="line">*** First throw call stack:</div><div class="line">(</div><div class="line">	0   CoreFoundation                      0x000000010efa11e6 __exceptionPreprocess + 294</div><div class="line">	1   libobjc.A.dylib                     0x000000010e636031 objc_exception_throw + 48</div><div class="line">	2   CoreFoundation                      0x000000010f016975 +[NSException raise:format:] + 197</div><div class="line">	3   Foundation                          0x000000010e061e43 -[NSObject(NSKeyValueObserverRegistration) _removeObserver:forProperty:] + 488</div><div class="line">	4   Foundation                          0x000000010e061c03 -[NSObject(NSKeyValueObserverRegistration) removeObserver:forKeyPath:] + 84</div><div class="line">	5   ImplementKVO                        0x000000010dd2de9c -[TestKVOViewController dealloc] + 172</div><div class="line">	6   UIKit                               0x000000010f406f74 __destroy_helper_block_.150 + 80</div><div class="line">	7   libsystem_blocks.dylib              0x0000000112a7098a _Block_release + 111</div><div class="line">	8   UIKit                               0x000000010f4e01e5 -[UIViewAnimationBlockDelegate .cxx_destruct] + 58</div><div class="line">	9   libobjc.A.dylib                     0x000000010e634920 _ZL27object_cxxDestructFromClassP11objc_objectP10objc_class + 127</div><div class="line">	10  libobjc.A.dylib                     0x000000010e640502 objc_destructInstance + 124</div><div class="line">	11  libobjc.A.dylib                     0x000000010e640539 object_dispose + 22</div><div class="line">	12  libobjc.A.dylib                     0x000000010e64aa6e _ZN11objc_object17sidetable_releaseEb + 202</div><div class="line">	13  CoreFoundation                      0x000000010ef0464d -[__NSDictionaryI dealloc] + 125</div><div class="line">	14  libobjc.A.dylib                     0x000000010e64aa6e _ZN11objc_object17sidetable_releaseEb + 202</div><div class="line">	15  libobjc.A.dylib                     0x000000010e64b1b2 _ZN12_GLOBAL__N_119AutoreleasePoolPage3popEPv + 860</div><div class="line">	16  CoreFoundation                      0x000000010eeeb136 _CFAutoreleasePoolPop + 22</div><div class="line">	17  CoreFoundation                      0x000000010ef27eae __CFRunLoopRun + 2350</div><div class="line">	18  CoreFoundation                      0x000000010ef2730b CFRunLoopRunSpecific + 635</div><div class="line">	19  GraphicsServices                    0x0000000114119a73 GSEventRunModal + 62</div><div class="line">	20  UIKit                               0x000000010f41e057 UIApplicationMain + 159</div><div class="line">	21  ImplementKVO                        0x000000010dd2dfef main + 111</div><div class="line">	22  libdyld.dylib                       0x00000001129fe955 start + 1</div><div class="line">	23  ???                                 0x0000000000000001 0x0 + 1</div><div class="line">)</div><div class="line">libc++abi.dylib: terminating with uncaught exception of type NSException</div></pre></td></tr></table></figure>
+<h1 id="手动实现-KVO"><a href="#手动实现-KVO" class="headerlink" title="手动实现 KVO"></a>手动实现 KVO</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">typedef void(^ObservingBlock)(id observedObject, NSString *observedKey, id oldValue, id newValue);</div><div class="line"></div><div class="line">@interface NSObject (KVO)</div><div class="line"></div><div class="line">- (void)addObserver:(NSObject *)observer</div><div class="line">forKey:(NSString *)key</div><div class="line">withBlock:(ObservingBlock)block;</div><div class="line"></div><div class="line">- (void)removeObserver:(NSObject *)observer forKey:(NSString *)key;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
+<p>接下来，实现 <code>addObserver:forKey:withBlock:</code> 方法：</p>
+<ul>
+<li>检查对象的类有没有相应的 <code>setter</code> 方法。如果没有抛出异常；</li>
+<li>检查对象 <code>isa</code> 指向的类是不是一个 <code>KVO</code> 类。如果不是，新建一个继承原来类的子类，并把 <code>isa</code> 指向这个新建的子类；</li>
+<li>检查对象的 <code>KVO</code> 类重写过没有这个 <code>setter</code> 方法。如果没有，添加重写的 <code>setter</code> 方法；</li>
+<li>添加这个观察者；</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> 1. 通过Method判断是否有这个key对应的selector，如果没有则Crash。</div><div class="line"> 2. 判断当前类是否是KVO子类，如果不是则创建，并设置其isa指针。</div><div class="line"> 3. 如果没有实现，则添加Key对应的setter方法。</div><div class="line"> 4. 将调用对象添加到数组中。</div><div class="line"> */</div><div class="line">- (void)addObserver:(NSObject *)observer</div><div class="line">             forKey:(NSString *)key</div><div class="line">          withBlock:(ObservingBlock)block &#123;</div><div class="line">    </div><div class="line">    SEL setterSelector = NSSelectorFromString(setterForGetter(key));</div><div class="line">    Method setterMethod = class_getInstanceMethod([self class], setterSelector);</div><div class="line">    if (!setterMethod) &#123;</div><div class="line">        NSString *reason = [NSString stringWithFormat:@&quot;Object %@ does not have a setter for key %@&quot;, self, key];</div><div class="line">        @throw [NSException exceptionWithName:NSInvalidArgumentException</div><div class="line">                                       reason:reason</div><div class="line">                                     userInfo:nil];</div><div class="line">        </div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    Class clazz = object_getClass(self);</div><div class="line">    NSString *clazzName = NSStringFromClass(clazz);</div><div class="line">    </div><div class="line">    // if not an KVO class yet</div><div class="line">    if (![clazzName hasPrefix:kKVOClassPrefix]) &#123;</div><div class="line">        clazz = [self makeKvoClassWithOriginalClassName:clazzName];</div><div class="line">        object_setClass(self, clazz);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    // add our kvo setter if this class (not superclasses) doesn&apos;t implement the setter?</div><div class="line">    if (![self hasSelector:setterSelector]) &#123;</div><div class="line">        const char *types = method_getTypeEncoding(setterMethod);</div><div class="line">        class_addMethod(clazz, setterSelector, (IMP)kvo_setter, types);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    ObservationInfo *info = [[ObservationInfo alloc] initWithObserver:observer Key:key block:block];</div><div class="line">    NSMutableArray *observers = objc_getAssociatedObject(self, (__bridge const void *)(kKVOAssociatedObservers));</div><div class="line">    if (!observers) &#123;</div><div class="line">        observers = [NSMutableArray array];</div><div class="line">        objc_setAssociatedObject(self, (__bridge const void *)(kKVOAssociatedObservers), observers, OBJC_ASSOCIATION_RETAIN_NONATOMIC);</div><div class="line">    &#125;</div><div class="line">    [observers addObject:info];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>第一步，先通过 <code>setterForGetter()</code> 方法获得相应的 <code>setter</code> 的名字 <code>(SEL)</code> 。也就是把 <code>key</code> 的首字母大写，然后前面加上 <code>set</code> 后面加上 <code>:</code> ，这样 <code>key</code> 就变成了 <code>setKey:</code> 。然后再用 <code>class_getInstanceMethod</code> 去获得 <code>setKey:</code> 的实现 <code>(Method)</code> 。如果没有，自然要抛出异常。</p>
+<p>第二步，我们先看类名有没有我们定义的前缀。如果没有，我们就去创建新的子类，并通过 <code>object_setClass()</code> 修改 <code>isa</code> 指针。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> 1. 判断是否存在KVO类，如果存在则返回。</div><div class="line"> 2. 如果不存在，则创建KVO类。</div><div class="line"> 3. 重写KVO类的class方法，指向自定义的IMP。</div><div class="line"> */</div><div class="line">- (Class)makeKvoClassWithOriginalClassName:(NSString *)originalClazzName &#123;</div><div class="line">    NSString *kvoClazzName = [kKVOClassPrefix stringByAppendingString:originalClazzName];</div><div class="line">    Class clazz = NSClassFromString(kvoClazzName);</div><div class="line">    </div><div class="line">    if (clazz) &#123;</div><div class="line">        return clazz;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    // class doesn&apos;t exist yet, make it</div><div class="line">    Class originalClazz = object_getClass(self);</div><div class="line">    Class kvoClazz = objc_allocateClassPair(originalClazz, kvoClazzName.UTF8String, 0);</div><div class="line">    </div><div class="line">    // grab class method&apos;s signature so we can borrow it</div><div class="line">    Method clazzMethod = class_getInstanceMethod(originalClazz, @selector(class));</div><div class="line">    const char *types = method_getTypeEncoding(clazzMethod);</div><div class="line">    class_addMethod(kvoClazz, @selector(class), (IMP)kvo_class, types);</div><div class="line">    </div><div class="line">    objc_registerClassPair(kvoClazz);</div><div class="line">    </div><div class="line">    return kvoClazz;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当动态创建新的类需要调用 <code>objc/runtime.h</code> 中定义的 <code>objc_allocateClassPair()</code> 函数。传一个父类，类名，然后额外的空间（通常为 0），它返回给你一个类。然后就给这个类添加方法，也可以添加变量。这里，我们只重写了 <code>class</code> 方法。跟 <code>Apple</code> 一样，这时候我们也企图隐藏这个子类的存在。最后 <code>objc_registerClassPair()</code> 告诉 <code>Runtime</code> 这个类的存在。</p>
+<p>第三步，重写 <code>setter</code> 方法。新的 <code>setter</code> 在调用原 <code>setter</code> 方法后，通知每个观察者（调用之前传入的 block ）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">static void kvo_setter(id self, SEL _cmd, id newValue) &#123;</div><div class="line">    NSString *setterName = NSStringFromSelector(_cmd);</div><div class="line">    NSString *getterName = getterForSetter(setterName);</div><div class="line">    </div><div class="line">    if (!getterName) &#123;</div><div class="line">        NSString *reason = [NSString stringWithFormat:@&quot;Object %@ does not have setter %@&quot;, self, setterName];</div><div class="line">        @throw [NSException exceptionWithName:NSInvalidArgumentException</div><div class="line">                                       reason:reason</div><div class="line">                                     userInfo:nil];</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    id oldValue = [self valueForKey:getterName];</div><div class="line">    </div><div class="line">    struct objc_super superclazz = &#123;</div><div class="line">        .receiver = self,</div><div class="line">        .super_class = class_getSuperclass(object_getClass(self))</div><div class="line">    &#125;;</div><div class="line">    </div><div class="line">    // cast our pointer so the compiler won&apos;t complain</div><div class="line">    void (*objc_msgSendSuperCasted)(void *, SEL, id) = (void *)objc_msgSendSuper;</div><div class="line">    </div><div class="line">    // call super&apos;s setter, which is original class&apos;s setter method</div><div class="line">    objc_msgSendSuperCasted(&amp;superclazz, _cmd, newValue);</div><div class="line">    </div><div class="line">    // look up observers and call the blocks</div><div class="line">    NSMutableArray *observers = objc_getAssociatedObject(self, (__bridge const void *)(kKVOAssociatedObservers));</div><div class="line">    for (ObservationInfo *each in observers) &#123;</div><div class="line">        if ([each.key isEqualToString:getterName]) &#123;</div><div class="line">            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^&#123;</div><div class="line">                each.block(self, getterName, oldValue, newValue);</div><div class="line">            &#125;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在这里会对 <code>objc_msgSendSuper</code> 进行类型转换。因为在 <code>Xcode 6</code> 之后， <code>LLVM</code> 会对 <code>objc_msgSendSuper</code> 以及 <code>objc_msgSend</code> 做严格的类型检查，如果不做类型转换。<code>Xcode</code> 会提示有 <code>too many arguments</code> 的错误。（在 WWDC 2014 的视频 What new in LLVM 中有提到过这个问题。）</p>
+<p>最后一步，把这个观察的相关信息存在 <code>associatedObject</code> 里。观察的相关信息(观察者，被观察的 <code>key</code> , 和传入的 <code>block</code> )封装在 <code>ObservationInfo</code> 类里。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">@interface ObservationInfo : NSObject</div><div class="line"></div><div class="line">@property (nonatomic, weak) NSObject *observer;</div><div class="line">@property (nonatomic, copy) NSString *key;</div><div class="line">@property (nonatomic, copy) ObservingBlock block;</div><div class="line"></div><div class="line">@end</div><div class="line"></div><div class="line">@implementation ObservationInfo</div><div class="line"></div><div class="line">- (instancetype)initWithObserver:(NSObject *)observer</div><div class="line">                             Key:(NSString *)key</div><div class="line">                           block:(ObservingBlock)block &#123;</div><div class="line">    self = [super init];</div><div class="line">    if (self) &#123;</div><div class="line">        _observer = observer;</div><div class="line">        _key = key;</div><div class="line">        _block = block;</div><div class="line">    &#125;</div><div class="line">    return self;</div><div class="line">&#125;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;code&gt;KVO&lt;/code&gt; 全称 &lt;code&gt;KeyValueObserving&lt;/code&gt; 是 &lt;code&gt;Objective-C&lt;/code&gt; 对观察者模式&lt;code&gt;(Observer Pattern)&lt;/code&gt;的实现；&lt;code&gt;KVO&lt;/code&gt; 提
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>谈谈 Autolayout</title>
@@ -1165,144 +1216,6 @@
 &lt;li&gt;文本计算的坑&lt;/li&gt;
 &lt;li&gt;UITableview的headerView和footerView高度的设置&lt;/li&gt;
 &lt;li&gt;UIW
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>iOS如何使用TestFlight进行App-Beta版测试</title>
-    <link href="https://sunjinshuai.github.io/2016/07/25/iOS%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8TestFlight%E8%BF%9B%E8%A1%8CApp-Beta%E7%89%88%E6%B5%8B%E8%AF%95/"/>
-    <id>https://sunjinshuai.github.io/2016/07/25/iOS如何使用TestFlight进行App-Beta版测试/</id>
-    <published>2016-07-25T14:26:18.000Z</published>
-    <updated>2018-06-09T07:10:23.913Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote>
-<p>在2014WWDC中库克用了20秒的时间，简短的3句话，介绍了测试版本的TestFlight服务。TestFlight用于将Beta版测试，TestFlight已经被苹果收购，所以不要担心存在第三方测试造成数据泄露问题。TestFlight需要iOS8及以上版本的iOS设备才能运行，所以iOS7及之前的设备就不能安装了。TestFlight整合进了iTunes Connect，开发者可以通过电子邮件来邀请测试员来进行测试，这样开发者就可以更简单地让你的同行非同行、你的上级、你的客户、你所想要一起参与测试的人一起来测试应用。</p>
-</blockquote>
-<p>TestFlight的测试方式分为两种：</p>
-<ul>
-<li>一种是内部测试；</li>
-<li>一种是外部测试。</li>
-</ul>
-<p>从功能上讲，这两种方式都可以为测试人员在测试阶段对你的App进行测试。但是既然分了内部测试和外部测试，他们肯定还是有区别的，所谓的内部主要是指iTunes Connect上在你的开发团队里参与技术开发或者管理的成员。最多可以邀请25个内部成员，而与之相对的外部测试，指的是那些不属于你的团队或者公司的测试者，外部测试人员的上限是2000人。这里有一点需要注意的是，在你邀请外部成员参与测试之前，需要先通过苹果的审核，一般审核会在一天左右。而这一限制在内部成员上就没有，也就是说只要你把你的App上传到iTunes Connect上之后内部成员就可以开始进行内部测试了，无需审核。在邀请发出后，有效测试时间为60天。</p>
-<p>注意：</p>
-<ul>
-<li>现在公司也有使用比较老的测试方法，就是需要提供参与app测试人员的设备UDID，并且开发者需要将这些设备的UDID添加到开发者中心，每次有新的测试人员加入，需要重新生成profiles，重新打包，最可恶的是，只能添加100台设备的限制，总体来说，比较笨拙。</li>
-<li>使用TestFlight测试的好处，只需要参与app测试人员提供一个邮箱，开发者登录iTunes Connect，给测试者发送邀请，测试者接受邀请，然后通过TestFlight，下载安装程序。不需要用户提供设备的UDID，最重要的一点是没有了100台设备的限制，一般内部测试人员最多25个人，外部测试人员最多2000个人，重点是<strong>不需要重新配置证书了，也不需要手动发送ipa包, 直接上传到iTunes即可。</strong></li>
-<li>然而，也有其他公司在使用<strong>蒲公英</strong>等其他参与测试。</li>
-</ul>
-<p>接下来介绍一下TestFlight如何使用：</p>
-<p>一、开发者需要做的事情</p>
-<p>1、进入网址：<a href="https://itunesconnect.apple.com/" target="_blank" rel="external">https://itunesconnect.apple.com</a> 输入账号密码登录iTunes Connect。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c88eda738f1?w=1240&amp;h=757&amp;f=png&amp;s=264305" alt="Paste_Image.png"></p>
-<p>2、成功登录iTunes Connect，点击我的App，进入App列表页</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c88f2b36fba?w=1240&amp;h=757&amp;f=png&amp;s=114351" alt="Paste_Image.png"></p>
-<p>注意：</p>
-<p>如果是初次创建的 App，需要创建一个 iTunes Connect Record。如果你的 App 已经创建好了，可以直接跳过这段，如果你要新建一个 App 的话，可以按照下面的步骤来做：</p>
-<ul>
-<li>登录 <a href="https://itunesconnect.apple.com/" target="_blank" rel="external">iTunes Connect</a> 。</li>
-<li>在 iTunes Connect 的首页，点击‘My Apps’图标。</li>
-<li>开发者第一次进到这里的时候，这里是个空白页。点击左上角的‘+’号按钮，创建一个新的 App 。在你创建了 App 之后，这里会显示你创建的 App 列表。</li>
-</ul>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c88ed2f9690?w=1240&amp;h=407&amp;f=png&amp;s=25733" alt="Paste_Image.png"></p>
-<ul>
-<li><p>选择‘New App’。如果你只是 iOS 平台的开发者，这里不会出现其它的选项（如‘New Mac App’）。<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c891c1662b4?w=574&amp;h=287&amp;f=png&amp;s=17998" alt="Paste_Image.png"></p>
-</li>
-<li><p>填写好如下弹窗内的信息，点击‘Create’按钮完成创建。<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c891bd44df4?w=460&amp;h=525&amp;f=png&amp;s=25214" alt="Paste_Image.png"></p>
-</li>
-<li><p>对于一些必填信息，如果未填写的话，Apple 会在对话框内给出如下提示：<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89215e27c8?w=453&amp;h=525&amp;f=png&amp;s=24156" alt="Paste_Image.png"></p>
-</li>
-<li><p>提交App到iTunes connect。<br>在 Xcode 中配置好版本和证书信息。<br>选中菜单‘Product-&gt;Archive’将当前代码归档，归档完成后会弹出‘Organizer-Archives’对话框。<br>选择‘Validate’按钮来检测该归档文件是否符合要求。<br>验证通过之后，你可以选择‘Submit’来提交这个归档。</p>
-</li>
-</ul>
-<p>3、每当你提交一个新的build之后，在 iTunes Connect的列表中都会对应的增加一个build。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c894b1da7a1?w=246&amp;h=273&amp;f=png&amp;s=15536" alt="Paste_Image.png"></p>
-<p>选择TestFlight，在TestFlight中填写基本信息接收反馈的邮箱地址，隐私政策网址等。<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c894b29a88b?w=1240&amp;h=671&amp;f=png&amp;s=87261" alt="Paste_Image.png"></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c894c64b874?w=1240&amp;h=674&amp;f=png&amp;s=92273" alt="Paste_Image.png"></p>
-<p>Internal Testing：内部测试<br>External Testing：外部测试</p>
-<p>4、邀请测试人员</p>
-<ul>
-<li>内部测试：<br>点击Internal Testers，添加测试人员（一般内部测试人员最多25个人）<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8971b0d4c9?w=1240&amp;h=637&amp;f=png&amp;s=82502" alt="Paste_Image.png"></li>
-</ul>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8972dd4153?w=719&amp;h=678&amp;f=png&amp;s=33222" alt="Paste_Image.png"></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8972e9478b?w=1240&amp;h=591&amp;f=png&amp;s=66166" alt="Paste_Image.png"></p>
-<p>点击Select Version to Test，添加测试版本</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c898b870435?w=1240&amp;h=632&amp;f=png&amp;s=75184" alt="Paste_Image.png"></p>
-<p>选中一个版本，点击OK<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c899566352a?w=646&amp;h=455&amp;f=png&amp;s=42621" alt="Paste_Image.png"></p>
-<p>点击save<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c899748f843?w=1240&amp;h=633&amp;f=png&amp;s=93969" alt="Paste_Image.png"></p>
-<p>点击Start Testing，之后会收到两封邮件，一封是邀请你加入测试组的邮件，点击同意即可，另一封是成功加入测试组的通知，点击start testing然后跳转到有加粗黑色字体的8个字母测试码的页面，下载TestFlight，然后点击Redeem，输入这8个字母即可下载测试app。<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8995757da3?w=499&amp;h=173&amp;f=png&amp;s=17226" alt="Paste_Image.png"></p>
-<p>点击Start Testing<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89b3ff16b3?w=888&amp;h=782&amp;f=png&amp;s=220304" alt="Paste_Image.png"></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89c042e467?w=872&amp;h=568&amp;f=png&amp;s=85650" alt="Paste_Image.png"></p>
-<ul>
-<li>邀请外部测试人员</li>
-</ul>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89c2650bfd?w=1240&amp;h=466&amp;f=png&amp;s=64747" alt="Paste_Image.png"></p>
-<p>点击External Testers，选择添加新测试员，或者使用CSV批量导入邀请外部测试人员。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89c1704a5b?w=1178&amp;h=379&amp;f=png&amp;s=27869" alt="Paste_Image.png"></p>
-<p>输入电子邮件，名称和姓氏可不填，点击添加。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89e862f103?w=801&amp;h=677&amp;f=png&amp;s=35961" alt="Paste_Image.png"></p>
-<p>点击Add Build to Test，添加测试版本<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89e871b440?w=1175&amp;h=318&amp;f=png&amp;s=19991" alt="Paste_Image.png"></p>
-<p>点击Next，进入下一步</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89e92be8c6?w=644&amp;h=460&amp;f=png&amp;s=28775" alt="Paste_Image.png"></p>
-<p>填写测试版本的一些信息，点击Next，进入下一步</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c89f54a138b?w=645&amp;h=458&amp;f=png&amp;s=24711" alt="Paste_Image.png"></p>
-<p>填写联系人信息，和 Beta App Review审核的测试账号，点击Next，进入下一步</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a13a35fa6?w=646&amp;h=456&amp;f=png&amp;s=26579" alt="Paste_Image.png"></p>
-<p>填写审核信息，然后点击submit，提交 Beta 审核，目前来看，Beta 审核还是比较快速的，有时候一个工作日就可以通过审核。可能是现在使用 TestFlight 功能的 App 还不太多吧；不知道等 TestFlight 普及之后，随着参与 Beta Review 的 App 越来越多，Beta 审核还能不能一直这么快。<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a0e40939b?w=649&amp;h=453&amp;f=png&amp;s=12644" alt="Paste_Image.png"></p>
-<p>注意：</p>
-<p>还需要一提的是，外部测试人员想要参与测试的话，必须要 App 已经通过了 Beta App Review 才行。审核通过，点击Invite邀请按钮，测试者会收到来自TestFlight Beta Testing的邀请邮件。</p>
-<p>二、开发者需要做的事情</p>
-<p>1、在AppStore上面搜索“TestFlight”</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a1994efa3?w=750&amp;h=1334&amp;f=png&amp;s=347471" alt="41B2276FCDA83285299E76566F7CC7A7.png"></p>
-<p>2、下载TestFlight</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a1c3739b7?w=750&amp;h=1334&amp;f=png&amp;s=345333" alt="F258A6014C8A0B15D16866DDF08EDE25.png"></p>
-<p>3、打开TestFlight进行使用</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a3d2950db?w=640&amp;h=1136&amp;f=jpeg&amp;s=49391" alt="%PIDKXC5O`C%1857`2ZK6W2.jpg"></p>
-<p>注意：</p>
-<ul>
-<li>应用提示是否允许“推送通知”，一般是允许的，提醒测试新版本；</li>
-<li>这时候TestFlight内是没什么内容可看的；</li>
-<li>等待开发者邀请测试。（注意查看关联Apple ID邮箱的邮件，2封邮件）</li>
-</ul>
-<p>4、接受邀请iTunes Connect</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a49954acc?w=893&amp;h=418&amp;f=png&amp;s=80338" alt="Paste_Image.png"></p>
-<p>注意：</p>
-<ul>
-<li>打开邮箱邮件（电脑和手机操作都可以）；</li>
-<li>点击邮件详情里面的“activate your access”，跳转到iTunes Connect登录页；</li>
-<li>登录Apple ID账户，按提示勾选同意协议接受邀请。</li>
-<li>这是第一封邮件，只有邀请加入开发者用户才会收到。只需要接受一次即可。</li>
-</ul>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a45e28243?w=194&amp;h=344&amp;f=png&amp;s=26581" alt="Paste_Image.png"></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a6ec014af?w=195&amp;h=343&amp;f=png&amp;s=31211" alt="Paste_Image.png"></p>
-<p>5、接受TestFlight测试邀请</p>
-<ul>
-<li>打开邮箱邮件（电脑和手机操作都可以，推荐手机操作。）；</li>
-<li>点击邮件详情里面的“Start Testing”；</li>
-<li>打开“TestFlight”（手机操作第2步会自动打开TestFlight）；</li>
-<li>在TestFlight显示App信息，可以接收测试邀请“Accept”。<br>ps：这是第二封邮件，只有邀请加入应用测试的才会收到。只需要接受一次即可。</li>
-</ul>
-<p>电脑操作要有这3步：</p>
-<ul>
-<li>Get TestFlight from the App Store<br>（翻译：到App Store下载TestFlight）</li>
-<li>Open TestFlight and choose Redeem<br>（翻译：打开TestFlight选择Redeem）</li>
-<li>Enter xxxxxx and start testing<br>（翻译：输入验证码，然后开始测试）<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a7694eaa0?w=750&amp;h=1334&amp;f=png&amp;s=192092" alt="7A7E0DE90230E930E93080D40EE3C3A3.png"></li>
-</ul>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a9263322e?w=750&amp;h=1334&amp;f=png&amp;s=126885" alt="56CDFF1CE801FA37ECF0948087D22CED.png"></p>
-<p>6、打开TestFlight，输入验证码，Install应用。</p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a949d7cf5?w=639&amp;h=1136&amp;f=png&amp;s=95657" alt="A278F5C094C8A1884412D4F2A6434144.png"></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a9cf4f731?w=639&amp;h=1136&amp;f=png&amp;s=103183" alt="35585F326706916C0C05E3680BBEBCC6.png"></p>
-<p><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8a9bbd3a07?w=639&amp;h=1136&amp;f=png&amp;s=158838" alt="B512850F08A6D399EE6E3DE7F5CF0F8E.png"></p>
-<p>注意：</p>
-<p>安装完应用，会发现右侧有一个橘红色的点点。<br><img src="https://user-gold-cdn.xitu.io/2017/12/17/16062c8ab27e8045?w=192&amp;h=345&amp;f=png&amp;s=116152" alt="Paste_Image.png"></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;在2014WWDC中库克用了20秒的时间，简短的3句话，介绍了测试版本的TestFlight服务。TestFlight用于将Beta版测试，TestFlight已经被苹果收购，所以不要担心存在第三方测试造成数据泄露问题。TestFlight需要iO
     
     </summary>
     

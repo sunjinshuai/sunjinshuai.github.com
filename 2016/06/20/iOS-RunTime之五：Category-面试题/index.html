@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> iOS RunTime之五：Category 面试题 · 孙金帅的技术博客</title><meta name="description" content="iOS RunTime之五：Category 面试题 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunjinshuai" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">iOS RunTime之五：Category 面试题</h1><div class="post-info">2016年6月20日</div><div class="post-content"><p>面试题：为什么 <code>Category</code> 中不能动态添加成员变量？</p>
+<p>解答：</p>
+<p>很多人在面试的时候都会被问到 <code>Category</code>，既然允许用 <code>Category</code> 给类增加方法和属性，那为什么不允许增加成员变量？</p>
+<p>在 <code>Objective-C</code> 提供的 <code>runtime</code> 函数中，确实有一个 <code>class_addIvar()</code> 函数用于给类添加成员变量，但是阅读过苹果的官方文档的人应该会看到：</p>
+<blockquote>
+<p>This function may only be called after objc_allocateClassPair and before objc_registerClassPair. Adding an instance variable to an existing class is not supported.</p>
+</blockquote>
+<p>大概的意思说，这个函数只能在“构建一个类的过程中”调用。当编译类的时候，编译器生成了一个实例变量内存布局 <code>ivar layout</code>，来告诉运行时去那里访问类的实例变量们，一旦完成类定义，就不能再添加成员变量了。经过编译的类在程序启动后就被 <code>runtime</code> 加载，没有机会调用 <code>addIvar</code>。程序在运行时动态构建的类需要在调用 <code>objc_registerClassPair</code> 之后才可以被使用，同样没有机会再添加成员变量。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-3e956669e49c0239.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>从运行结果中看出，你<strong>不能为一个类动态的添加成员变量，可以给类动态增加方法和属性。</strong></p>
+<p><strong>因为方法和属性并不“属于”类实例，而成员变量“属于”类实例。</strong>我们所说的“类实例”概念，指的是一块内存区域，包含了 <code>isa</code> 指针和所有的成员变量。所以假如允许动态修改类成员变量布局，已经创建出的类实例就不符合类定义了，变成了无效对象。但方法定义是在 <code>objc_class</code> 中管理的，不管如何增删类方法，都不影响类实例的内存布局，已经创建出的类实例仍然可正常使用。</p>
+<p>同理：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-6594de971343a76f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>某一个类的分类是在 <code>runTime</code> 时，被动态的添加到类的结构中。<br>想了解分类是如何加载的请看 <a href="https://www.jianshu.com/p/8b4432f5586e" target="_blank" rel="external">iOS RunTime之六：Category</a> </p>
+<h4 id="Category-和-Extension-的区别"><a href="#Category-和-Extension-的区别" class="headerlink" title="Category 和 Extension 的区别"></a><strong><code>Category</code> 和 <code>Extension</code> 的区别</strong></h4><ul>
+<li><code>Extension</code> 在编译期决议，它就是类的一部分，在编译期和头文件里的 <code>@interface</code> 以及实现文件里的 <code>@implement</code> 一起形成一个完整的类，它伴随类的产生而产生，亦随之一起消亡。<code>Extension</code> 一般用来隐藏类的私有信息，你必须有一个类才能为这个类添加 <code>Extension</code>，所以你无法为系统的类比如 <code>NSString</code> 添加 <code>Extension</code>。</li>
+<li><code>Category</code> 则完全不一样，它是在运行期决议的。</li>
+<li><code>Extension</code> 可以添加成员变量，而 <code>Category</code> 一般不可以。</li>
+</ul>
+<p>总之，就 <code>Category</code> 和 <code>Extension</code> 的区别来看，<code>Extension</code> 可以添加成员变量，而 <code>Category</code> 是无法添加成员变量的。因为 <code>Category</code> 在运行期，对象的内存布局已经确定，如果添加实例变量就会破坏类的内部布局。</p>
+<h5 id="面试题"><a href="#面试题" class="headerlink" title="面试题"></a><strong>面试题</strong></h5><p>一般面试官有时候会问到这样的问题：<br>在类和<code>Category</code>中都可以有<code>study</code>方法，那么有两个问题：</p>
+<ul>
+<li>在类的<code>study</code>方法调用的时候，我们可以调用<code>Category</code>中声明的<code>study</code>方法么？</li>
+<li>如果一个类有多个分类的时候<code>study</code>方法，调用顺序是咋样的呢？</li>
+</ul>
+<p>解决方法：<br><a href="https://sunjinshuai.github.io/2016/08/16/iOS%E4%B9%8B-load%E5%92%8C-initialize%E7%9A%84%E5%8C%BA%E5%88%AB/">iOS之+load和+initialize的区别</a></p>
+<p>如果有觉得上述我讲的不对的地方欢迎指出，大家多多交流沟通。</p>
+</div></article></div></main><footer><div class="paginator"><a href="/2016/06/22/iOS-RunTime之六：Category/" class="prev">上一篇</a><a href="/2016/06/15/iOS面试题-如何在项目中处理页面中的多个网络请求/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2016/06/20/iOS-RunTime之五：Category-面试题/';
+var disqus_title = 'iOS RunTime之五：Category 面试题';
+var disqus_url = 'https://sunjinshuai.github.io/2016/06/20/iOS-RunTime之五：Category-面试题/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2018 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

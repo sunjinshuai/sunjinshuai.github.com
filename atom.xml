@@ -103,7 +103,7 @@
     <link href="https://sunjinshuai.github.io/2018/06/20/%E6%B5%85%E8%B0%88-NSUserDefaults/"/>
     <id>https://sunjinshuai.github.io/2018/06/20/浅谈-NSUserDefaults/</id>
     <published>2018-06-20T13:38:40.000Z</published>
-    <updated>2018-09-12T13:39:06.188Z</updated>
+    <updated>2018-09-12T13:40:27.315Z</updated>
     
     <content type="html"><![CDATA[<p><code>NSUserDefaults</code> 适用于快速读取小规模的数据</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NSUserDefaults *standardDefaults = [NSUserDefaults standardUserDefaults];</div></pre></td></tr></table></figure>
@@ -230,6 +230,66 @@
     <summary type="html">
     
       &lt;h4 id=&quot;关于Autolayout的调试&quot;&gt;&lt;a href=&quot;#关于Autolayout的调试&quot; class=&quot;headerlink&quot; title=&quot;关于Autolayout的调试&quot;&gt;&lt;/a&gt;关于Autolayout的调试&lt;/h4&gt;&lt;p&gt;刚开始使用 Autolayout 遇
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>git 奇技淫巧</title>
+    <link href="https://sunjinshuai.github.io/2017/12/12/git-%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7/"/>
+    <id>https://sunjinshuai.github.io/2017/12/12/git-奇技淫巧/</id>
+    <published>2017-12-12T13:45:47.000Z</published>
+    <updated>2018-09-12T13:46:14.138Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Tag"><a href="#Tag" class="headerlink" title="Tag"></a>Tag</h1><h2 id="添加-Tag"><a href="#添加-Tag" class="headerlink" title="添加 Tag"></a>添加 Tag</h2><p>例如：1.0.0</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git tag -a 1.0.0 -m &quot;1.0.0 版本的备注信息.&quot;</div></pre></td></tr></table></figure>
+<h2 id="推送所有-tag，同步到远程仓库："><a href="#推送所有-tag，同步到远程仓库：" class="headerlink" title="推送所有 tag，同步到远程仓库："></a>推送所有 tag，同步到远程仓库：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git push origin --tags</div></pre></td></tr></table></figure>
+<h2 id="删除本地-Tag"><a href="#删除本地-Tag" class="headerlink" title="删除本地 Tag"></a>删除本地 Tag</h2><p>例如：1.0.0</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git tag -d 1.0.0</div></pre></td></tr></table></figure>
+<p>删除远程标签需要先删除本地标签，再执行下面的命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git push origin :refs/tags/1.0.0</div><div class="line">git push origin --delete tag 1.0.0</div></pre></td></tr></table></figure>
+<h2 id="展示当前分支的最近的tag"><a href="#展示当前分支的最近的tag" class="headerlink" title="展示当前分支的最近的tag"></a>展示当前分支的最近的tag</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git describe --tags --abbrev=0</div></pre></td></tr></table></figure>
+<h2 id="默认-tag-是打在最近的一次-commit-上，如果需要指定-commit-打-tag："><a href="#默认-tag-是打在最近的一次-commit-上，如果需要指定-commit-打-tag：" class="headerlink" title="默认 tag 是打在最近的一次 commit 上，如果需要指定 commit 打 tag："></a>默认 tag 是打在最近的一次 commit 上，如果需要指定 commit 打 tag：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git tag -a &lt;version-number&gt; -m &quot;v1.0.0 发布(描述)&quot; &lt;commit-id&gt;</div></pre></td></tr></table></figure>
+<h1 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h1><h2 id="快速切换分支"><a href="#快速切换分支" class="headerlink" title="快速切换分支"></a>快速切换分支</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git checkout -</div></pre></td></tr></table></figure>
+<h2 id="删除已经合并到master的分支"><a href="#删除已经合并到master的分支" class="headerlink" title="删除已经合并到master的分支"></a>删除已经合并到master的分支</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch --merged master | grep -v &apos;^\*\|  master&apos; | xargs -n 1 git branch -d</div></pre></td></tr></table></figure>
+<h2 id="列出远程服务器和本地的所有分支，以及分支上的最后提交"><a href="#列出远程服务器和本地的所有分支，以及分支上的最后提交" class="headerlink" title="列出远程服务器和本地的所有分支，以及分支上的最后提交"></a>列出远程服务器和本地的所有分支，以及分支上的最后提交</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch -vv</div></pre></td></tr></table></figure>
+<h2 id="列出本地和远程分支"><a href="#列出本地和远程分支" class="headerlink" title="列出本地和远程分支"></a>列出本地和远程分支</h2><p>-a参数相当于：all<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch -a</div></pre></td></tr></table></figure></p>
+<h2 id="列出所有远程服务器上的分支"><a href="#列出所有远程服务器上的分支" class="headerlink" title="列出所有远程服务器上的分支"></a>列出所有远程服务器上的分支</h2><p>-r参数相当于：remote<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch -r</div></pre></td></tr></table></figure></p>
+<h2 id="同步本地与远程分支"><a href="#同步本地与远程分支" class="headerlink" title="同步本地与远程分支"></a>同步本地与远程分支</h2><p>删除远程不存在的本地分支</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git fetch --p</div></pre></td></tr></table></figure>
+<h2 id="更新远程跟踪分支"><a href="#更新远程跟踪分支" class="headerlink" title="更新远程跟踪分支"></a>更新远程跟踪分支</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git fetch origin</div></pre></td></tr></table></figure>
+<h2 id="创建并切换到本地分支"><a href="#创建并切换到本地分支" class="headerlink" title="创建并切换到本地分支"></a>创建并切换到本地分支</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git checkout -b &lt;branch-name&gt;</div></pre></td></tr></table></figure>
+<h2 id="创建并切换到远程分支"><a href="#创建并切换到远程分支" class="headerlink" title="创建并切换到远程分支"></a>创建并切换到远程分支</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git checkout -b &lt;branch-name&gt; origin/&lt;branch-name&gt;</div></pre></td></tr></table></figure>
+<h2 id="删除远程分支"><a href="#删除远程分支" class="headerlink" title="删除远程分支"></a>删除远程分支</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git push origin --delete &lt;remote-branchname&gt;</div><div class="line">git push origin :&lt;remote-branchname&gt;</div></pre></td></tr></table></figure>
+<h2 id="重命名本地分支"><a href="#重命名本地分支" class="headerlink" title="重命名本地分支"></a>重命名本地分支</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch -m &lt;new-branch-name&gt;</div></pre></td></tr></table></figure>
+<h1 id="Commit"><a href="#Commit" class="headerlink" title="Commit"></a>Commit</h1><h2 id="合并本地的最后两次-commit"><a href="#合并本地的最后两次-commit" class="headerlink" title="合并本地的最后两次 commit"></a>合并本地的最后两次 commit</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git reset --soft HEAD^git commit --amend</div></pre></td></tr></table></figure>
+<h2 id="修改上一次的-commit-信息"><a href="#修改上一次的-commit-信息" class="headerlink" title="修改上一次的 commit 信息"></a>修改上一次的 commit 信息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git commit --amend</div></pre></td></tr></table></figure>
+<h2 id="展示简化的-commit-历史"><a href="#展示简化的-commit-历史" class="headerlink" title="展示简化的 commit 历史"></a>展示简化的 commit 历史</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git log --pretty=oneline --graph --decorate --all</div></pre></td></tr></table></figure>
+<h2 id="以新增一个commit的方式还原某一个commit的修改"><a href="#以新增一个commit的方式还原某一个commit的修改" class="headerlink" title="以新增一个commit的方式还原某一个commit的修改"></a>以新增一个commit的方式还原某一个commit的修改</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git revert &lt;commit-id&gt;</div></pre></td></tr></table></figure>
+<h2 id="回到某个commit的状态，并删除后面的commit"><a href="#回到某个commit的状态，并删除后面的commit" class="headerlink" title="回到某个commit的状态，并删除后面的commit"></a>回到某个commit的状态，并删除后面的commit</h2><p>和 revert 的区别：reset 命令会抹去某个 commit id 之后的所有 commit</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">git reset &lt;commit-id&gt;  #默认就是-mixed参数。</div><div class="line">git reset –mixed HEAD^  #回退至上个版本，它将重置HEAD到另外一个commit,并且重置暂存区以便和HEAD相匹配，但是也到此为止。工作区不会被更改。</div><div class="line">git reset –soft HEAD~3  #回退至三个版本之前，只回退了commit的信息，暂存区和工作区与回退之前保持一致。如果还要提交，直接commit即可   </div><div class="line">git reset –hard &lt;commit-id&gt;  #彻底回退到指定commit-id的状态，暂存区和工作区也会变为指定commit-id版本的内容</div></pre></td></tr></table></figure>
+<h2 id="查看指定路径文件代码是谁写的"><a href="#查看指定路径文件代码是谁写的" class="headerlink" title="查看指定路径文件代码是谁写的"></a>查看指定路径文件代码是谁写的</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git blame &lt;file-name&gt;</div></pre></td></tr></table></figure>
+<h1 id="远程仓库"><a href="#远程仓库" class="headerlink" title="远程仓库"></a>远程仓库</h1><h2 id="删除远程仓库地址"><a href="#删除远程仓库地址" class="headerlink" title="删除远程仓库地址"></a>删除远程仓库地址</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote remove origin &lt;remote-url&gt;</div></pre></td></tr></table></figure>
+<h2 id="修改远程仓库的url"><a href="#修改远程仓库的url" class="headerlink" title="修改远程仓库的url"></a>修改远程仓库的url</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote set-url origin &lt;URL&gt;</div></pre></td></tr></table></figure>
+<h2 id="增加远程仓库"><a href="#增加远程仓库" class="headerlink" title="增加远程仓库"></a>增加远程仓库</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote add origin &lt;remote-url&gt;</div></pre></td></tr></table></figure>
+<h2 id="列出所有远程仓库"><a href="#列出所有远程仓库" class="headerlink" title="列出所有远程仓库"></a>列出所有远程仓库</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote</div></pre></td></tr></table></figure>
+<h1 id="stash"><a href="#stash" class="headerlink" title="stash"></a>stash</h1><p>暂存命令stash使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">git stash #将本地修改暂时存储起来</div><div class="line">git stash list #查看暂存的信息</div><div class="line">git stash pop  #应用最近一次暂存的内容</div><div class="line">git stash apply stash@&#123;1&#125; #应用指定版本的暂存内容</div><div class="line">git stash clear  #清空暂存栈</div><div class="line">git checkout &lt;stash@&#123;n&#125;&gt; -- &lt;file-path&gt; #从stash中拿出某个文件的修改</div></pre></td></tr></table></figure></p>
+<h1 id="Git取消合并-merge-、暂存修改-stash-、回退到某个版本-reset-的使用方法"><a href="#Git取消合并-merge-、暂存修改-stash-、回退到某个版本-reset-的使用方法" class="headerlink" title="Git取消合并(merge)、暂存修改(stash)、回退到某个版本(reset)的使用方法"></a>Git取消合并(merge)、暂存修改(stash)、回退到某个版本(reset)的使用方法</h1><p>例如：取消某次合并<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git merge --abort #如果Git版本 &gt;= 1.7.4</div><div class="line">git reset --merge #如果Git版本 &gt;= 1.6.1</div></pre></td></tr></table></figure></p>
+<p>注意：<br>在合并之前要保证没有未提交的文件，如果有未提交的文件但现在又不想提交，用stash命令暂存。</p>
+<p>回退到某个版本并应用指定的几次提交<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">git reset --hard 1d7444 #回退到某个版本</div><div class="line">git cherry-pick 626335 #将某次commit的更改应用到当前版本</div><div class="line">git cherry-pick …</div><div class="line">git push origin HEAD --force  #强制提交</div></pre></td></tr></table></figure></p>
+<p>注意：<br>如果是撤销某次提交，可以用revert命令，git revert是生成一个新的提交来撤销某次提交，此次提交之前的commit都会被保留; git reset是回到某次提交，提交及之前的commit都会被保留，但是此次之后的修改都会被退回到暂存区。</p>
+<h1 id="git强制push"><a href="#git强制push" class="headerlink" title="git强制push"></a>git强制push</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git push -u origin master -f</div></pre></td></tr></table></figure>
+<h1 id="把暂存区的指定file放到工作区中"><a href="#把暂存区的指定file放到工作区中" class="headerlink" title="把暂存区的指定file放到工作区中"></a>把暂存区的指定file放到工作区中</h1><p>不添加参数，默认是-mixed<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git reset &lt;file-name&gt;</div></pre></td></tr></table></figure></p>
+<h1 id="撤销所有未提交的本地修改"><a href="#撤销所有未提交的本地修改" class="headerlink" title="撤销所有未提交的本地修改"></a>撤销所有未提交的本地修改</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git checkout .</div></pre></td></tr></table></figure>
+<h1 id="Push-本地分支到指定远程分支"><a href="#Push-本地分支到指定远程分支" class="headerlink" title="Push 本地分支到指定远程分支"></a>Push 本地分支到指定远程分支</h1><p>例如：Push 本地当前分支到远程仓库 origin 的 master 分支</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git push -u origin master</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;Tag&quot;&gt;&lt;a href=&quot;#Tag&quot; class=&quot;headerlink&quot; title=&quot;Tag&quot;&gt;&lt;/a&gt;Tag&lt;/h1&gt;&lt;h2 id=&quot;添加-Tag&quot;&gt;&lt;a href=&quot;#添加-Tag&quot; class=&quot;headerlink&quot; title=&quot;添加 Tag&quot;&gt;&lt;
     
     </summary>
     
@@ -484,6 +544,34 @@
   </entry>
   
   <entry>
+    <title>Mac iterm2 配色方案</title>
+    <link href="https://sunjinshuai.github.io/2017/06/12/Mac-iterm2-%E9%85%8D%E8%89%B2%E6%96%B9%E6%A1%88/"/>
+    <id>https://sunjinshuai.github.io/2017/06/12/Mac-iterm2-配色方案/</id>
+    <published>2017-06-12T13:44:57.000Z</published>
+    <updated>2018-09-12T13:45:26.353Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>安装</strong></p>
+<p>首先我们下载的 iTem2 这个软件，比 Mac 自带的终端更加强大。直接官网 <a href="http://iterm2.com/" target="_blank" rel="external">http://iterm2.com/</a> 下载并安装即可。</p>
+<p><strong>配色方案</strong></p>
+<p>我选用的是 <a href="http://ethanschoonover.com/solarized" target="_blank" rel="external">solarized</a>，效果还不错。点开官网，下载，解压，然后打开 iTerm2 下的偏好设置 preference ，点开 profiles 下的colors 选项，点击右下角的 Color Presets 选项，选择import ，导入解压到的 solarized 文件下的Solarized Dark.itermcolors，或者在 github 上下载：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone git://github.com/altercation/solarized.git</div></pre></td></tr></table></figure>
+<p>但是打开 iterm2 发现灰蒙蒙的，就像下面这样：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-79f94acb51b5baf8?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image"></p>
+<p>打开 iTerm2 - Preferences - Profiles - Text - Text Rendering，将 Draw bold text in bright colors 前面的勾去掉，彩色的世界就回来了。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-721e68e0e940bd75?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image"></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;安装&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;首先我们下载的 iTem2 这个软件，比 Mac 自带的终端更加强大。直接官网 &lt;a href=&quot;http://iterm2.com/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://ite
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>iOS学习笔记 第4期(2017.05.03)</title>
     <link href="https://sunjinshuai.github.io/2017/05/03/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC4%E6%9C%9F-2017-05-03/"/>
     <id>https://sunjinshuai.github.io/2017/05/03/iOS学习笔记-第4期-2017-05-03/</id>
@@ -559,6 +647,106 @@
 &lt;li&gt;使用Instruments检测僵尸对象&lt;/li&gt;
 &lt;li&gt;iOS11适配之UITableview、UICollectionView下拉刷新错乱&lt;/li&gt;
 &lt;l
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>神器 iTools 的巧妙使用</title>
+    <link href="https://sunjinshuai.github.io/2017/04/12/%E7%A5%9E%E5%99%A8-iTools-%E7%9A%84%E5%B7%A7%E5%A6%99%E4%BD%BF%E7%94%A8/"/>
+    <id>https://sunjinshuai.github.io/2017/04/12/神器-iTools-的巧妙使用/</id>
+    <published>2017-04-12T13:41:29.000Z</published>
+    <updated>2018-09-12T13:42:26.129Z</updated>
+    
+    <content type="html"><![CDATA[<p>这几天，公司项目不怎么忙，然后利用些业余的时间，想仿一个 app。下面介绍一下如果获取其他 app 的图片资源：</p>
+<ul>
+<li>在 MacX 下载 iTools 软件，并安装，直接在百度上搜也能找到。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-9d8944eded38ceaf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<ul>
+<li>双击安装 iTools，安装陈宫之后，在 iTools 中点击资源库，如果你连接上你的 iPhone，这个按钮就在右上角，若没有连接 iPhone，该按钮就在坐下角。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-245e9c5096661c18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-265d9ffa8e090bcd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<ul>
+<li>左边有网络资源和手机资源，点击网络资源下的苹果应用，在右上角搜索你要仿写的 app，点击下载，此时如果你连着 iPhone 显示的就不是下载而是安装，此时会提示你输入 apple id。这里以闲鱼为例：</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-823b3dde37b838b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-66e188b3358e55fb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<ul>
+<li>选中下载的软件，然后点击上面的那一排按钮中的导出，保存到桌面上。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-908292ff4068a664.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>在桌面上找到下载好的 ipa 文件，右键该文件，选择一个解压软件打开该文件，切记不要使用 iTunes 打开，此时该路径下便会有个文件夹名为项目名称的文件夹。可以导出到桌面然后结归档就好了。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-166baccabd38113c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<ul>
+<li>把解归档的文件夹进行打开就好了，资源都在里面，随便拿，有时候是乱的需要自己整理。</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-b28a8ed864cc4de3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>以上就是总结好的，神器 iTools 的巧妙使用。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;这几天，公司项目不怎么忙，然后利用些业余的时间，想仿一个 app。下面介绍一下如果获取其他 app 的图片资源：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在 MacX 下载 iTools 软件，并安装，直接在百度上搜也能找到。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&quot;http:/
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Charles 之 http、https 配置</title>
+    <link href="https://sunjinshuai.github.io/2017/04/12/Charles-%E4%B9%8B-http%E3%80%81https-%E9%85%8D%E7%BD%AE/"/>
+    <id>https://sunjinshuai.github.io/2017/04/12/Charles-之-http、https-配置/</id>
+    <published>2017-04-12T08:43:51.000Z</published>
+    <updated>2018-09-12T13:44:33.298Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://upload-images.jianshu.io/upload_images/588630-5c8a2583d88afd2b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h3 id="Charles安装"><a href="#Charles安装" class="headerlink" title="Charles安装"></a>Charles安装</h3><p>官网下载安装<a href="https://www.charlesproxy.com/download/" target="_blank" rel="external">Charles</a></p>
+<h3 id="http-配置"><a href="#http-配置" class="headerlink" title="http 配置"></a>http 配置</h3><ul>
+<li>查看电脑 IP 地址<br>在终端上<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ifconfig en4</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-89950831b7209779.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>或者</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-0a774d1072f66794.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h3 id="配置手机-http-代理"><a href="#配置手机-http-代理" class="headerlink" title="配置手机 http 代理"></a>配置手机 <code>http</code> 代理</h3><p>手机必须和电脑连接同一个局域网，点击“设置-&gt;无线局域网-&gt;选择连接的WiFi”，设置 <code>http</code> 代理：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-180b24c2da236bfd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>端口号：8888，端口号随便写。</p>
+<h3 id="Charles-进行-http-配置"><a href="#Charles-进行-http-配置" class="headerlink" title="Charles 进行 http 配置"></a><code>Charles</code> 进行 <code>http</code> 配置</h3><p><img src="http://upload-images.jianshu.io/upload_images/588630-408a9827a4b106ca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-8804c3edf00e8d24.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>以美团返回的数据为例：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-23f8f4c75256768d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h3 id="https-代理配置"><a href="#https-代理配置" class="headerlink" title="https 代理配置"></a>https 代理配置</h3><p>https 代理配置必须要安装 SSL 证书</p>
+<ul>
+<li>在手机上安装 SSL 证书<br>点击 Help -&gt; SSL Proxying -&gt; Install Charles Root Certificate on a Mobile Device</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-3f06155569d7e898.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>点击安装，得到 SSL 证书安装的地址</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-afbf08a0e9a92e95.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>在手机 Safari 浏览器输入地址 chls.pro/ssl，出现证书安装页面，点击安装</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-aced7f7c60e025de.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-239ad1c85aa702d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<ul>
+<li>Charles 进行 https 配置</li>
+</ul>
+<p>点击 Proxy -&gt; SSL Proxying Settings…</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-8303a9574e6e5276.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>勾选 Enable SSL Proxying，点击 Add。以<a href="https://api.weibo.cn/" target="_blank" rel="external">https://api.weibo.cn</a>为例，端口号填写443</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-57107c6cfd7da1c3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-e4cb9ec7e55199fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/588630-5c8a2583d88afd2b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; a
     
     </summary>
     
@@ -887,237 +1075,6 @@
 &lt;p&gt;&lt;code&gt;进程&lt;/code&gt;：就是一个正在执行的程序。&lt;br&gt;&lt;code&gt;线程&lt;/code&gt;：是执行程序最基本的单元，它有自己栈和寄存器。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;进程和线程的区别&lt;br
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>探索通知的原理</title>
-    <link href="https://sunjinshuai.github.io/2016/10/17/%E6%8E%A2%E7%B4%A2%E9%80%9A%E7%9F%A5%E7%9A%84%E5%8E%9F%E7%90%86/"/>
-    <id>https://sunjinshuai.github.io/2016/10/17/探索通知的原理/</id>
-    <published>2016-10-17T06:54:58.000Z</published>
-    <updated>2018-06-09T12:42:44.615Z</updated>
-    
-    <content type="html"><![CDATA[<h4 id="NSNotification解决的问题"><a href="#NSNotification解决的问题" class="headerlink" title="NSNotification解决的问题"></a>NSNotification解决的问题</h4><ul>
-<li>可以实现跨层的传递，例如A页面跳转到B页面，B页面再跳转到C页面，这时候如果我们通过委托回调的模式让A知道C的一些修改，那么实现起来就会很麻烦。</li>
-<li>可以实现一对多，<code>NSNotification</code> 的实际是一种观察者模式。</li>
-</ul>
-<h4 id="NSNotificationCenter"><a href="#NSNotificationCenter" class="headerlink" title="NSNotificationCenter"></a>NSNotificationCenter</h4><p><code>NSNotificationCenter</code> 就相当于一个广播站，使用 <code>[NSNotificationCenter defaultCenter]</code> 来获取，<code>NSNotificationCenter</code> 实际上是 <code>iOS</code> 程序内部之间的一种消息广播机制，主要为了解决应用程序内部不同对象之间解耦而设计。<br><code>NSNotificationCenter</code> 是整个通知机制的关键所在，它管理着监听者的注册和注销，通知的发送和接收。<code>NSNotificationCenter</code> 维护着一个通知的分发表，把所有通知发送者发送的通知，转发给对应的监听者们。每一个 <code>iOS</code> 程序都有一个唯一的通知中心，不必自己去创建一个，它是一个单例，通过 <code>[NSNotificationCenter defaultCenter]</code> 方法获取。<br><code>NSNotificationCenter</code> 是基于观察者模式设计的，不能跨应用程序进程通信，当 <code>NSNotificationCenter</code> 接收到消息之后会根据内部的消息转发表，将消息发送给订阅者；它可以向应用任何地方发送和接收通知。<br>在 <code>NSNotificationCenter</code> 注册观察者，发送者使用通知中心广播时，以 <code>NSNotification</code> 的 <code>name</code> 和 <code>object</code> 来确定需要发送给哪个观察者。为保证观察者能接收到通知，所以应先向通知中心注册观察者，接着再发送通知这样才能在通知中心调度表中查找到相应观察者进行通知。</p>
-<h4 id="NSNotification"><a href="#NSNotification" class="headerlink" title="NSNotification"></a>NSNotification</h4><p><code>NSNotification</code> 是 <code>NSNotificationCenter</code> 接收到消息之后根据内部的消息转发表，将消息发送给订阅者封装的对象；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">@interface NSNotification : NSObject &lt;NSCopying, NSCoding&gt;</div><div class="line"></div><div class="line">//这个成员变量是这个消息对象的唯一标识，用于辨别消息对象</div><div class="line">@property (readonly, copy) NSString *name;</div><div class="line">// 这个成员变量定义一个对象，可以理解为针对某一个对象的消息，代表通知的发送者</div><div class="line">@property (nullable, readonly, retain) id object;</div><div class="line">//这个成员变量是一个字典，可以用其来进行传值</div><div class="line">@property (nullable, readonly, copy) NSDictionary *userInfo;</div><div class="line">// 初始化方法</div><div class="line">- (instancetype)initWithName:(NSString *)name object:(nullable id)object userInfo:(nullable NSDictionary *)userInfo NS_AVAILABLE(10_6, 4_0) NS_DESIGNATED_INITIALIZER;</div><div class="line">- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder NS_DESIGNATED_INITIALIZER;</div><div class="line"></div><div class="line">@end</div></pre></td></tr></table></figure>
-<p>由于 <code>NSNotification</code> 属性都是只读的，如果要创建通知则要用下面 <code>NSNotification(NSNotificationCreation)</code> 分类相应的方法进行初始化；</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@interface NSNotification (NSNotificationCreation)</div><div class="line">+ (instancetype)notificationWithName:(NSString *)aName object:(nullable id)anObject;</div><div class="line">+ (instancetype)notificationWithName:(NSString *)aName object:(nullable id)anObject userInfo:(nullable NSDictionary *)aUserInfo;</div><div class="line">- (instancetype)init /*NS_UNAVAILABLE*/;    /* do not invoke; not a valid initializer for this class */</div><div class="line">@end</div></pre></td></tr></table></figure>
-<p>注意：<br>如果 <code>NSNotification</code> 对象中的 <code>notificationName</code> 为 <code>nil</code>，则会接收所有的通知。通知中心是以 <code>NSNotification</code> 的 <code>name</code> 和 <code>object</code> 来确定需要发送给哪个观察者。监听同一条通知的多个观察者，在通知到达时，它们执行回调的顺序是不确定的，所以我们不能去假设操作的执行会按照添加观察者的顺序来执行。</p>
-<p>通知中心默认是以同步的方式发送通知的，也就是说，当一个对象发送了一个通知，<strong>只有当该通知的所有接受者都接受到了通知中心分发的通知消息并且处理完成后，发送通知的对象才能继续执行接下来的方法。</strong></p>
-<h3 id="iOS-9-NSNotificationCenter-无需手动移除观察者"><a href="#iOS-9-NSNotificationCenter-无需手动移除观察者" class="headerlink" title="iOS 9 NSNotificationCenter 无需手动移除观察者"></a>iOS 9 NSNotificationCenter 无需手动移除观察者</h3><p>众所周知，在观察者对象释放之前，需要调用 <code>removeObserver</code> 方法，将观察者从通知中心移除，否则程序可能会出现崩溃。其实，从 <code>iOS 9</code> 开始，即使不移除观察者对象，程序也不会出现异常。这是为什么呢？我们先了解一下，为什么 <code>iOS 9</code> 之前需要手动移除观察者对象。</p>
-<p>在 <code>MRC</code> 时代，观察者注册时，通知中心并不会对观察者对象做 <code>retain</code> 操作，而是对观察者对象进行 <code>unsafe_unretained</code> 引用。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// for attribute</div><div class="line">@property (unsafe_unretained) NSObject *unsafeProperty;</div><div class="line">// for variables</div><div class="line">NSObject *__unsafe_unretained unsafeReference;</div></pre></td></tr></table></figure>
-<p>不安全引用（<code>unsafe reference</code>）和弱引用 (<code>weak reference</code>) 类似，它并不会让被引用的对象保持存活，但是和弱引用不同的是，当被引用的对象释放的时，不安全引用并不会自动被置为 <code>nil</code>，这就意味着它变成了野指针，而对野指针发送消息会导致程序崩溃。</p>
-<blockquote>
-<p>If your app targets iOS 9.0 and later or macOS 10.11 and later, you don’t need to unregister an observer in its dealloc method.</p>
-</blockquote>
-<p>而在 <code>iOS 9</code> 以后，通知中心持有的是注册者的 <code>weak</code> 指针，这时即使不对通知进行手动移除，指针也会在注册者被回收后自动置空。但是，通过 <code>-[NSNotificationCenter addObserverForName:object:queue:usingBlock]</code> 方法注册的观察者依然需要手动的释放，因为通知中心对它们持有的是强引用。</p>
-<h4 id="NSNotification在多线程中使用"><a href="#NSNotification在多线程中使用" class="headerlink" title="NSNotification在多线程中使用"></a>NSNotification在多线程中使用</h4><p>在主线程中注册观察者，在子线程中发送通知，是发送通知的线程处理的通知事件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">// 往通知中心添加观察者</div><div class="line">[[NSNotificationCenter defaultCenter] addObserver:self</div><div class="line">                                         selector:@selector(handleNotification:)</div><div class="line">                                             name:@&quot;MyNAME&quot;</div><div class="line">                                           object:nil];</div><div class="line">NSLog(@&quot;register notifcation thread = %@&quot;, [NSThread currentThread]);</div><div class="line">// 创建子线程，在子线程中发送通知</div><div class="line">dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^&#123;</div><div class="line">	NSLog(@&quot;post notification thread = %@&quot;, [NSThread currentThread]);</div><div class="line">        [[NSNotificationCenter defaultCenter] postNotificationName:@&quot;MyNAME&quot; object:nil userInfo:nil];</div><div class="line">&#125;);</div><div class="line"></div><div class="line">- (void)handleNotification:(NSNotification *)notification &#123;</div><div class="line">    //打印处理通知方法的线程</div><div class="line">    NSLog(@&quot;handle notification thread = %@&quot;, [NSThread currentThread]);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-5eda51fb29c68b9b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>在主线程中注册观察者，主线程中发送通知，是发送通知的线程处理的通知事件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">// 往通知中心添加观察者</div><div class="line">[[NSNotificationCenter defaultCenter] addObserver:self</div><div class="line">                                         selector:@selector(handleNotification:)</div><div class="line">                                             name:@&quot;MyNAME&quot;</div><div class="line">                                           object:nil];</div><div class="line">    </div><div class="line">NSLog(@&quot;register notifcation thread = %@&quot;, [NSThread currentThread]);</div><div class="line">    </div><div class="line">// 创建子线程，在子线程中发送通知</div><div class="line">dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^&#123;</div><div class="line">	NSLog(@&quot;post notification thread = %@&quot;, [NSThread currentThread]);</div><div class="line">        [[NSNotificationCenter defaultCenter] postNotificationName:@&quot;MyNAME&quot; object:nil userInfo:nil];</div><div class="line">&#125;);</div><div class="line">    </div><div class="line">- (void)handleNotification:(NSNotification *)notification &#123;</div><div class="line">    //打印处理通知方法的线程</div><div class="line">    NSLog(@&quot;handle notification thread = %@&quot;, [NSThread currentThread]);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-dee057a3614a9d88.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>注意：<br>在一个多线程的程序中，发送方发送通知的线程通常就是监听者接受通知的线程，这可能和监听者注册时的线程不一样。</p>
-<h4 id="通知的原理："><a href="#通知的原理：" class="headerlink" title="通知的原理："></a>通知的原理：</h4><p>在发送通知的子线程处理通知的事件时，将 <code>NSNotification</code> 暂存，然后通过 <code>MachPort</code> 往相应线程的 <code>RunLoop</code> 中发送事件。相应的线程收到该事件后，取出在队列中暂存的 <code>NSNotification</code> , 然后在当前线程中调用处理通知的方法。<br><img src="http://upload-images.jianshu.io/upload_images/588630-7ddc2c7fab912f4d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h4 id=&quot;NSNotification解决的问题&quot;&gt;&lt;a href=&quot;#NSNotification解决的问题&quot; class=&quot;headerlink&quot; title=&quot;NSNotification解决的问题&quot;&gt;&lt;/a&gt;NSNotification解决的问题&lt;/h4&gt;&lt;ul&gt;
-
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>AutoreleasePool的实现原理</title>
-    <link href="https://sunjinshuai.github.io/2016/10/06/AutoreleasePool%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/"/>
-    <id>https://sunjinshuai.github.io/2016/10/06/AutoreleasePool的实现原理/</id>
-    <published>2016-10-06T06:32:16.000Z</published>
-    <updated>2017-07-06T08:16:54.000Z</updated>
-    
-    <content type="html"><![CDATA[<h4 id="面试题：autorelease对象什么时候释放。"><a href="#面试题：autorelease对象什么时候释放。" class="headerlink" title="面试题：autorelease对象什么时候释放。"></a>面试题：autorelease对象什么时候释放。</h4><p>autorelease的本质就是延迟调用<code>release</code>方法，在MRC的环境下，可以通过调用<code>[obj autorelease]</code>来延迟释放内存，在ARC的环境下，当我们创建一个对象，会将对象添加到当前的<code>autoreleasepool</code>中，当<code>autoreleasepool</code>销毁时，会对<code>autoreleasepool</code>里面的所有对象做一次<code>release</code>操作。在没有手动加入<code>autoreleasepool</code>的情况下，<code>autorelease</code>对象是在当前的<code>runloop</code>迭代结束时释放的，而它能够释放的原因是系统在每个runloop迭代中都加入了自动释放池<code>push</code>和<code>pop</code>。</p>
-<p>当<code>autoreleasepool</code>销毁时，在调用堆栈中可以发现，系统调用了<code>-[NSAutoreleasePool release]</code>方法，这个方法最终通过调用<code>AutoreleasePoolPage::pop(void *)</code>函数来负责对<code>autoreleasepool</code>中的<code>autorelease</code>对象执行<code>release</code>操作。</p>
-<h4 id="AutoreleasePoolPage"><a href="#AutoreleasePoolPage" class="headerlink" title="AutoreleasePoolPage"></a>AutoreleasePoolPage</h4><p>我们打开<a href="http://opensource.apple.com/tarballs/objc4/" target="_blank" rel="external">runtime</a> 的源码工程，在 NSObject.mm 文件的第 438-932 行可以找到<code>autoreleasepool</code>的实现源码。其实，<code>autoreleasepool</code>是没有单独的内存结构的，它是通过以<code>AutoreleasePoolPage</code>为结点的双向链表来实现的。</p>
-<ul>
-<li>每一个线程的<code>autoreleasepool</code>其实就是一个指针的堆栈，结构中的thread指针指向当前线程；</li>
-<li>每一个指针代表一个需要<code>release</code>的对象或者<code>POOL_SENTINEL</code>（哨兵对象，代表一个<code>autoreleasepool</code>的边界）；</li>
-<li>一个<code>pool token</code>指向<code>autoreleasepool</code>所对应的<code>POOL_SENTINEL</code>（哨兵对象）的内存地址。当这个<code>autoreleasepool</code>被<code>pop</code>的时候，所有在<code>pool token</code>指针之后的的对象都会被<code>release</code>；</li>
-</ul>
-<p>一个空的<code>AutoreleasePoolPage</code>的内存结构如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/588630-f64cda7c9112e5ec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<ul>
-<li><code>magic</code>用来校验<code>AutoreleasePoolPage</code>的结构是否完整；</li>
-<li><code>next</code>指向最新添加的<code>autorelease</code>对象的下一个位置，初始化时指向 begin() ；</li>
-<li><code>thread</code>指向当前线程；</li>
-<li><code>parent</code>指向父结点，第一个结点的 parent 值为 nil ；</li>
-<li><code>child</code>指向子结点，最后一个结点的 child 值为 nil ；</li>
-<li><code>depth</code>代表深度，从 0 开始，往后递增 1；</li>
-<li><code>hiwat</code>代表 high water mark 。</li>
-</ul>
-<p>当<code>AutoreleasePoolPage</code>里面的<code>autorelease</code>对象满了，也就是next指针指向了栈顶，会新建一个<code>AutoreleasePoolPage</code>对象，连接链表，后来的<code>autorelease</code>对象在新的<code>AutoreleasePoolPage</code>加入，新<code>AutoreleasePoolPage</code>的next指针被初始化在栈底（begin的位置），然后继续向栈顶添加新对象。<br>另外，当 next == begin() 时，表示 AutoreleasePoolPage 为空；当 next == end() 时，表示 AutoreleasePoolPage 已满。<br>所以，向一个对象发送<code>release</code>消息，就是将这个对象加入到当前<code>AutoreleasePoolPage</code>的栈顶next指针指向的位置。</p>
-<h4 id="autoreleasepool"><a href="#autoreleasepool" class="headerlink" title="autoreleasepool"></a><code>autoreleasepool</code></h4><p>使用<code>clang -rewrite-objc</code>命令将下面的 Objective-C 代码重写成 C++ 代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">extern &quot;C&quot; __declspec(dllimport) void * objc_autoreleasePoolPush(void);</div><div class="line">extern &quot;C&quot; __declspec(dllimport) void objc_autoreleasePoolPop(void *);</div><div class="line"></div><div class="line">struct __AtAutoreleasePool &#123;</div><div class="line">  __AtAutoreleasePool() &#123;atautoreleasepoolobj = objc_autoreleasePoolPush();&#125;</div><div class="line">  ~__AtAutoreleasePool() &#123;objc_autoreleasePoolPop(atautoreleasepoolobj);&#125;</div><div class="line">  void * atautoreleasepoolobj;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">#define __OFFSETOFIVAR__(TYPE, MEMBER) ((long long) &amp;((TYPE *)0)-&gt;MEMBER)</div><div class="line">int main(int argc, char * argv[]) &#123;</div><div class="line">    /* @autoreleasepool */ &#123; __AtAutoreleasePool __autoreleasepool;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>声明一个<code>__AtAutoreleasePool</code>类型的局部变量<code>__autoreleasepool</code>来实现<code>@autoreleasepool {}</code>。当声明<code>__autoreleasepool</code>变量时，构造函数<code>__AtAutoreleasePool()</code>被调用，即执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">atautoreleasepoolobj = objc_autoreleasePoolPush();</div></pre></td></tr></table></figure></p>
-<p>当出了当前作用域时，析构函数<code>~__AtAutoreleasePool()</code>被调用，即执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">objc_autoreleasePoolPop(atautoreleasepoolobj);</div></pre></td></tr></table></figure></p>
-<p>也就是说<code>@autoreleasepool {}</code>的实现代码可以进一步简化如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">/* @autoreleasepool */ &#123;</div><div class="line">    void *atautoreleasepoolobj = objc_autoreleasePoolPush();</div><div class="line">    // 用户代码，所有接收到 autorelease 消息的对象会被添加到这个 autoreleasepool 中</div><div class="line">    objc_autoreleasePoolPop(atautoreleasepoolobj);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>因此，单个<code>autoreleasepool</code>的运行过程可以简单地理解为<code>objc_autoreleasePoolPush()</code>、<code>[obj release]</code>和<code>objc_autoreleasePoolPop(void *)</code>三个过程。</p>
-<h4 id="objc-autoreleasePoolPush"><a href="#objc-autoreleasePoolPush" class="headerlink" title="objc_autoreleasePoolPush()"></a>objc_autoreleasePoolPush()</h4><p>上面提到的<code>objc_autoreleasePoolPush()</code>函数本质上就是调用的<code>AutoreleasePoolPage</code>的<code>push</code>函数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">void *</div><div class="line">objc_autoreleasePoolPush(void)</div><div class="line">&#123;</div><div class="line">    if (UseGC) return nil;</div><div class="line">    return AutoreleasePoolPage::push();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>根据源码得出，每次执行<code>objc_autoreleasePoolPush</code>其实就是创建了一个新的<code>autoreleasepool</code>，对应<code>AutoreleasePoolPage</code>的具体实现就是往<code>AutoreleasePoolPage</code>中的<code>next</code>位置插入一个<code>POOL_SENTINEL</code>（哨兵对象），并且返回插入的<code>POOL_SENTINEL</code>的内存地址。并且把<code>pool token</code>指针指向这个地址，在执行<code>pop</code>操作的时候作为函数的入参。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">static inline void *push()</div><div class="line">&#123;</div><div class="line">    id *dest = autoreleaseFast(POOL_SENTINEL);</div><div class="line">    assert(*dest == POOL_SENTINEL);</div><div class="line">    return dest;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p><code>push</code>函数通过调用<code>autoreleaseFast</code>函数来执行具体的插入操作。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">static inline id *autoreleaseFast(id obj)</div><div class="line">&#123;</div><div class="line">    AutoreleasePoolPage *page = hotPage();</div><div class="line">    if (page &amp;&amp; !page-&gt;full()) &#123;</div><div class="line">        return page-&gt;add(obj);</div><div class="line">    &#125; else if (page) &#123;</div><div class="line">        return autoreleaseFullPage(obj, page);</div><div class="line">    &#125; else &#123;</div><div class="line">        return autoreleaseNoPage(obj);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p><code>autoreleaseFast</code>函数在执行一个具体的插入操作时，分别对三种情况进行了不同的处理：</p>
-<ul>
-<li>当前<code>page</code>存在且没有满时，直接将对象添加到当前<code>page</code>中，即<code>next</code>指向的位置；</li>
-<li>当前<code>page</code>存在且已满时，创建一个新的<code>page</code> ，并将对象添加到新创建的<code>page</code>中；</li>
-<li>当前<code>page</code>不存在时，即还没有<code>page</code>时，创建第一个<code>page</code>，并将对象添加到新创建的<code>page</code>中。<br>每调用一次<code>push</code>操作就会创建一个新的<code>autoreleasepool</code> ，即往<code>AutoreleasePoolPage</code>中插入一个<code>POOL_SENTINEL</code>（哨兵对象），并且返回插入的<code>POOL_SENTINEL</code>（哨兵对象）的内存地址。</li>
-</ul>
-<h4 id="objc-autoreleasePoolPop-void"><a href="#objc-autoreleasePoolPop-void" class="headerlink" title="objc_autoreleasePoolPop(void *)"></a>objc_autoreleasePoolPop(void *)</h4><p><code>objc_autoreleasePoolPop(void *)</code>函数本质上也是调用的<code>AutoreleasePoolPage</code>的<code>pop</code>函数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">void</div><div class="line">objc_autoreleasePoolPop(void *ctxt)</div><div class="line">&#123;</div><div class="line">    if (UseGC) return;</div><div class="line"></div><div class="line">    // fixme rdar://9167170</div><div class="line">    if (!ctxt) return;</div><div class="line"></div><div class="line">    AutoreleasePoolPage::pop(ctxt);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p><code>pop</code>函数的入参就是<code>push</code>函数的返回值，也就是<code>POOL_SENTINEL</code>（哨兵对象）的内存地址，（哨兵对象）的内存地址。当这个<code>autoreleasepool</code>被<code>pop</code>的时候，所有在<code>pool token</code>指针之后的的对象都会被<code>release</code>，直到<code>pool token</code>所在<code>page</code>的<code>next</code>指向<code>pool token</code>为止。</p>
-<h4 id="autorelease对象释放原理"><a href="#autorelease对象释放原理" class="headerlink" title="autorelease对象释放原理"></a>autorelease对象释放原理</h4><p>每调用一次<code>push</code>操作就会创建一个新的<code>autoreleasepool</code> ，即往<code>AutoreleasePoolPage</code>中插入一个<code>POOL_SENTINEL</code>（哨兵对象），并且返回插入的<code>POOL_SENTINEL</code>（哨兵对象）的内存地址，在执行<code>objc_autoreleasePoolPop(void *)</code>操作的时候作为函数的入参。<br><img src="http://upload-images.jianshu.io/upload_images/588630-cf6a8a8bd44f721c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<ul>
-<li>根据传入的哨兵对象地址找到哨兵对象所处的page</li>
-<li>在当前<code>AutoreleasePoolPage</code>中，将晚于哨兵对象插入的所有<code>autorelease</code>对象都发送一次<code>release</code>消息，并向回移动next指针到正确位置。</li>
-<li>从最新加入的对象一直向前清理，可以向前跨越若干个<code>AutoreleasePoolPage</code>，直到哨兵所在的<code>AutoreleasePoolPage</code>。</li>
-</ul>
-<p><code>objc_autoreleasePoolPop(void *)</code>函数本质上也是调用的<code>AutoreleasePoolPage</code>的<code>pop</code>函数，当执行<code>pop</code>操作后，<br><img src="http://upload-images.jianshu.io/upload_images/588630-ee6388ccaec8b86f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<h4 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h4><p><a href="http://blog.sunnyxx.com/2014/10/15/behind-autorelease/" target="_blank" rel="external">http://blog.sunnyxx.com/2014/10/15/behind-autorelease/</a><br><a href="http://blog.leichunfeng.com/blog/2015/05/31/objective-c-autorelease-pool-implementation-principle/" target="_blank" rel="external">http://blog.leichunfeng.com/blog/2015/05/31/objective-c-autorelease-pool-implementation-principle/</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h4 id=&quot;面试题：autorelease对象什么时候释放。&quot;&gt;&lt;a href=&quot;#面试题：autorelease对象什么时候释放。&quot; class=&quot;headerlink&quot; title=&quot;面试题：autorelease对象什么时候释放。&quot;&gt;&lt;/a&gt;面试题：autoreleas
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>对称加密与非对称加密</title>
-    <link href="https://sunjinshuai.github.io/2016/09/23/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E4%B8%8E%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/"/>
-    <id>https://sunjinshuai.github.io/2016/09/23/对称加密与非对称加密/</id>
-    <published>2016-09-23T14:21:21.000Z</published>
-    <updated>2018-06-09T07:17:45.018Z</updated>
-    
-    <content type="html"><![CDATA[<p>对称加密：<br>加密（encryption）与解密（decryption）使用的是同样的密钥（secret key），对称加密是最快速、最简单的一种加密方式。<br>加密和解密算法是公开的，秘钥必须严格保存，如果秘钥泄露，别人就能够用密文+秘钥还原成你的明文。</p>
-<p>对称加密有很多种算法，由于它效率很高，所以被广泛使用在很多加密协议的核心当中。</p>
-<p>对称加密通常使用的是相对较小的密钥，一般小于256bit。因为密钥越大，加密越强，但加密与解密的过程越慢。如果你只用1bit来做这个密钥，那黑客们可以先试着用0来解密，不行的话就再用1解；但如果你的密钥有1MB大，黑客们可能永远也无法破解，但加密和解密的过程要花费很长的时间。</p>
-<p>比如常见的DES/AES都是属于对称加密算法。</p>
-<p>优点：算法公开、计算量小、加密速度快、加密效率高。<br>缺点：秘钥的管理和分发非常困难，不够安全。在数据传送前，发送方和接收方必须商定好秘钥，然后双方都必须要保存好秘钥，如果一方的秘钥被泄露，那么加密信息也就不安全了。</p>
-<p>另外，每对用户每次使用对称加密算法时，都需要使用其他人不知道的唯一秘钥，这会使得收、发双方所拥有的钥匙数量巨大，密钥管理成为双方的负担。</p>
-<p>非对称加密：<br>非对称加密算法需要两个密钥来进行加密和解密，这两个秘钥是公开密钥（简称公钥）和私有密钥（简称私钥），即常说的“公钥加密，私钥加密”或“私钥加密，公钥加密”。</p>
-<p>私钥只能由一方安全保管，不能外泄，而公钥则可以发给任何请求它的人。</p>
-<p>非对称加密使用这对密钥中的一个进行加密，而解密则需要另一个密钥。</p>
-<p>比如，你向银行请求公钥，银行将公钥发给你，你使用公钥对消息加密，那么只有私钥的持有人–银行才能对你的消息解密。</p>
-<p>与对称加密不同的是，银行不需要将私钥通过网络发送出去，因此安全性大大提高。<br>比如RSA就是最常用的非对称加密算法。</p>
-<p>虽然非对称加密很安全，但是和对称加密比起来，它非常的慢，所以我们还是要用对称加密来传送消息，但对称加密所使用的密钥我们可以通过非对称加密的方式发送出去。</p>
-<p>优点：安全性更高，公钥是公开的，秘钥是自己保存的，不需要将私钥给别人。<br>缺点：加密和解密花费时间长、速度慢，只适合对少量数据进行加密。</p>
-<p>对称加密加密与解密使用的是同样的密钥，所以速度快，但由于需要将密钥在网络传输，所以安全性不高。</p>
-<p>非对称加密使用了一对密钥，公钥与私钥，所以安全性高，但加密与解密速度慢。</p>
-<p>解决的办法是将对称加密的密钥使用非对称加密的公钥进行加密，然后发送出去，接收方使用私钥进行解密得到对称加密的密钥，然后双方可以使用对称加密来进行沟通。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;对称加密：&lt;br&gt;加密（encryption）与解密（decryption）使用的是同样的密钥（secret key），对称加密是最快速、最简单的一种加密方式。&lt;br&gt;加密和解密算法是公开的，秘钥必须严格保存，如果秘钥泄露，别人就能够用密文+秘钥还原成你的明文。&lt;/p&gt;
-&lt;
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Load&amp;Initialize</title>
-    <link href="https://sunjinshuai.github.io/2016/09/19/Load-Initialize/"/>
-    <id>https://sunjinshuai.github.io/2016/09/19/Load-Initialize/</id>
-    <published>2016-09-19T15:20:55.000Z</published>
-    <updated>2017-11-29T15:22:09.163Z</updated>
-    
-    <content type="html"><![CDATA[<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">+ (void)load;</div><div class="line">+ (void)initialize;</div></pre></td></tr></table></figure>
-<h2 id="Load"><a href="#Load" class="headerlink" title="Load"></a>Load</h2><p>如果你实现了 <code>+ load</code> 方法，那么当类被加载到内存时，它会自动被调用，并且是在 <code>main</code> 函数调用之前被调用。</p>
-<h4 id="load-方法的调用栈"><a href="#load-方法的调用栈" class="headerlink" title="load 方法的调用栈"></a>load 方法的调用栈</h4><p>首先分析一下 <code>load</code> 方法是如何被调用的</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-79f9a27a6fad634c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>从控制台的打印可以看出，运行之后，依然打印了 <code>XXXX load</code> 字符串，也就是说调用了 <code>+ load</code> 方法。</p>
-<h4 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h4><p><code>load</code> 方法的调用顺序其实有迹可循，我们看到 <code>demo</code> 的项目设置如下：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-578317d4cc2d9920.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>在 <code>TARGETS -&gt; Build Phases -&gt; Compile Sources</code>中调整一下文件的加载顺序：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-0bdb3567814e7f69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>结果发现：</p>
-<ul>
-<li>在 <code>load</code> 方法的调用中会自动调用父类的方法，即<strong>父类先于子类调用</strong>。</li>
-<li>在 <code>load</code> 方法的调用中，<strong>文件的加载顺序靠前的类优先调用</strong>。</li>
-<li>在 <code>load</code> 方法的调用中，<strong>类先于分类调用</strong>。</li>
-<li>在 <code>load</code> 方法的调用中，<strong>文件的加载顺序靠前的分类优先调用</strong>。</li>
-</ul>
-<h4 id="load方法如何加载到内存中"><a href="#load方法如何加载到内存中" class="headerlink" title="load方法如何加载到内存中"></a><code>load</code>方法如何加载到内存中</h4><p>使用 <code>Xcode</code> 添加一个符号断点 <code>+[Parent load]</code>：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-fc3a92e363d99516.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>注意：<br>注意这里 <code>+</code> 和 <code>[</code> 之间没有空格</p>
-<p>重新运行程序。这时，代码会停在 <code>NSLog(@&quot;%@ , %s&quot;, [self class], __FUNCTION__);</code> 这一行的实现上：</p>
-<p>左侧的调用栈很清楚的展示哪些方法被调用了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">0  +[Parent load]</div><div class="line">1  call_load_methods</div><div class="line">2  load_images</div><div class="line">3  dyld::notifySingle(dyld_image_states, ImageLoader const*, ImageLoader::InitializerTimingList*)</div><div class="line">...</div><div class="line">13 _dyld_start</div></pre></td></tr></table></figure>
-<p>从runtime初始化开始</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-9494f2a6913b9e0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>当 <code>Objective-C</code> 运行时初始化的时候，会通过 <code>dyld_register_image_state_change_handler</code> 在每次有新的镜像加入运行时的时候，进行回调。</p>
-<ul>
-<li><code>map_images</code> 主要是在 <code>image</code> 加载进内容后对其二进制内容进行解析，初始化里面的类的结构等。</li>
-<li><code>load_images</code> 主要是调用 <code>call_load_methods</code>。按照继承层次依次调用 <code>Class</code> 的 <code>+load</code> 方法然后再是 <code>Category</code> 的 <code>+load</code> 方法。</li>
-</ul>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-ab9a17fe1c457f6a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-ec529c4bedd7e4ba.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>从源码中可以看出，</p>
-<ul>
-<li>通过 <code>_getObjc2NonlazyClassList</code> 获取所有的类的列表之后，会通过 <code>remapClass</code> 获取类对应的指针，然后调用 <code>schedule_class_load</code> 递归把当前类和没有调用 <code>+ load</code> 方法的父类，通过 <code>add_class_to_loadable_list(cls)</code> 方法添加到 <code>loadable_classes</code> 列表中，<strong>保证父类在子类前调用 <code>+load</code> 方法</strong>。</li>
-<li>通过 <code>_getObjc2NonlazyCategoryList</code> 获取所有的分类的列表之后，会通过 <code>remapClass</code> 获取分类对应的指针，然后调用<code>add_category_to_loadable_list</code> 把当前分类添加到 <code>loadable_categories</code> 列表中。</li>
-</ul>
-<p>在将镜像加载到运行时、对 <code>+load</code> 方法的准备就绪之后，执行 <code>call_load_methods</code>，开始调用 <code>+load</code> 方法：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-908e53a2462438c8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<ul>
-<li>不停调用类的 <code>+load</code> 方法，直到 <code>loadable_classes</code> 为空。</li>
-<li>然后调用一次 <code>call_category_loads</code> 加载分类。</li>
-<li>如果有 <code>loadable_classes</code> 或者更多的分类，继续调用 <code>+load</code> 方法。</li>
-<li><strong>类先于分类调用</strong>。</li>
-</ul>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-5c3408d006682624.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>其中 <code>call_class_loads</code> 会从一个待加载的类列表 <code>loadable_classes</code> 中寻找对应的类，然后通过对应的 <code>SEL</code> ，找到 <code>IMP</code> 的实现并执行。</p>
-<h4 id="load-方法的应用"><a href="#load-方法的应用" class="headerlink" title="load 方法的应用"></a>load 方法的应用</h4><p>由于调用 <code>+load</code> 方法运行时间过早，环境很不安全，我们应该尽量减少 <code>+load</code> 方法的逻辑。另一个原因是load方法是线程安全的，它内部使用了锁，所以我们应该避免线程阻塞在 <code>+load</code> 方法中。不过在这个时间点，所有的 <code>framework</code> 都已经加载到了运行时中，所以调用 <code>framework</code> 中的方法都是安全的。</p>
-<h2 id="Initialize"><a href="#Initialize" class="headerlink" title="Initialize"></a>Initialize</h2><ul>
-<li><code>initialize</code> 的调用是惰性的，它会在第一次调用当前类的方法时被调用。</li>
-<li>与 <code>load</code> 不同，<code>initialize</code> 方法调用时，所有的类都已经加载到了内存中。</li>
-<li><code>initialize</code> 的运行是线程安全的。</li>
-<li>子类会继承父类的 <code>initialize</code> 方法。</li>
-</ul>
-<h4 id="执行顺序-1"><a href="#执行顺序-1" class="headerlink" title="执行顺序"></a>执行顺序</h4><p>在项目中没有引用任何文件，当我们运行项目，会发现与 <code>load</code> 方法不同的是，虽然我们在 <code>initialize</code> 方法中调用了 <code>NSLog</code>。但是程序运行之后没有任何输出。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-1ed8f3a5cc66ad20.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>结果发现：<br>没有直接调用 <code>initialize</code> 方法。但是，这里也打印出了 <code>XXXX initialize</code> 字符串。</p>
-<p><strong> <code>initialize</code> 只会在对应类的方法第一次被调用时，才会调用。</strong></p>
-<p>由于子类会继承父类的 <code>initialize</code> 方法，即使子类没有实现 <code>initialize</code> 方法，也会调用父类的方法，这会导致一个很严重的问题：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-e7b192de1527d86f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>运行后发现父类的 <code>initialize</code> 方法竟然调用了两次：</p>
-<p>虽然 <code>initialize</code> 方法对一个类而言只会调用一次，但这里由于出现了两个类，所以调用两次符合规则，但不符合我们的需求。正确使用initialize方法的姿势如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// In Parent.m</div><div class="line">+ (void)initialize &#123;</div><div class="line">if (self == [Parent class]) &#123;</div><div class="line">NSLog(@&quot;Initialize Parent, caller Class %@&quot;, [self class]);</div><div class="line">&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>加上判断后，就不会因为子类而调用到自己的 <code>initialize</code> 方法了。</p>
-<p><strong> 如果在分类中也实现了 <code>initialize</code>  方法，则会出现方法”覆盖”</strong>。</p>
-<p>在 <code>initialize</code> 方法中打一个断点，来查看这个方法的调用栈：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-4b45dbbbeceffd7d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>从runtime初始化开始</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-9eca14718fb589ea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p><code>lookUpImpOrForward</code> 方法只会在向对象发送消息，并且在类的缓存中没有找到消息的选择子时才会调用。</p>
-<h4 id="Initialize-方法的应用"><a href="#Initialize-方法的应用" class="headerlink" title="Initialize 方法的应用"></a>Initialize 方法的应用</h4><p>由于 <code>initialize</code> 作用也非常局限，一般我们只会在 <code>initialize</code> 方法中进行一些常量的初始化。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;c
     
     </summary>
     

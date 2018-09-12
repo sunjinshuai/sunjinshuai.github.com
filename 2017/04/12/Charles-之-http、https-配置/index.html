@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> Charles 之 http、https 配置 · 孙金帅的技术博客</title><meta name="description" content="Charles 之 http、https 配置 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunjinshuai" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">Charles 之 http、https 配置</h1><div class="post-info">2017年4月12日</div><div class="post-content"><p><img src="http://upload-images.jianshu.io/upload_images/588630-5c8a2583d88afd2b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h3 id="Charles安装"><a href="#Charles安装" class="headerlink" title="Charles安装"></a>Charles安装</h3><p>官网下载安装<a href="https://www.charlesproxy.com/download/" target="_blank" rel="external">Charles</a></p>
+<h3 id="http-配置"><a href="#http-配置" class="headerlink" title="http 配置"></a>http 配置</h3><ul>
+<li>查看电脑 IP 地址<br>在终端上<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ifconfig en4</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-89950831b7209779.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>或者</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-0a774d1072f66794.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h3 id="配置手机-http-代理"><a href="#配置手机-http-代理" class="headerlink" title="配置手机 http 代理"></a>配置手机 <code>http</code> 代理</h3><p>手机必须和电脑连接同一个局域网，点击“设置-&gt;无线局域网-&gt;选择连接的WiFi”，设置 <code>http</code> 代理：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-180b24c2da236bfd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>端口号：8888，端口号随便写。</p>
+<h3 id="Charles-进行-http-配置"><a href="#Charles-进行-http-配置" class="headerlink" title="Charles 进行 http 配置"></a><code>Charles</code> 进行 <code>http</code> 配置</h3><p><img src="http://upload-images.jianshu.io/upload_images/588630-408a9827a4b106ca.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-8804c3edf00e8d24.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>以美团返回的数据为例：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-23f8f4c75256768d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<h3 id="https-代理配置"><a href="#https-代理配置" class="headerlink" title="https 代理配置"></a>https 代理配置</h3><p>https 代理配置必须要安装 SSL 证书</p>
+<ul>
+<li>在手机上安装 SSL 证书<br>点击 Help -&gt; SSL Proxying -&gt; Install Charles Root Certificate on a Mobile Device</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-3f06155569d7e898.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>点击安装，得到 SSL 证书安装的地址</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-afbf08a0e9a92e95.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>在手机 Safari 浏览器输入地址 chls.pro/ssl，出现证书安装页面，点击安装</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-aced7f7c60e025de.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-239ad1c85aa702d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<ul>
+<li>Charles 进行 https 配置</li>
+</ul>
+<p>点击 Proxy -&gt; SSL Proxying Settings…</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-8303a9574e6e5276.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p>勾选 Enable SSL Proxying，点击 Add。以<a href="https://api.weibo.cn/" target="_blank" rel="external">https://api.weibo.cn</a>为例，端口号填写443</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-57107c6cfd7da1c3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-e4cb9ec7e55199fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Paste_Image.png"></p>
+</div></article></div></main><footer><div class="paginator"><a href="/2017/04/12/神器-iTools-的巧妙使用/" class="prev">上一篇</a><a href="/2017/03/18/iOS之使用Cocoapods创建私有仓库/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2017/04/12/Charles-之-http、https-配置/';
+var disqus_title = 'Charles 之 http、https 配置';
+var disqus_url = 'https://sunjinshuai.github.io/2017/04/12/Charles-之-http、https-配置/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2018 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

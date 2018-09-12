@@ -99,6 +99,72 @@
   </entry>
   
   <entry>
+    <title>浅谈 NSUserDefaults</title>
+    <link href="https://sunjinshuai.github.io/2018/06/20/%E6%B5%85%E8%B0%88-NSUserDefaults/"/>
+    <id>https://sunjinshuai.github.io/2018/06/20/浅谈-NSUserDefaults/</id>
+    <published>2018-06-20T13:38:40.000Z</published>
+    <updated>2018-09-12T13:39:06.188Z</updated>
+    
+    <content type="html"><![CDATA[<p><code>NSUserDefaults</code> 适用于快速读取小规模的数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NSUserDefaults *standardDefaults = [NSUserDefaults standardUserDefaults];</div></pre></td></tr></table></figure>
+<p>写入数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">NSString *string = @&quot;hahaha&quot;;</div><div class="line">[standardDefaults setObject:string forKey:@&quot;myKey&quot;];</div><div class="line">[standardDefaults synchronize];// 写完别忘了同步</div></pre></td></tr></table></figure></p>
+<p>读取数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NSString *value = [standardDefaults objectForKey:@&quot;myKey&quot;];</div></pre></td></tr></table></figure></p>
+<p><code>NSUserDefaults</code> 可以理解成键值对</p>
+<p>有时在写数据之前，想判断下这个健是否已经设置过默认值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">NSUserDefaults *standardDefaults = [NSUserDefaults standardUserDefaults];</div><div class="line">if ([standardDefaults stringForKey:@&quot;favoriteColor&quot;] == nil) &#123;</div><div class="line">    [standardDefaults setObject:@&quot;Green&quot; forKey:@&quot;favoriteColor&quot;];</div><div class="line">    [standardDefaults synchronize];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其实可以使用 <code>registerDefaults:</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">NSUserDefaults *standardDefaults = [NSUserDefaults standardUserDefaults];</div><div class="line">[standardDefaults registerDefaults:@&#123;@&quot;favoriteColor&quot;: @&quot;Green&quot;&#125;];</div><div class="line">[standardDefaults synchronize];</div></pre></td></tr></table></figure>
+<p>每次程序启动的时候调用 <code>registerDefaults:</code> 方法都是安全的，完全可以将这个方法的调用放到 <code>applicationDidFinishLaunching:</code> 方法中，这个方法永远都不会覆盖用户设置的值。</p>
+<p>但是并不是所有类型的对象都能够直接放入 <code>NSUserDefaults</code>，<code>NSUserDefaults</code> 只支持 <code>Foundation</code> 类型的对象，如果自定义 <code>NSObject</code> 对象存入 <code>NSUserDefaults</code> 就要实现 <code>NSCoding</code> 协议了，比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">@interface Person : NSObject&lt;NSCoding&gt;</div><div class="line"></div><div class="line">@property (nonatomic, copy) NSString *age;</div><div class="line">@property (nonatomic, copy) NSString *name;</div><div class="line"></div><div class="line">- (id)initWithCoder:(NSCoder *)coder;</div><div class="line">- (void)encodeWithCoder:(NSCoder *)coder;</div><div class="line"></div><div class="line">@implementation Person</div><div class="line">- (id)initWithCoder:(NSCoder *)coder &#123;</div><div class="line">    if (self = [super init]) &#123;</div><div class="line">        self.age  = [coder decodeObjectForKey:@&quot;age&quot;];</div><div class="line">        self.name = [coder decodeObjectForKey:@&quot;name&quot;];</div><div class="line">    &#125;</div><div class="line">    return self;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)encodeWithCoder: (NSCoder *)coder &#123;</div><div class="line">    [coder encodeObject:self.age forKey:@&quot;age&quot;];</div><div class="line">    [coder encodeObject:self.name forKey:@&quot;name&quot;];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后再存取时通过 <code>NSData</code> 做载体：</p>
+<p>存入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">NSUserDefaults *standardDefaults = [NSUserDefaults standardUserDefaults];</div><div class="line">Person *person = [[Person alloc] init];</div><div class="line">NSData *personData = [NSKeyedArchiver archivedDataWithRootObject:person];</div><div class="line">[standardDefaults setObject:personData forKey:@&quot;personKey&quot;];</div><div class="line">[standardDefaults synchronize];</div></pre></td></tr></table></figure>
+<p>读取<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">NSData *newPersonData = [standardDefaults objectForKey:&quot;personKey&quot;];</div><div class="line">Person *Person = [NSKeyedUnarchiver unarchiveObjectWithData:newPersonData];</div></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;code&gt;NSUserDefaults&lt;/code&gt; 适用于快速读取小规模的数据&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>浅谈 KVC</title>
+    <link href="https://sunjinshuai.github.io/2018/04/12/%E6%B5%85%E8%B0%88-KVC/"/>
+    <id>https://sunjinshuai.github.io/2018/04/12/浅谈-KVC/</id>
+    <published>2018-04-12T14:37:32.000Z</published>
+    <updated>2018-09-12T13:38:20.627Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p><code>KVC</code> 是 <code>KeyValue Coding</code> 的简称，遵循 <code>NSKeyValueCoding</code> 协议，它是一种可以直接通过字符串的名字 <code>key</code> 来访问类属性的机制，而不是通过调用 <code>setter</code>、<code>getter</code> 方法访问。</p>
+<p>对于 <code>KVC</code>，<code>Cocoa</code> 自动放入和取出基本数据类型放入 <code>NSNumber</code> 或 <code>NSValue</code> 中，当使用 <code>setValue:ForKey:</code> 或者 <code>valueForKey:</code> 时，它自动将基本数据类型从这些对象中取出，仅 <code>KVC</code> 具有这种自动包装功能，常规方法调用和属性语法不具备该功能。</p>
+<h1 id="setValue-forKey-的实现方式："><a href="#setValue-forKey-的实现方式：" class="headerlink" title="setValue:forKey 的实现方式："></a><code>setValue:forKey</code> 的实现方式：</h1><p>以字符串的形式向对象发送消息，首先查找以 <code>set&lt;Key&gt;</code> 命名的 <code>setter</code> 方法，如果成员用 <code>@property</code>，<code>@synthsize</code> 处理，因为 <code>@synthsize</code> 告诉编译器自动生成 <code>set&lt;Key&gt;:</code> 格式的 <code>setter</code> 方法，所以这种情况下会直接搜索到。如果上面的 <code>setter</code> 方法没有找到，如果类方法 <code>accessInstanceVariablesDirectly</code> 返回 <code>YES</code>，那么将在对象内部查找名为 <code>_&lt;key&gt;</code>、<code>_is&lt;Key&gt;</code>、<code>&lt;key&gt;</code>、<code>is&lt;key&gt;</code> 的实例变量。如果找到则设置成员的值，如果没有查找调用 <code>setValue:forUndefinedKey:</code>。</p>
+<h1 id="valueForKey-的实现方式："><a href="#valueForKey-的实现方式：" class="headerlink" title="valueForKey: 的实现方式："></a><code>valueForKey:</code> 的实现方式：</h1><ul>
+<li>首先查找以 <code>get&lt;Key&gt;</code>、<code>&lt;key&gt;</code>、<code>is&lt;Key&gt;</code> 命名的 <code>getter</code> 方法，找到直接调用。</li>
+<li>如果上面的 <code>getter</code> 没有找到，则会查找 <code>countOf&lt;Key&gt;</code>、<code>objectIn&lt;Key&gt;AtIndex:</code>、<code>&lt;Key&gt;AtIndexes</code> 格式的方法，找到就会调用 <code>countOf&lt;Key&gt;</code>、<code>objectIn&lt;Key&gt;AtIndex:</code>、<code>&lt;Key&gt;AtIndexes</code> 方法，还有一个可选的 <code>get&lt;Key&gt;:range:</code> 方法。</li>
+<li>若是还没查到，那么查找 <code>countOf&lt;Key&gt;</code>、<code>enumeratorOf&lt;Key&gt;</code>、<code>memberOf&lt;Key&gt;:</code> 格式的方法，如果找到就调用 <code>countOf&lt;Key&gt;</code>、<code>enumeratorOf&lt;Key&gt;</code>、<code>memberOf&lt;Key&gt;:</code> 方法。</li>
+<li>若是还没查到，那么如果类方法 accessInstanceVariablesDirectly 返回 YES，那么将在对象内部查找名为 <code>_&lt;key&gt;</code>、<code>_is&lt;Key&gt;</code>、<code>&lt;key&gt;</code>、<code>is&lt;key&gt;</code> 的实例变量。</li>
+<li>再没查到，调用 <code>valueForUndefinedKey:</code>。</li>
+</ul>
+<p>综上，<strong>使用 KVC 访问属性的代价比直接使用存取方法性能开销要大</strong>。</p>
+<h1 id="值的正确性核查"><a href="#值的正确性核查" class="headerlink" title="值的正确性核查"></a>值的正确性核查</h1><p>KVC 提供属性值确认的 API，它可以用来检查 set 的值是否正确、为不正确的值做一个替换值或者拒绝设置新值并返回错误原因。</p>
+<p>实现核查方法，为如下格式：<code>validate&lt;Key&gt;:error:</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">- (BOOL)validateName:(id *)ioValue error:(NSError **)outError &#123;</div><div class="line">    // The name must not be nil, and must be at least two characters long.</div><div class="line">    if ((*ioValue == nil) || ([(NSString *)*ioValue length] &lt; 2]) &#123;</div><div class="line">        if (outError != NULL) &#123;</div><div class="line">            NSString *errorString = NSLocalizedStringFromTable(</div><div class="line">                    @&quot;A Person&apos;s name must be at least two characters long&quot;, @&quot;Person&quot;,</div><div class="line">                    @&quot;validation: too short name error&quot;);</div><div class="line">            NSDictionary *userInfoDict =</div><div class="line">                [NSDictionary dictionaryWithObject:errorString</div><div class="line">                                            forKey:NSLocalizedDescriptionKey];</div><div class="line">            *outError = [[[NSError alloc] initWithDomain:PERSON_ERROR_DOMAIN</div><div class="line">                                                    code:PERSON_INVALID_NAME_CODE</div><div class="line">                                                userInfo:userInfoDict] autorelease];</div><div class="line">        &#125;</div><div class="line">        return NO;</div><div class="line">    &#125;</div><div class="line">    return YES;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>调用核查方法：<br><code>validateValue:forKey:error:</code>，默认实现会搜索 <code>validate&lt;Key&gt;:error:</code>格式的核查方法，找到则调用，未找到默认返回 <code>YES</code>。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h1&gt;&lt;p&gt;&lt;code&gt;KVC&lt;/code&gt; 是 &lt;code&gt;KeyValue Coding&lt;/code&gt; 的简称，遵循 &lt;code&gt;NSKeyValu
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>谈谈 Autolayout</title>
     <link href="https://sunjinshuai.github.io/2017/12/18/%E8%B0%88%E8%B0%88%20Autolayout/"/>
     <id>https://sunjinshuai.github.io/2017/12/18/谈谈 Autolayout/</id>
@@ -1052,155 +1118,6 @@
     <summary type="html">
     
       &lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;c
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>CocoaPods的安装与使用</title>
-    <link href="https://sunjinshuai.github.io/2016/08/08/CocoaPods%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8/"/>
-    <id>https://sunjinshuai.github.io/2016/08/08/CocoaPods的安装与使用/</id>
-    <published>2016-08-08T03:16:06.000Z</published>
-    <updated>2017-08-08T04:00:39.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><code>Cocoapods</code>是一个框架依赖管理的一个管理工具，主要是用来管理框架一些开源库在项目中的引用。简而言之就是用来管理你的项目中对开源框架或自己公司子模块的依赖。</p>
-<p>当然作为开发者来说，入门教程特别简单。但是作为一个开发人员不能只满足于当前的步伐，而应该不断进取，要做到能想<code>Cocoapods</code>提交项目，并且在自己项目中熟练应用该工具的程度。特别是如果一个大的公司来说的话,就有可能进行模块化开发了。对于国内很多公司还是在用OC来说的话，<code>Cocoapods</code>应该还是一个不错的模块管理的工具。</p>
-<h4 id="升级ruby源"><a href="#升级ruby源" class="headerlink" title="升级ruby源"></a>升级ruby源</h4><p>安装<code>Cocoapods</code>需要用到<code>ruby</code>，Mac系统自带<code>ruby</code>，但如果不是最新的系统，最好更新一下。</p>
-<p>注意：<br><code>ruby</code>的软件源<code>rubygems.org</code>被墙了，所以先换一下源。</p>
-<ul>
-<li>首先，执行以下命令删除原来的ruby源：</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gem sources --remove https://rubygems.org/</div></pre></td></tr></table></figure>
-<p>注意：<br>执行命令后可在终端看见以下信息：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://rubygems.org/ removed from sources</div></pre></td></tr></table></figure>
-<ul>
-<li>然后下一步添加你找到的可用的镜像源(这里我没有用淘宝的源：<a href="https://ruby.taobao.org/" target="_blank" rel="external">https://ruby.taobao.org/</a>):</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gem sources -a https://gems.ruby-china.org/</div></pre></td></tr></table></figure>
-<ul>
-<li>验证新源是否替换成功</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gem sources -l</div></pre></td></tr></table></figure>
-<p>终端输出:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">*** CURRENT SOURCES ***</div><div class="line">https://gems.ruby-china.org/</div></pre></td></tr></table></figure>
-<p>到此<code>ruby</code>源替已经换成国内的源。</p>
-<h4 id="安装CocoaPods"><a href="#安装CocoaPods" class="headerlink" title="安装CocoaPods"></a>安装CocoaPods</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo gem install cocoapods</div></pre></td></tr></table></figure>
-<h5 id="可能出现的问题"><a href="#可能出现的问题" class="headerlink" title="可能出现的问题"></a>可能出现的问题</h5><p>问题1、<code>While executing gem ... (Errno::EPERM)  Operation not permitted - /usr/bin/fuzzy_match</code>错误</p>
-<p>解决方法:</p>
-<p>执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo gem install -n /usr/local/bin cocoapods</div></pre></td></tr></table></figure></p>
-<p>然后提示<code>gems installed</code>即可。</p>
-<p>问题2、<code>Error installing pods:active support requires Ruby version &gt;= 2.2.2</code><br>解决方案:</p>
-<p>查看<code>ruby</code>版本:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ruby -v</div></pre></td></tr></table></figure>
-<p>终端会输出你的<code>ruby</code>版本信息</p>
-<p>查看目前的所有<code>ruby</code>版本:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rvm list known</div></pre></td></tr></table></figure>
-<p>如果提示<code>command not found</code>请先安装<code>rvm</code>:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -L get.rvm.io | bash -s stable</div></pre></td></tr></table></figure>
-<p>如果已安装会列出所有的<code>ruby</code>版本:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"># MRI Rubies</div><div class="line">[ruby-]1.8.6[-p420]</div><div class="line">[ruby-]1.8.7[-head] # security released on head</div><div class="line">[ruby-]1.9.1[-p431]</div><div class="line">[ruby-]1.9.2[-p330]</div><div class="line">[ruby-]1.9.3[-p551]</div><div class="line">[ruby-]2.0.0[-p648]</div><div class="line">[ruby-]2.1[.10]</div><div class="line">[ruby-]2.2[.6]</div><div class="line">[ruby-]2.3[.3]</div><div class="line">[ruby-]2.4[.0]</div><div class="line">ruby-head</div><div class="line"></div><div class="line"># for forks use: rvm install ruby-head-&lt;name&gt; --url https://github.com/github/ruby.git --branch 2.2</div><div class="line"></div><div class="line"># JRuby</div><div class="line">jruby-1.6[.8]</div><div class="line">jruby-1.7[.26]</div><div class="line">jruby[-9.1.7.0]</div><div class="line">jruby-head</div><div class="line"></div><div class="line"># Rubinius</div><div class="line">rbx-1[.4.3]</div></pre></td></tr></table></figure>
-<p>然后安装最新的<code>ruby</code>版本:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo gem install cocoapods</div></pre></td></tr></table></figure>
-<h4 id="CocoaPods的使用"><a href="#CocoaPods的使用" class="headerlink" title="CocoaPods的使用"></a>CocoaPods的使用</h4><ul>
-<li>查找第三方库</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pod search AFNetworking</div></pre></td></tr></table></figure>
-<ul>
-<li>创建Podfile文件</li>
-</ul>
-<p>在终端使用cd ＋路径切换到项目所在文件下，然后输入:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">touch Podfile</div></pre></td></tr></table></figure>
-<p>就可以在项目目录里看到<code>Podfile</code>文件。也可以使用<code>pod init</code>来创建，<code>Podfile</code>文件:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pod init</div></pre></td></tr></table></figure>
-<p>打开Podfile文件:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">open Podfile</div></pre></td></tr></table></figure>
-<p>然后<code>pod install</code>就可以了</p>
-<h4 id="Podfile"><a href="#Podfile" class="headerlink" title="Podfile"></a>Podfile</h4><p>由于有<code>Podfile.lock</code>文件的保护下，在没有执行<code>pod update</code>命令的情况下，是不会将已有的第三方库进行升级的。所以运行<code>pod install</code>的情况下还是能编译通过的。</p>
-<ul>
-<li>pod</li>
-</ul>
-<p>一般在<code>Podfile</code>里面如果引入第三方库，比如:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pod &apos;AFNetworking&apos;, &apos;~&gt; 3.1.0&apos;</div></pre></td></tr></table></figure>
-<p>可以看出<code>pod</code>关键字后面可以跟参数:</p>
-<p>参数一： 版本号<br>从上面可以看得出<code>AFNetworking</code>后面跟了参数版本号。<br>不过版本号可以是大于、小于、等于等。当然具体的可以是’&gt; 3.1.0’, ‘&gt;= 3.1.0’, ‘&lt; 3.1.0’, ‘3.1.0’以及’~&gt; 3.1.0’。关于普通的就没什么好说了，最后一个~&gt;指的是正对最后一位来说。如使用’~&gt; 3.1.0’,意味着’&gt;= 3.1.0’并且’&lt; 3.2.0’的意思。</p>
-<p>参数二：地址<br><code>Cocoapods</code>可以指定某一个<code>git</code>的目录或者是本地的目录。有的时候我们希望一直用某一个版本最新的版本，即使没有打版本的话，我们可以直接后面接上:<code>git =&gt; &#39;https://github.com/gowalla/AFNetworking.git&#39;</code>。<br>当然除了这种情况外，还有可能是如果是我们自己开发的私有库，并且在开发阶段的情况下，可能就希望开发模式进行引用，则可以使用path参数:<code>:path =&gt; &#39;~/Documents/AFNetworking</code>。</p>
-<p>参数三：tag、branche、commit<br>有的时候我们希望引用有一个<code>tag</code>，<code>branch</code>或者是<code>comit</code>的内容的话可以使用这个参数，分别用<code>:branch =&gt; &#39;branch名&#39;</code>、<code>:tag =&gt; &#39;tag名&#39;</code>、<code>:commit =&gt; &#39;提交号&#39;</code>。</p>
-<ul>
-<li>platform</li>
-</ul>
-<p>这个参数是只依赖的库希望在哪个平台被编译，比如:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">platform :ios, &apos;7.0&apos;</div></pre></td></tr></table></figure>
-<ul>
-<li>target</li>
-</ul>
-<p>这个是指定具体的配置是适配在哪个target，这里的target值得就是Xcode中的target。如果对于一些项目中你的不同target引用的框架不同的话，可以采用这个进行区分。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">target &quot;ShowsApp&quot; do  </div><div class="line">  pod &apos;ShowsKit&apos;</div><div class="line">  target &quot;ShowsTV&quot; do</div><div class="line">    pod &quot;ShowTVAuth&quot;</div><div class="line">  end</div><div class="line">end</div></pre></td></tr></table></figure>
-<ul>
-<li>use_frameworks!</li>
-</ul>
-<p>这个指明编译成动态库，而不是静态库，特别是在使用Swift库的过程中，特别需要使用这句。不过他会把所有项目的编译动态库，这一点有点不好。不过在使用Swift库的过程中就没办法了。</p>
-<ul>
-<li>source</li>
-</ul>
-<p>这个参数是指Cocoapods从哪些仓库(Spec)中获得框架的源代码，如果在结合使用开源库以及自己私有库的情况下，这个参数还是非常有意义的。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">source &apos;https://github.com/artsy/Specs.git&apos;  </div><div class="line">source &apos;https://192.168.0.90:8888/MySepcs/Specs.git&apos;</div></pre></td></tr></table></figure>
-<h4 id="小技巧"><a href="#小技巧" class="headerlink" title="小技巧"></a>小技巧</h4><p>使用CocoaPods来添加第三方类库，无论是执行pod install还是pod update都卡在了Analyzing dependencies不动，原因在于当执行以上两个命令的时候会升级CocoaPods的spec仓库，加一个参数可以省略这一步，命令如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">pod install --verbose --no-repo-update</div><div class="line">pod update --verbose --no-repo-update</div></pre></td></tr></table></figure>
-<p>pod install只会按照Podfile的要求来请求类库，如果类库版本号有变化，那么将获取失败。但是pod update会更新所有的类库，获取最新版本的类库。每次用pod update就行。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&lt;code&gt;Cocoapods&lt;/code&gt;是一个框架依赖管理的一个管理工具，主要是用来管理框架一些开源库在项目中的引用。简而言之就是用来管理你的项目中对开源框架或自己公司子模块的依赖。&lt;/p&gt;
-&lt;p&gt;当然作为开发者来说，入门教程特别简单。但是作为一个开发人员不能只满足于当
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>源码管理工具之git中merge、rebase的区别</title>
-    <link href="https://sunjinshuai.github.io/2016/08/04/%E6%BA%90%E7%A0%81%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E4%B9%8Bgit%E4%B8%ADmerge%E3%80%81rebase%E7%9A%84%E5%8C%BA%E5%88%AB/"/>
-    <id>https://sunjinshuai.github.io/2016/08/04/源码管理工具之git中merge、rebase的区别/</id>
-    <published>2016-08-04T06:15:32.000Z</published>
-    <updated>2017-08-04T07:43:29.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>一般在公司git整合分支一般有两种方法——快速向前合并<code>git rebase</code>和三路合并<code>git merge</code>。其实在开发中，<code>git rebase</code>和<code>git merge</code>表达都是一个意思，即，将一个分支合并到另一个分支。</p>
-<p>当开发一个新功能，一般我们会在<code>develop</code>分支上创建<code>featrue</code>分支：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-b6359864017521dc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>当我们这个新功能开发测试完毕之后，首先要把<code>featrue</code>分支合并到<code>develop</code>分支上，一般会根据实际情况选择是否使用<code>git merge</code>还是<code>git rebase</code>。</p>
-<p><strong><code>git merge</code></strong><br>根据分支合并的原则，<code>git</code>会自动根据两个分支的共同祖和两个分支的最新提交<code>commit</code>记录进行一个三方合并，然后将合并中修改的内容生成一个新的<code>commit</code>记录。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git checkout feature</div><div class="line">git merge master</div></pre></td></tr></table></figure>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-2fb4e523cea0a269.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p><strong><code>git merge</code>是一个安全的操作</strong></p>
-<p><strong><code>git rebase</code></strong></p>
-<p>它会把整个<code>feature</code>分支移动到<code>develop</code>分支的后面，有效地把所有<code>develop</code>分支上新的提交并入过来。但是，<code>git rebase</code>为原分支上每一个提交创建一个新的提交，重写了项目历史，并且不会带来合并提交。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">git checkout feature</div><div class="line">git rebase master</div></pre></td></tr></table></figure>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-93bdffa37317c083.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p><strong><code>git rebase</code>最大的特点就是让你的项目历史提交记录会非常整洁。</strong><br>首先，它不像<code>git merge</code>那样引入不必要的合并提交。其次，如上图所示，<code>git rebase</code>使项目历史提交记录呈现出一条直线。你可以从项目终点到起点浏览而不需要任何的分叉，可以让你更容易的使用<code>git log</code>查看项目的提交记录。</p>
-<p><strong><code>git rebase</code>缺点就是安全性和可跟踪性。</strong></p>
-<p><code>git rebase</code>的黄金法则：绝对不要在公共的分支上使用。如果你把<code>master</code>分支<code>rebase</code>到你的<code>feature</code>分支上：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/588630-aa37afc6fe4ff411.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
-<p>这次<code>rebase</code>将<code>master</code>分支上的所有提交都移到了<code>feature</code>分支后面。<br>问题是它只发生在你的代码仓库中，而其他所有的开发者还在原来的<code>master</code>上工作。因为<code>rebase</code>引起了新的提交，所以<code>git</code>会认为你的<code>master</code>分支和其他人的<code>master</code>已经分叉了。</p>
-<p>同步两个<code>master</code>分支的唯一办法是把它们<code>merge</code>到一起，导致一个额外的合并提交和两堆包含同样更改的提交。</p>
-<p><strong><code>git rebase</code>不适用于公共的分支上。</strong></p>
-<p>总结：选择<code>git merge</code>还是<code>git rebase</code>？</p>
-<ul>
-<li><p><code>git merge</code>是一个合并操作，会采用三路合并的方式将两个分支的修改合并在一起，默认操作的情况下会提交合并中修改的内容，生成一个新的<code>commit</code>记录。</p>
-</li>
-<li><p><code>git rebase</code>并没有进行合并操作，只是提取了当前分支的修改，将其复制在了目标分支的最新提交后面，为原分支上每一个提交创建一个新的提交。</p>
-</li>
-<li><p><code>git merge</code>与<code>git rebase</code>都是非常强大的分支整合命令，没有优劣之分，使用哪一个应由项目和团队的开发需求决定。</p>
-</li>
-</ul>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;一般在公司git整合分支一般有两种方法——快速向前合并&lt;code&gt;git rebase&lt;/code&gt;和三路合并&lt;code&gt;git merge&lt;/code&gt;。其实在开发中，&lt;code&gt;git rebase&lt;/code&gt;和&lt;code&gt;git merge&lt;/code&gt;表达都是一个
     
     </summary>
     

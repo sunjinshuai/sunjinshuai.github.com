@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> iOS 中的事件的产生和传递 · 孙金帅的技术博客</title><meta name="description" content="iOS 中的事件的产生和传递 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunjinshuai" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">iOS 中的事件的产生和传递</h1><div class="post-info">2016年6月16日</div><div class="post-content"><h1 id="事件处理"><a href="#事件处理" class="headerlink" title="事件处理"></a>事件处理</h1><ul>
+<li>发生触摸事件后，系统会将该事件加入到一个由 UIApplication 管理的事件队列中，为什么是队列而不是栈？因为队列的特点是 FIFO，即先进先出，先产生的事件优先处理，所以把事件添加到队列。</li>
+<li>UIApplication 会从事件队列中取出最前面的事件，并将事件分发下去以便处理，通常先发送事件给应用程序的主窗口 keyWindow。</li>
+<li>主窗口 keyWindow 会在视图层次结构中找到一个最合适的视图来处理触摸事件，这也是整个事件处理过程的第一步，找到合适的视图控件后，就会调用视图控件的touches 方法来作具体的事件处理。</li>
+</ul>
+<h1 id="事件的传递"><a href="#事件的传递" class="headerlink" title="事件的传递"></a>事件的传递</h1><ul>
+<li>触摸事件的传递是从父控件传递到子控件</li>
+<li>也就是UIApplication-&gt;window-&gt;寻找处理事件最合适的view。</li>
+</ul>
+<p>注意：如果父控件不能接受触摸事件，那么子控件就不可能接收到触摸事件。</p>
+<h1 id="UIView-不能接收触摸事件的三种情况："><a href="#UIView-不能接收触摸事件的三种情况：" class="headerlink" title="UIView 不能接收触摸事件的三种情况："></a>UIView 不能接收触摸事件的三种情况：</h1><ul>
+<li>不允许交互：userInteractionEnabled = NO</li>
+<li>隐藏：如果把父控件隐藏，那么子控件也会隐藏，隐藏的控件不能接受事件</li>
+<li>透明度：如果设置一个控件的透明度&lt;0.01，会直接影响子控件的透明度。alpha：0.0~0.01为透明。</li>
+</ul>
+<p>注意：默认 UIImageView 不能接受触摸事件，因为不允许交互，即 userInteractionEnabled = NO。所以如果希望 UIImageView 可以交互，需要设置 UIImageView 的 userInteractionEnabled = YES。</p>
+<h1 id="如何找到最合适的控件来处理事件？"><a href="#如何找到最合适的控件来处理事件？" class="headerlink" title="如何找到最合适的控件来处理事件？"></a>如何找到最合适的控件来处理事件？</h1><ul>
+<li>首先判断主窗口 keyWindow 自己是否能接受触摸事件。</li>
+<li>触摸点是否在自己身上。</li>
+<li>从后往前遍历子控件数组(遍历自己的子控件只是为了寻找出来最合适的view)，重复前面的两个步骤(传递事件给子控件：1、判断子控件能否接受事件；2、点在不在子控件上)。</li>
+<li>如果没有符合条件的子控件，那么就认为自己最合适处理。</li>
+</ul>
+<h1 id="hitTest-withEvent-方法"><a href="#hitTest-withEvent-方法" class="headerlink" title="hitTest:withEvent:方法"></a>hitTest:withEvent:方法</h1><p>控件通过重写 hitTest:withEvent: 方法，寻找并返回最合适的 view (能够响应事件的那个最合适的view)。</p>
+<p>注意：</p>
+<ul>
+<li>不管这个控件能不能处理事件，也不管触摸点在不在这个控件上，事件都会先传递给这个控件，随后再调用 hitTest:withEvent: 方法。</li>
+<li>如果 hitTest:withEvent: 方法中返回 nil，那么调用该方法的控件本身和其子控件都不是最合适的 view，也就是在自己身上没有找到更合适的 view。那么最合适的 view 就是该控件的父控件。</li>
+</ul>
+<p>事件传递给窗口或控件的后，就调用 hitTest:withEvent: 方法寻找更合适的 view。所以先传递事件，再根据事件是否在自己身上能找到更合适的 view。不管子控件是不是最合适的 view，系统默认都要先把事件传递给子控件，然后调用子控件自己的 hitTest:withEvent: 方法验证后才能确认有没有更合适的 view。即便父控件是最合适的 view 了，子控件的 hitTest:withEvent: 方法还是会调用，不然怎么知道有没有更合适的。即，如果确定最终父控件是最合适的view，那么该父控件的子控件的hitTest:withEvent:方法也是会被调用的。</p>
+<p>注意：在 hitTest:withEvent: 方法中返回 self 有时候会出现问题：当遍历子控件时，如果触摸点不在子控件A上而是在子控件B上，要求返回子控件A作为最合适的view，如果在 hitTest:withEvent: 方法中返回 self 可能会导致还没有来得及遍历A自己，就有可能已经遍历了点真正所在的view，也就是B。这就导致了返回的不是自己而是触摸点真正所在的 view。所以还是<strong>建议在父控件的 hitTest:withEvent: 中返回子控件作为最合适的 view</strong>。</p>
+<h1 id="在-hitTest-withEvent-方法中返回-nil-的含义："><a href="#在-hitTest-withEvent-方法中返回-nil-的含义：" class="headerlink" title="在 hitTest:withEvent: 方法中返回 nil 的含义："></a>在 hitTest:withEvent: 方法中返回 nil 的含义：</h1><p>在 hitTest:withEvent: 方法中返回 nil 的意思是调用当前 hitTest:withEvent: 方法的 view 不是合适的 view，子控件也不是合适的 view，如果同级的兄弟控件也没有合适的 view，那么最合适的 view 就是父控件。</p>
+<h1 id="pointInside-withEvent-方法"><a href="#pointInside-withEvent-方法" class="headerlink" title="pointInside:withEvent: 方法"></a>pointInside:withEvent: 方法</h1><p>pointInside:withEvent: 方法判断子控件的点在不在当前 view 上（方法调用者的坐标系上）如果返回YES，代表点在方法调用者的坐标系上；返回 NO 代表点不在方法调用者的坐标系上，那么方法调用者也就不能处理事件。</p>
+<h1 id="响应者链的事件传递过程"><a href="#响应者链的事件传递过程" class="headerlink" title="响应者链的事件传递过程:"></a>响应者链的事件传递过程:</h1><ul>
+<li>如果当前 view 是控制器的 view，那么控制器就是上一个响应者，事件就传递给控制器；如果当前 view 不是控制器的 view，那么父视图就是当前 view 的上一个响应者，事件就传递给它的父视图</li>
+<li>在视图层次结构的最顶级视图，如果也不能处理收到的事件或消息，则其将事件或消息传递给 window 对象进行处理</li>
+<li>如果 window 对象也不处理，则其将事件或消息传递给 UIApplication 对象</li>
+<li>如果 UIApplication 也不能处理该事件或消息，则将其丢弃。</li>
+</ul>
+</div></article></div></main><footer><div class="paginator"><a href="/2016/06/20/iOS-RunTime之五：Category-面试题/" class="prev">上一篇</a><a href="/2016/06/15/iOS面试题-如何在项目中处理页面中的多个网络请求/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2016/06/16/iOS-中的事件的产生和传递/';
+var disqus_title = 'iOS 中的事件的产生和传递';
+var disqus_url = 'https://sunjinshuai.github.io/2016/06/16/iOS-中的事件的产生和传递/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2018 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

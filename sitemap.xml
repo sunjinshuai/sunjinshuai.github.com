@@ -2,9 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://sunjinshuai.github.io/2017/08/25/%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0-KVO/</loc>
+    <loc>https://sunjinshuai.github.io/2018/09/11/%E6%B5%85%E8%B0%88-KVO-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</loc>
     
-    <lastmod>2018-08-25T06:56:17.694Z</lastmod>
+    <lastmod>2018-09-12T13:35:30.040Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://sunjinshuai.github.io/2017/07/18/%E6%B5%85%E8%B0%88%20iOS%20AutoLayout%20%E4%B8%AD%20Label%20%E7%9A%84%E6%8A%97%E6%8B%89%E4%BC%B8%E5%92%8C%E6%8A%97%E5%8E%8B%E7%BC%A9/</loc>
+    
+    <lastmod>2018-09-12T13:27:55.260Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://sunjinshuai.github.io/2016/06/22/iOS-RunTime%E4%B9%8B%E5%85%AD%EF%BC%9ACategory/</loc>
+    
+    <lastmod>2018-09-12T13:26:26.172Z</lastmod>
     
   </url>
   
@@ -37,13 +51,6 @@
   </url>
   
   <url>
-    <loc>https://sunjinshuai.github.io/2016/06/22/iOS-RunTime%E4%B9%8B%E5%85%AD%EF%BC%9ACategory/</loc>
-    
-    <lastmod>2018-08-25T03:18:32.736Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://sunjinshuai.github.io/2018/07/25/Flutter%E4%B9%8B%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</loc>
     
     <lastmod>2018-08-25T03:12:34.163Z</lastmod>
@@ -68,13 +75,6 @@
     <loc>https://sunjinshuai.github.io/2017/12/18/%E8%B0%88%E8%B0%88%20Autolayout/</loc>
     
     <lastmod>2018-08-25T02:51:53.750Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://sunjinshuai.github.io/2017/07/18/%E6%B5%85%E8%B0%88%20iOS%20AutoLayout%20%E4%B8%AD%20Label%20%E7%9A%84%E6%8A%97%E6%8B%89%E4%BC%B8%E5%92%8C%E6%8A%97%E5%8E%8B%E7%BC%A9/</loc>
-    
-    <lastmod>2018-08-25T02:49:56.261Z</lastmod>
     
   </url>
   

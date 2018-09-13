@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://sunjinshuai.github.io/2016/10/17/%E6%B5%85%E8%B0%88-iOS-NSNotification/</loc>
+    
+    <lastmod>2018-09-13T13:52:12.440Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://sunjinshuai.github.io/2016/10/06/%E6%B5%85%E8%B0%88-AutoreleasePool-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</loc>
+    
+    <lastmod>2018-09-13T13:51:07.337Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://sunjinshuai.github.io/2017/05/10/%E6%B5%85%E8%B0%88-Zombie-Objects/</loc>
     
     <lastmod>2018-09-12T14:50:17.062Z</lastmod>
@@ -191,13 +205,6 @@
   </url>
   
   <url>
-    <loc>https://sunjinshuai.github.io/2016/10/17/%E6%8E%A2%E7%B4%A2%E9%80%9A%E7%9F%A5%E7%9A%84%E5%8E%9F%E7%90%86/</loc>
-    
-    <lastmod>2018-06-09T12:42:44.615Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://sunjinshuai.github.io/2016/09/23/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E4%B8%8E%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/</loc>
     
     <lastmod>2018-06-09T07:17:45.018Z</lastmod>
@@ -348,13 +355,6 @@
     <loc>https://sunjinshuai.github.io/2015/10/05/iOS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC1%E6%9C%9F-2015-10-05/</loc>
     
     <lastmod>2017-07-18T05:31:15.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://sunjinshuai.github.io/2016/10/06/AutoreleasePool%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</loc>
-    
-    <lastmod>2017-07-06T08:16:54.000Z</lastmod>
     
   </url>
   

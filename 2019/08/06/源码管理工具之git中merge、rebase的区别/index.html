@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 源码管理工具之git中merge、rebase的区别 · 孙金帅的技术博客</title><meta name="description" content="源码管理工具之git中merge、rebase的区别 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"><meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="孙金帅的技术博客" type="application/atom+xml">
+</head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunjinshuai" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">源码管理工具之git中merge、rebase的区别</h1><div class="post-info">2019年8月6日</div><div class="post-content"><p>一般在公司git整合分支一般有两种方法——快速向前合并<code>git rebase</code>和三路合并<code>git merge</code>。其实在开发中，<code>git rebase</code>和<code>git merge</code>表达都是一个意思，即，将一个分支合并到另一个分支。</p>
+<p>当开发一个新功能，一般我们会在<code>develop</code>分支上创建<code>featrue</code>分支：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-b6359864017521dc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>当我们这个新功能开发测试完毕之后，首先要把<code>featrue</code>分支合并到<code>develop</code>分支上，一般会根据实际情况选择是否使用<code>git merge</code>还是<code>git rebase</code>。</p>
+<p><strong><code>git merge</code></strong><br>根据分支合并的原则，<code>git</code>会自动根据两个分支的共同祖和两个分支的最新提交<code>commit</code>记录进行一个三方合并，然后将合并中修改的内容生成一个新的<code>commit</code>记录。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git checkout feature</span><br><span class="line">git merge master</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-2fb4e523cea0a269.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><strong><code>git merge</code>是一个安全的操作</strong></p>
+<p><strong><code>git rebase</code></strong></p>
+<p>它会把整个<code>feature</code>分支移动到<code>develop</code>分支的后面，有效地把所有<code>develop</code>分支上新的提交并入过来。但是，<code>git rebase</code>为原分支上每一个提交创建一个新的提交，重写了项目历史，并且不会带来合并提交。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git checkout feature</span><br><span class="line">git rebase master</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-93bdffa37317c083.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><strong><code>git rebase</code>最大的特点就是让你的项目历史提交记录会非常整洁。</strong><br>首先，它不像<code>git merge</code>那样引入不必要的合并提交。其次，如上图所示，<code>git rebase</code>使项目历史提交记录呈现出一条直线。你可以从项目终点到起点浏览而不需要任何的分叉，可以让你更容易的使用<code>git log</code>查看项目的提交记录。</p>
+<p><strong><code>git rebase</code>缺点就是安全性和可跟踪性。</strong></p>
+<p><code>git rebase</code>的黄金法则：绝对不要在公共的分支上使用。如果你把<code>master</code>分支<code>rebase</code>到你的<code>feature</code>分支上：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-aa37afc6fe4ff411.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>这次<code>rebase</code>将<code>master</code>分支上的所有提交都移到了<code>feature</code>分支后面。<br>问题是它只发生在你的代码仓库中，而其他所有的开发者还在原来的<code>master</code>上工作。因为<code>rebase</code>引起了新的提交，所以<code>git</code>会认为你的<code>master</code>分支和其他人的<code>master</code>已经分叉了。</p>
+<p>同步两个<code>master</code>分支的唯一办法是把它们<code>merge</code>到一起，导致一个额外的合并提交和两堆包含同样更改的提交。</p>
+<p><strong><code>git rebase</code>不适用于公共的分支上。</strong></p>
+<p>总结：选择<code>git merge</code>还是<code>git rebase</code>？</p>
+<ul>
+<li><p><code>git merge</code>是一个合并操作，会采用三路合并的方式将两个分支的修改合并在一起，默认操作的情况下会提交合并中修改的内容，生成一个新的<code>commit</code>记录。</p>
+</li>
+<li><p><code>git rebase</code>并没有进行合并操作，只是提取了当前分支的修改，将其复制在了目标分支的最新提交后面，为原分支上每一个提交创建一个新的提交。</p>
+</li>
+<li><p><code>git merge</code>与<code>git rebase</code>都是非常强大的分支整合命令，没有优劣之分，使用哪一个应由项目和团队的开发需求决定。</p>
+</li>
+</ul>
+</div></article></div></main><footer><div class="paginator"><a href="/2019/09/13/HTTPS%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/" class="prev">上一篇</a><a href="/2019/08/02/%E6%BA%90%E7%A0%81%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E4%B9%8Bgit%E7%9A%84%E4%BD%BF%E7%94%A8/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2019/08/06/源码管理工具之git中merge、rebase的区别/';
+var disqus_title = '源码管理工具之git中merge、rebase的区别';
+var disqus_url = 'https://sunjinshuai.github.io/2019/08/06/源码管理工具之git中merge、rebase的区别/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2020 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

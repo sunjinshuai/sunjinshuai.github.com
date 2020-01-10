@@ -29,7 +29,7 @@
 <p>其实这就是 <code>UIScrollView</code> 滑动时所发生的事情。注意从一个用户的角度来看，他以为时这个 <code>View</code> 中的子 <code>View</code> 在移动，其实他们的在坐标系中位置（他们的 <code>frame</code> ）没有发生过变化。</p>
 <p>一个 <code>scroll view</code> 并不需要其中子 <code>View</code> 的坐标来使他们滚动，唯一要做的就是改变他的 <code>bounds</code> 属性。知道了这一点，实现一个简单的 <code>scroll view</code> 就没什么困难了。我们用一个 <code>gesture recognizer</code> 来识别用户的拖动操作，根据用户拖动的偏移量来改变 <code>bounds</code> 的原点：</p>
 <p>和真正的 <code>UIScrollView</code> 一样，我们的类也有一个 <code>contentSize</code> 属性，你必须从外部来设置这个值来指定可以滚动的区域，当我们改变 <code>bounds</code> 的大小时我们要确保设置的值是有效的。</p>
-</div></article></div></main><footer><div class="paginator"><a href="/2016/04/17/iOS-RunTime%E4%B9%8BSelf-Super/" class="prev">上一篇</a><a href="/2016/04/07/Object-C%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+</div></article></div></main><footer><div class="paginator"><a href="/2016/04/17/iOS-RunTime%E4%B9%8BSelf-Super/" class="prev">上一篇</a><a href="/2016/04/10/iOS-%E4%B8%AD-NSString-%E5%B1%9E%E6%80%A7%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8-copy%EF%BC%8C%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8-strong/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
 var disqus_identifier = '2016/04/15/如何手动实现一个 UIScrollView/';
 var disqus_title = '如何手动实现一个 UIScrollView';
 var disqus_url = 'https://sunjinshuai.github.io/2016/04/15/如何手动实现一个 UIScrollView/';

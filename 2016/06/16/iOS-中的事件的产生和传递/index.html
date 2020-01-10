@@ -1,42 +1,67 @@
 <!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> iOS 中的事件的产生和传递 · 孙金帅的技术博客</title><meta name="description" content="iOS 中的事件的产生和传递 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"><meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="孙金帅的技术博客" type="application/atom+xml">
-</head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunjinshuai" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">iOS 中的事件的产生和传递</h1><div class="post-info">2016年6月16日</div><div class="post-content"><h1 id="事件处理"><a href="#事件处理" class="headerlink" title="事件处理"></a>事件处理</h1><ul>
-<li>发生触摸事件后，系统会将该事件加入到一个由 UIApplication 管理的事件队列中，为什么是队列而不是栈？因为队列的特点是 FIFO，即先进先出，先产生的事件优先处理，所以把事件添加到队列。</li>
-<li>UIApplication 会从事件队列中取出最前面的事件，并将事件分发下去以便处理，通常先发送事件给应用程序的主窗口 keyWindow。</li>
-<li>主窗口 keyWindow 会在视图层次结构中找到一个最合适的视图来处理触摸事件，这也是整个事件处理过程的第一步，找到合适的视图控件后，就会调用视图控件的touches 方法来作具体的事件处理。</li>
+</head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="http://weibo.com/sunjinshuai" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">iOS 中的事件的产生和传递</h1><div class="post-info">2016年6月16日</div><div class="post-content"><p><img src="https://upload-images.jianshu.io/upload_images/588630-b84bb8008b7bd101?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h1 id="事件的产生"><a href="#事件的产生" class="headerlink" title="事件的产生"></a>事件的产生</h1><ul>
+<li>当有触摸或者其他事件产生，将事件交由 <code>IOKit.framework</code> 处理。</li>
+<li><code>IOKit.framework</code> 将事件封装成一个 <code>IOHIDEvent</code> 对象，并通过 <code>mach port</code> 传递给 <code>SpringBoad</code>。</li>
+<li><code>SpringBoard</code> 会接收这个对象并通过 <code>mach port</code> 转发给当前 <code>App</code> 的进程；</li>
+<li>唤醒 <code>runloop</code>，触发了 <code>source1</code> 回调，其回调函数为 <code>__IOHIDEventSystemClientQueueCallback()</code>。</li>
+<li><code>source1</code> 回调触发 <code>source0</code> 回调，将接收到的 <code>IOHIDEvent</code> 对象封装成 <code>UIEvent</code> 对象进行处理或分发。</li>
 </ul>
-<h1 id="事件的传递"><a href="#事件的传递" class="headerlink" title="事件的传递"></a>事件的传递</h1><ul>
-<li>触摸事件的传递是从父控件传递到子控件</li>
-<li>也就是UIApplication-&gt;window-&gt;寻找处理事件最合适的view。</li>
+<p>注意：<br><strong><code>SpringBoard</code> 其实是一个标准的应用程序，这个应用程序用来管理 <code>iOS</code> 的主屏幕；</strong><br><strong><code>source1</code> 是苹果用来监听 <code>mach port</code> 传来的系统事件的，<code>source0</code> 是用来处理用户事件的。</strong><br><strong><code>source1</code> 收到系统事件后，会回调 <code>source0</code>，所以最终这些事件都是由 <code>source0</code> 处理的。</strong></p>
+<h1 id="事件传递的流程"><a href="#事件传递的流程" class="headerlink" title="事件传递的流程"></a>事件传递的流程</h1><ul>
+<li>当用户点击屏幕时，会产生一个触摸事件，系统会将该事件加入到一个由 <code>UIApplication</code> 管理的事件队列中。</li>
+<li><code>UIApplication</code> 会从事件队列中取出最前面的事件，并将事件分发下去以便处理，通常先发送事件给应用程序的主窗口 <code>keyWindow</code>。</li>
+<li>主窗口会调用 <code>hitTest:withEvent:</code> 方法在视图 <code>View</code> 层次结构中找到一个最合适的 <code>View</code> 来处理触摸事件。</li>
+<li>最终，这个触摸事件交给主窗口的 <code>hitTest:withEvent:</code> 方法返回的视图对象去处理。</li>
 </ul>
 <p>注意：如果父控件不能接受触摸事件，那么子控件就不可能接收到触摸事件。</p>
-<h1 id="UIView-不能接收触摸事件的三种情况："><a href="#UIView-不能接收触摸事件的三种情况：" class="headerlink" title="UIView 不能接收触摸事件的三种情况："></a>UIView 不能接收触摸事件的三种情况：</h1><ul>
-<li>不允许交互：userInteractionEnabled = NO</li>
-<li>隐藏：如果把父控件隐藏，那么子控件也会隐藏，隐藏的控件不能接受事件</li>
-<li>透明度：如果设置一个控件的透明度&lt;0.01，会直接影响子控件的透明度。alpha：0.0~0.01为透明。</li>
+<h4 id="View-不能接收触摸事件的三种情况："><a href="#View-不能接收触摸事件的三种情况：" class="headerlink" title="View 不能接收触摸事件的三种情况："></a>View 不能接收触摸事件的三种情况：</h4><ul>
+<li>不允许交互：<code>userInteractionEnabled = NO</code>；</li>
+<li>隐藏：如果把父控件隐藏，那么子控件也会隐藏，隐藏的控件不能接受事件；</li>
+<li>透明度：如果设置一个控件的透明度&lt;0.01，会直接影响子控件的透明度，0.0~0.01 为透明。</li>
 </ul>
-<p>注意：默认 UIImageView 不能接受触摸事件，因为不允许交互，即 userInteractionEnabled = NO。所以如果希望 UIImageView 可以交互，需要设置 UIImageView 的 userInteractionEnabled = YES。</p>
-<h1 id="如何找到最合适的控件来处理事件？"><a href="#如何找到最合适的控件来处理事件？" class="headerlink" title="如何找到最合适的控件来处理事件？"></a>如何找到最合适的控件来处理事件？</h1><ul>
-<li>首先判断主窗口 keyWindow 自己是否能接受触摸事件。</li>
-<li>触摸点是否在自己身上。</li>
-<li>从后往前遍历子控件数组(遍历自己的子控件只是为了寻找出来最合适的view)，重复前面的两个步骤(传递事件给子控件：1、判断子控件能否接受事件；2、点在不在子控件上)。</li>
-<li>如果没有符合条件的子控件，那么就认为自己最合适处理。</li>
+<p>注意：<br>默认 <code>UIImageView</code> 不能接受触摸事件，因为不允许交互，即 <code>userInteractionEnabled = NO</code>。所以如果希望 <code>UIImageView</code> 可以交互，需要设置 <code>UIImageView</code> 的 <code>userInteractionEnabled = YES</code>。</p>
+<h4 id="如何找到最合适的控件来处理事件？"><a href="#如何找到最合适的控件来处理事件？" class="headerlink" title="如何找到最合适的控件来处理事件？"></a>如何找到最合适的控件来处理事件？</h4><ul>
+<li>首先判断主窗口 <code>keyWindow</code> 自己是否能接受触摸事件。</li>
+<li>调用当前视图的 <code>pointInside:withEvent:</code> 方法判断触摸点是否在当前视图内。</li>
+<li>若 <code>pointInside:withEvent:</code> 方法返回 <code>NO</code>，说明触摸点不在当前视图内，则当前视图的 <code>hitTest:withEvent:</code> 返回 <code>nil</code>。</li>
+<li>若 <code>pointInside:withEvent:</code> 方法返回 <code>YES</code>，说明触摸点在当前视图内，则遍历当前视图的所有子视图 <code>subviews</code>，调用子视图的 <code>hitTest:withEvent:</code> 方法重复前面的步骤，子视图的遍历顺序是从上到下，即从 <code>subviews</code> 数组的末尾向前遍历，直到有子视图的 <code>hitTest:withEvent:</code> 方法返回非空对象或者全部子视图遍历完毕。</li>
+<li>若第一次有子视图的 <code>hitTest:withEvent:</code> 方法返回非空对象，则当前视图的 <code>hitTest:withEvent:</code> 方法就返回此对象，处理结束。</li>
+<li>若所有子视图的 <code>hitTest:withEvent:</code> 方法都返回 <code>nil</code>，则当前视图的 <code>hitTest:withEvent:</code> 方法返回当前视图自身。</li>
 </ul>
-<h1 id="hitTest-withEvent-方法"><a href="#hitTest-withEvent-方法" class="headerlink" title="hitTest:withEvent:方法"></a>hitTest:withEvent:方法</h1><p>控件通过重写 hitTest:withEvent: 方法，寻找并返回最合适的 view (能够响应事件的那个最合适的view)。</p>
-<p>注意：</p>
+<h1 id="查找第一响应者"><a href="#查找第一响应者" class="headerlink" title="查找第一响应者"></a>查找第一响应者</h1><h4 id="hitTest-withEvent-方法"><a href="#hitTest-withEvent-方法" class="headerlink" title="hitTest:withEvent:方法"></a>hitTest:withEvent:方法</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event;</span><br></pre></td></tr></table></figure>
+<p>控件通过重写 <code>hitTest:withEvent:</code> 方法，来判断点击区域是否在视图上，是则返回 <code>YES</code>，不是则返回 <code>NO</code>，寻找并返回最合适的 <code>view</code> (能够响应事件的那个最合适的 <code>view</code>)。</p>
+<p><strong>应用程序接收到事件后，将事件交给 <code>keyWindow</code> 并转发给根视图，根视图按照视图层级逐级遍历子视图，并且遍历的过程中不断判断视图范围，并最终找到第一响应者。</strong></p>
+<p>事件传递给窗口或控件的后，就递归调用 <code>hitTest:withEvent:</code> 方法寻找更合适的 <code>view</code>。<br>在 <code>hitTest:withEvent:</code> 方法中，会从上到下遍历子视图，并调用 <code>subViews</code> 的 <code>pointInside:withEvent:</code> 方法，通过重写 <code>pointInside:withEvent:</code> 方法，返回点击区域是否在视图上。如果找到子视图则不断调用其 <code>hitTest:withEvent:</code> 方法，以此类推。</p>
+<h4 id="在-hitTest-withEvent-方法中返回-nil-的含义："><a href="#在-hitTest-withEvent-方法中返回-nil-的含义：" class="headerlink" title="在 hitTest:withEvent: 方法中返回 nil 的含义："></a>在 hitTest:withEvent: 方法中返回 nil 的含义：</h4><p>在 <code>hitTest:withEvent:</code> 方法中返回 <code>nil</code> 的意思是调用当前 <code>hitTest:withEvent:</code> 方法的 <code>view</code> 不是合适的 <code>view</code>，子控件也不是合适的 <code>view</code>，如果同级的兄弟控件也没有合适的 <code>view</code>，那么最合适的 <code>view</code> 就是父控件。</p>
+<h4 id="pointInside-withEvent-方法"><a href="#pointInside-withEvent-方法" class="headerlink" title="pointInside:withEvent: 方法"></a>pointInside:withEvent: 方法</h4><p><code>pointInside:withEvent:</code> 方法判断子控件的点在不在当前 <code>view</code> 上（方法调用者的坐标系上）如果返回 <code>YES</code>，代表点在方法调用者的坐标系上；返回 <code>NO</code> 代表点不在方法调用者的坐标系上，那么方法调用者也就不能处理事件。</p>
+<h1 id="查找第一响应者传递过程"><a href="#查找第一响应者传递过程" class="headerlink" title="查找第一响应者传递过程:"></a>查找第一响应者传递过程:</h1><ul>
+<li>如果当前 <code>view</code> 是控制器的 <code>view</code>，那么控制器就是上一个响应者，事件就传递给控制器；</li>
+<li>如果当前 <code>view</code> 不是控制器的 <code>view</code>，那么父视图就是当前 <code>view</code> 的上一个响应者，事件就传递给它的父视图。</li>
+<li>在视图层次结构的最顶级视图，如果也不能处理收到的事件或消息，则其将事件或消息传递给 <code>window</code> 对象进行处理。</li>
+<li>如果 <code>window</code> 对象也不处理，则其将事件或消息传递给 <code>UIApplication</code> 对象。</li>
+<li>如果 <code>UIApplication</code> 也不能处理该事件或消息，则将其丢弃。</li>
+</ul>
+<h1 id="事件拦截"><a href="#事件拦截" class="headerlink" title="事件拦截"></a>事件拦截</h1><p>有时候想让指定视图来响应事件，不再向其子视图继续传递事件，可以通过重写 <code>hitTest:withEvent:</code> 方法。在执行到方法后，直接将该视图返回，而不再继续遍历子视图，这样响应者链的终端就是当前视图。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event &#123;</span><br><span class="line">    return self;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际开发中可能会遇到一些特殊的交互需求，需要定制视图对于事件的响应。例如下面 <code>Tabbar</code> 的这种情况，中间的圆形按钮是底部 <code>Tabbar</code>上的控件，而 <code>Tabbar</code> 是添加在控制器根视图中的。默认情况下我们点击图中红色方框中按钮的区域，会发现按钮并不会得到响应。<br><img src="https://upload-images.jianshu.io/upload_images/588630-1f27542e7e36f69a?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>很明显，图中红色方框中按钮是添加在 <code>Tabbar</code> 上面的，但是图中红色方框中按钮的位置又超出了 <code>Tabbar</code> 的区域，当点击红色方框区域后，会发现红色方框得不到响应。</p>
+<p>分析：</p>
 <ul>
-<li>不管这个控件能不能处理事件，也不管触摸点在不在这个控件上，事件都会先传递给这个控件，随后再调用 hitTest:withEvent: 方法。</li>
-<li>如果 hitTest:withEvent: 方法中返回 nil，那么调用该方法的控件本身和其子控件都不是最合适的 view，也就是在自己身上没有找到更合适的 view。那么最合适的 view 就是该控件的父控件。</li>
+<li>生成的触摸事件首先传到了 <code>UIWindow</code>，然后 <code>UIWindow</code> 将事件传递给控制器的根视图 <code>UILayoutContainerView</code>；</li>
+<li><code>UILayoutContainerView</code> 判断自己可以响应触摸事件，然后将事件传递给子视图 <code>Tabbar</code>；</li>
+<li>子视图 <code>Tabbar</code> 判断触摸点并不在自己的坐标范围内，因此返回 <code>nil</code>；</li>
+<li>这时 <code>UILayoutContainerView</code> 将事件传递其他子视图 <code>UINavigationTransitionView</code>，<code>UINavigationTransitionView</code> 判断自己可以响应事件，就将事件时间传递给其子视图 <code>UIViewControllerWrapperView</code>；</li>
+<li><code>UIViewControllerWrapperView</code> 判断自己可以响应事件，就将事件传递给子视图 <code>UITableViewController</code> 控制器的 <code>TableView</code>；</li>
+<li><code>TableView</code> 判断自己可以响应事件，所以 <code>UITableViewController</code> 控制器的 <code>TableView</code> 就是第一响应者；</li>
 </ul>
-<p>事件传递给窗口或控件的后，就调用 hitTest:withEvent: 方法寻找更合适的 view。所以先传递事件，再根据事件是否在自己身上能找到更合适的 view。不管子控件是不是最合适的 view，系统默认都要先把事件传递给子控件，然后调用子控件自己的 hitTest:withEvent: 方法验证后才能确认有没有更合适的 view。即便父控件是最合适的 view 了，子控件的 hitTest:withEvent: 方法还是会调用，不然怎么知道有没有更合适的。即，如果确定最终父控件是最合适的view，那么该父控件的子控件的hitTest:withEvent:方法也是会被调用的。</p>
-<p>注意：在 hitTest:withEvent: 方法中返回 self 有时候会出现问题：当遍历子控件时，如果触摸点不在子控件A上而是在子控件B上，要求返回子控件A作为最合适的view，如果在 hitTest:withEvent: 方法中返回 self 可能会导致还没有来得及遍历A自己，就有可能已经遍历了点真正所在的view，也就是B。这就导致了返回的不是自己而是触摸点真正所在的 view。所以还是<strong>建议在父控件的 hitTest:withEvent: 中返回子控件作为最合适的 view</strong>。</p>
-<h1 id="在-hitTest-withEvent-方法中返回-nil-的含义："><a href="#在-hitTest-withEvent-方法中返回-nil-的含义：" class="headerlink" title="在 hitTest:withEvent: 方法中返回 nil 的含义："></a>在 hitTest:withEvent: 方法中返回 nil 的含义：</h1><p>在 hitTest:withEvent: 方法中返回 nil 的意思是调用当前 hitTest:withEvent: 方法的 view 不是合适的 view，子控件也不是合适的 view，如果同级的兄弟控件也没有合适的 view，那么最合适的 view 就是父控件。</p>
-<h1 id="pointInside-withEvent-方法"><a href="#pointInside-withEvent-方法" class="headerlink" title="pointInside:withEvent: 方法"></a>pointInside:withEvent: 方法</h1><p>pointInside:withEvent: 方法判断子控件的点在不在当前 view 上（方法调用者的坐标系上）如果返回YES，代表点在方法调用者的坐标系上；返回 NO 代表点不在方法调用者的坐标系上，那么方法调用者也就不能处理事件。</p>
-<h1 id="响应者链的事件传递过程"><a href="#响应者链的事件传递过程" class="headerlink" title="响应者链的事件传递过程:"></a>响应者链的事件传递过程:</h1><ul>
-<li>如果当前 view 是控制器的 view，那么控制器就是上一个响应者，事件就传递给控制器；如果当前 view 不是控制器的 view，那么父视图就是当前 view 的上一个响应者，事件就传递给它的父视图</li>
-<li>在视图层次结构的最顶级视图，如果也不能处理收到的事件或消息，则其将事件或消息传递给 window 对象进行处理</li>
-<li>如果 window 对象也不处理，则其将事件或消息传递给 UIApplication 对象</li>
-<li>如果 UIApplication 也不能处理该事件或消息，则将其丢弃。</li>
-</ul>
+<p>整个过程，事件根本没有传递到图中红色方框中按钮；</p>
+<p>因此我们需要做的就是修改 <code>Tabbar</code> 的 <code>hitTest:withEvent:</code> 函数里面判断点击位置是否在 <code>Tabbar</code> 坐标范围的的判断条件，也就是需要重写 <code>Tabbar</code> 的<br> <code>pointInside:withEvent:</code> 方法，判断如果当前触摸坐标在图中红色方框中按钮上面，就返回 <code>YES</code>，否则返回 <code>NO</code>；这样一来时间就会最终传递到图中红色方框中按钮上面，来响应事件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; TabBar</span><br><span class="line">- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event &#123;</span><br><span class="line">    &#x2F;&#x2F; 将触摸点坐标转换到在 circleButton 上的坐标</span><br><span class="line">    CGPoint pointTemp &#x3D; [self convertPoint:point toView:_circleButton];</span><br><span class="line">    &#x2F;&#x2F; 若触摸点在 cricleButton 上则返回 YES</span><br><span class="line">    if ([_circleButton pointInside:pointTemp withEvent:event]) &#123;</span><br><span class="line">        return YES;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F; 否则返回默认的操作</span><br><span class="line">    return [super pointInside:point withEvent:event];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="事件转发"><a href="#事件转发" class="headerlink" title="事件转发"></a>事件转发</h1><p>在开发过程中，经常会遇到子视图显示范围超出父视图的情况，这时候可以重写该视图的 <code>pointInside:withEvent:</code> 方法，将点击区域扩大到能够覆盖所有子视图。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event &#123;</span><br><span class="line">    if (!self.isUserInteractionEnabled || self.isHidden || self.alpha &lt;&#x3D; 0.01) return nil;</span><br><span class="line">    </span><br><span class="line">    CGFloat inset &#x3D; 45.0f - 78.0f;</span><br><span class="line">    CGRect touchRect &#x3D; CGRectInset(self.bounds, inset, inset);</span><br><span class="line">    </span><br><span class="line">    if (CGRectContainsPoint(touchRect, point)) &#123;</span><br><span class="line">        for (UIView *subview in [self.subviews reverseObjectEnumerator]) &#123;</span><br><span class="line">            CGPoint convertedPoint &#x3D; [subview convertPoint:point fromView:self];</span><br><span class="line">            UIView *hitTestView &#x3D; [subview hitTest:convertedPoint withEvent:event];</span><br><span class="line">            if (hitTestView) &#123;</span><br><span class="line">                return hitTestView;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return self;</span><br><span class="line">    &#125;</span><br><span class="line">    return nil;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </div></article></div></main><footer><div class="paginator"><a href="/2016/06/20/iOS-RunTime%E4%B9%8B%E4%BA%94%EF%BC%9ACategory-%E9%9D%A2%E8%AF%95%E9%A2%98/" class="prev">上一篇</a><a href="/2016/06/15/iOS%E9%9D%A2%E8%AF%95%E9%A2%98-%E5%A6%82%E4%BD%95%E5%9C%A8%E9%A1%B9%E7%9B%AE%E4%B8%AD%E5%A4%84%E7%90%86%E9%A1%B5%E9%9D%A2%E4%B8%AD%E7%9A%84%E5%A4%9A%E4%B8%AA%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
 var disqus_identifier = '2016/06/16/iOS-中的事件的产生和传递/';
 var disqus_title = 'iOS 中的事件的产生和传递';

@@ -1,20 +1,14 @@
 <!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 对称加密与非对称加密 · 孙金帅的技术博客</title><meta name="description" content="对称加密与非对称加密 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"><meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="孙金帅的技术博客" type="application/atom+xml">
-</head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="https://weibo.com/u/5113807465" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">对称加密与非对称加密</h1><div class="post-info">2016年9月23日</div><div class="post-content"><p>对称加密：<br>加密（encryption）与解密（decryption）使用的是同样的密钥（secret key），对称加密是最快速、最简单的一种加密方式。<br>加密和解密算法是公开的，秘钥必须严格保存，如果秘钥泄露，别人就能够用密文+秘钥还原成你的明文。</p>
-<p>对称加密有很多种算法，由于它效率很高，所以被广泛使用在很多加密协议的核心当中。</p>
-<p>对称加密通常使用的是相对较小的密钥，一般小于256bit。因为密钥越大，加密越强，但加密与解密的过程越慢。如果你只用1bit来做这个密钥，那黑客们可以先试着用0来解密，不行的话就再用1解；但如果你的密钥有1MB大，黑客们可能永远也无法破解，但加密和解密的过程要花费很长的时间。</p>
-<p>比如常见的DES/AES都是属于对称加密算法。</p>
-<p>优点：算法公开、计算量小、加密速度快、加密效率高。<br>缺点：秘钥的管理和分发非常困难，不够安全。在数据传送前，发送方和接收方必须商定好秘钥，然后双方都必须要保存好秘钥，如果一方的秘钥被泄露，那么加密信息也就不安全了。</p>
-<p>另外，每对用户每次使用对称加密算法时，都需要使用其他人不知道的唯一秘钥，这会使得收、发双方所拥有的钥匙数量巨大，密钥管理成为双方的负担。</p>
-<p>非对称加密：<br>非对称加密算法需要两个密钥来进行加密和解密，这两个秘钥是公开密钥（简称公钥）和私有密钥（简称私钥），即常说的“公钥加密，私钥加密”或“私钥加密，公钥加密”。</p>
-<p>私钥只能由一方安全保管，不能外泄，而公钥则可以发给任何请求它的人。</p>
-<p>非对称加密使用这对密钥中的一个进行加密，而解密则需要另一个密钥。</p>
-<p>比如，你向银行请求公钥，银行将公钥发给你，你使用公钥对消息加密，那么只有私钥的持有人–银行才能对你的消息解密。</p>
-<p>与对称加密不同的是，银行不需要将私钥通过网络发送出去，因此安全性大大提高。<br>比如RSA就是最常用的非对称加密算法。</p>
+</head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="https://weibo.com/u/5113807465" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">对称加密与非对称加密</h1><div class="post-info">2016年9月23日</div><div class="post-content"><h1 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a>对称加密</h1><p>加密 <code>encryption</code> 与解密 <code>decryption</code> 使用的是同样的密钥 <code>secret key</code>，对称加密是最快速、最简单的一种加密方式。加密和解密算法是公开的，秘钥必须严格保存，如果秘钥泄露，别人就能够用密文+秘钥还原成你的明文。<br>对称加密有很多种算法，由于它效率很高，所以被广泛使用在很多加密协议的核心当中。<br>对称加密通常使用的是相对较小的密钥，一般小于 <code>256bit</code>。因为密钥越大，加密越强，但加密与解密的过程越慢。如果你只用 <code>1bit</code> 来做这个密钥，那黑客们可以先试着用 <code>0</code> 来解密，不行的话就再用 <code>1</code> 解；但如果你的密钥有 <code>1MB</code> 大，黑客们可能永远也无法破解，但加密和解密的过程要花费很长的时间。</p>
+<h1 id="For-Example"><a href="#For-Example" class="headerlink" title="For Example"></a>For Example</h1><p>比如常见的 <code>DES/AES</code> 都是属于对称加密算法。</p>
+<h1 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h1><p>算法公开、计算量小、加密速度快、加密效率高。</p>
+<h1 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h1><p>秘钥的管理和分发非常困难，不够安全。在数据传送前，发送方和接收方必须商定好秘钥，然后双方都必须要保存好秘钥，如果一方的秘钥被泄露，那么加密信息也就不安全了。</p>
+<h1 id="非对称加密"><a href="#非对称加密" class="headerlink" title="非对称加密"></a>非对称加密</h1><p>非对称加密算法需要两个密钥来进行加密和解密，这两个秘钥是公开密钥（简称公钥）和私有密钥（简称私钥），即常说的“公钥加密，私钥加密”或“私钥加密，公钥加密”。<br>私钥只能由一方安全保管，不能外泄，而公钥则可以发给任何请求它的人。<br>非对称加密使用这对密钥中的一个进行加密，而解密则需要另一个密钥。</p>
+<h1 id="For-Example-1"><a href="#For-Example-1" class="headerlink" title="For Example"></a>For Example</h1><p><code>RSA</code> 就是最常用的非对称加密算法。<br>比如，你向银行请求公钥，银行将公钥发给你，你使用公钥对消息加密，那么只有私钥的持有人–银行才能对你的消息解密。<br>与对称加密不同的是，银行不需要将私钥通过网络发送出去，因此安全性大大提高。</p>
 <p>虽然非对称加密很安全，但是和对称加密比起来，它非常的慢，所以我们还是要用对称加密来传送消息，但对称加密所使用的密钥我们可以通过非对称加密的方式发送出去。</p>
-<p>优点：安全性更高，公钥是公开的，秘钥是自己保存的，不需要将私钥给别人。<br>缺点：加密和解密花费时间长、速度慢，只适合对少量数据进行加密。</p>
-<p>对称加密加密与解密使用的是同样的密钥，所以速度快，但由于需要将密钥在网络传输，所以安全性不高。</p>
-<p>非对称加密使用了一对密钥，公钥与私钥，所以安全性高，但加密与解密速度慢。</p>
-<p>解决的办法是将对称加密的密钥使用非对称加密的公钥进行加密，然后发送出去，接收方使用私钥进行解密得到对称加密的密钥，然后双方可以使用对称加密来进行沟通。</p>
+<h1 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h1><p>安全性更高，公钥是公开的，秘钥是自己保存的，不需要将私钥给别人。</p>
+<h1 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h1><p>加密和解密花费时间长、速度慢，只适合对少量数据进行加密。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>对称加密加密与解密使用的是同样的密钥，所以速度快，但由于需要将密钥在网络传输，所以安全性不高。<br>非对称加密使用了一对密钥，公钥与私钥，所以安全性高，但加密与解密速度慢。<br>解决的办法是将对称加密的密钥使用非对称加密的公钥进行加密，然后发送出去，接收方使用私钥进行解密得到对称加密的密钥，然后双方可以使用对称加密来进行沟通。</p>
 </div></article></div></main><footer><div class="paginator"><a href="/2016/03/05/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
 var disqus_identifier = '2016/09/23/对称加密与非对称加密/';
 var disqus_title = '对称加密与非对称加密';

@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 如何使用hexo搭建个人博客 · 孙金帅的技术博客</title><meta name="description" content="如何使用hexo搭建个人博客 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"><meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="孙金帅的技术博客" type="application/atom+xml">
+</head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="https://weibo.com/u/5113807465" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">如何使用hexo搭建个人博客</h1><div class="post-info">2016年3月5日</div><div class="post-content"><p>经过各种找资料，踩过何种坑，终于搭建好了 <code>hexo</code>，域名目前用得时 <code>github</code> 的，我的 <code>hexo</code> 是 <code>3.2.2</code> 版本，<code>hexo</code> 不同的版本，很多配置都不一样。好吧，废话不多说了，开始吧。</p>
+<p>之前是想着写博客，一方面是给自己做笔记，可以提升自己的写作、总结能力，一个技术点我们会使用，并不难，但是要做到让让别人也能听懂我们讲得，还是需要一定的技巧和经验的。很多类似于 <code>CSDN</code>、博客园也都可以写文章，但是页面的样式我不是太喜欢，简书还算好点得。最近看到一些大神们的博客，貌似都是用 <code>hexo</code> 写得，我也依葫芦画瓢的搭建了一个。不罗嗦了，直接上搭建步骤。</p>
+<h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><p><code>hexo</code>是一个<code>npm</code>包，在<code>node</code>环境上运行，功能就是将你的文章（<code>.md</code>文件）生成为静态<code>html</code>文件。</p>
+<h4 id="基础准备"><a href="#基础准备" class="headerlink" title="基础准备"></a>基础准备</h4><p>下面正式开始搭建博客！首先要想使用 <code>Hexo</code> 和 <code>github pages</code> 搭建博客，需要以下环境：</p>
+<ul>
+<li>在 <code>github</code> 上注册一个账号，并创建一个指定名字的 <code>reposity</code></li>
+<li><code>homebrew</code> 套件管理器，主要用来安装 <code>git</code> 和 <code>node.js</code></li>
+<li><code>git</code> 版本管理工具</li>
+<li><code>node.js</code></li>
+<li>配置 <code>SSH key</code></li>
+<li>安装 <code>hexo</code></li>
+<li>同步 <code>hexo</code> 博客到 <code>github</code></li>
+</ul>
+<h5 id="注册Github账号并创建reposity"><a href="#注册Github账号并创建reposity" class="headerlink" title="注册Github账号并创建reposity"></a>注册Github账号并创建reposity</h5><p>申请完账号，登陆之后，就可以创建 <code>reposity</code> 了，点击 <code>New repository</code><br>，会跳转到这个界面: </p>
+<p><img src="/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/588630-c658dc0c9c467b19.png" alt="Paste_Image.png"></p>
+<h5 id="安装brewhome"><a href="#安装brewhome" class="headerlink" title="安装brewhome"></a>安装brewhome</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby -e &quot;$(curl -fsSL https:&#x2F;&#x2F;raw.github.com&#x2F;Homebrew&#x2F;homebrew&#x2F;go&#x2F;install)”</span><br></pre></td></tr></table></figure>
+
+<p>安装失败, 执行以下脚本卸载：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;usr&#x2F;bin&#x2F;ruby -e &quot;$(curl -fsSL https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Homebrew&#x2F;install&#x2F;master&#x2F;uninstall)&quot; </span><br><span class="line">报错：Failed to locate Homebrew!</span><br></pre></td></tr></table></figure>
+
+<p>执行以下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo rm -rf &#x2F;usr&#x2F;local&#x2F;.git rm -rf Library .git .gitignore bin&#x2F;brew README.md share&#x2F;man&#x2F;man1&#x2F;brew rm -rf ~&#x2F;Library&#x2F;Caches&#x2F;Homebrew</span><br></pre></td></tr></table></figure>
+
+<p>成功后，再次执行，下载脚本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby -e &quot;$(curl -fsSL https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;Homebrew&#x2F;install&#x2F;master&#x2F;install)&quot;</span><br></pre></td></tr></table></figure>
+
+<p>下载成功</p>
+<h5 id="安装git版本管理工具"><a href="#安装git版本管理工具" class="headerlink" title="安装git版本管理工具"></a>安装git版本管理工具</h5><p><code>git</code> 是一个强大的版本管理工具，<code>github</code> 的版本管理就是基于 <code>git</code> 的，现在 <code>svn</code> 基本过时了，使用 <code>Git</code> 进行版本管理才是王道。安装完 <code>homebrew</code> 之后，安装 <code>Git</code> 几乎零成本，还是在 <code>terminal</code> 终端，输入以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install git</span><br></pre></td></tr></table></figure>
+
+<p>然后等一段时间就 <code>ok</code> 了，<code>homebrew</code> 会自动去帮你完成下载安装。</p>
+<h5 id="安装node-js"><a href="#安装node-js" class="headerlink" title="安装node.js"></a>安装node.js</h5><p><code>hexo</code> 是基于 <code>node.js</code> 的，所以要让 <code>hexo</code> 运行，<code>node.js</code> 环境是必不可少的。使用 <code>homebrew</code> 安装 <code>node.js</code> 也特别简单，在 <code>terminal</code> 终端输入如下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install node</span><br></pre></td></tr></table></figure>
+
+<p>ps：安装最新版的 <code>Node.js</code> 之后，我们就可以使用 <code>npm</code> 命令，在 <code>mac</code> 下遇到 <code>npm</code> 命令找不到的问题，解决方案如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo ln -s &#x2F;usr&#x2F;local&#x2F;bin&#x2F;node &#x2F;usr&#x2F;bin&#x2F;node</span><br><span class="line">sudo ln -s &#x2F;usr&#x2F;local&#x2F;lib&#x2F;node &#x2F;usr&#x2F;lib&#x2F;node</span><br><span class="line">sudo ln -s &#x2F;usr&#x2F;local&#x2F;bin&#x2F;npm &#x2F;usr&#x2F;bin&#x2F;npm</span><br><span class="line">sudo ln -s &#x2F;usr&#x2F;local&#x2F;bin&#x2F;node-waf &#x2F;usr&#x2F;bin&#x2F;node-waf</span><br></pre></td></tr></table></figure>
+
+<h5 id="安装hexo"><a href="#安装hexo" class="headerlink" title="安装hexo"></a>安装hexo</h5><p>前面我们安装了 <code>node.js</code>，装完 <code>node.js</code> 之后，我们就可以使用 <code>npm</code> 命令了，而 <code>hexo</code> 安装就是使用 <code>npm</code>，在终端输入以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g hexo</span><br></pre></td></tr></table></figure>
+
+<p>ps：等待一会儿，<code>hexo</code> 会自动完成下载安装。等 <code>hexo</code> 安装完成之后，在创建一个文件夹，这个文件夹以后就是你存放本地博客的地方了。</p>
+<h4 id="搭建hexo博客"><a href="#搭建hexo博客" class="headerlink" title="搭建hexo博客"></a>搭建hexo博客</h4><p>创建新建一个文件夹，用来存放本地博客。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+
+<p><code>hexo</code>会在创建的文件夹创建本地博客所需的一切资源。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+
+<p>访问本地localhost:4000可以看到博客已经搭建成功。</p>
+<h4 id="同步hexo博客到github"><a href="#同步hexo博客到github" class="headerlink" title="同步hexo博客到github"></a>同步hexo博客到github</h4><ul>
+<li>配置本地和<code>github</code>的<code>ssh</code></li>
+<li>在<code>github</code>上创建名字为<code>XXX.github.io</code>的项目，<code>XXX</code>为自己的<code>github</code>用户名。</li>
+<li>开本地的创建的文件夹中的<code>_config.yml</code>配置文件，将其中的<code>type</code>设置为<code>git</code>。</li>
+</ul>
+<h6 id="检查你电脑上现有的ssh-key"><a href="#检查你电脑上现有的ssh-key" class="headerlink" title="检查你电脑上现有的ssh key"></a>检查你电脑上现有的ssh key</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ~&#x2F;.ssh   # 切换到ssh目录</span><br><span class="line">ls -al ~&#x2F;.ssh # 查看</span><br></pre></td></tr></table></figure>
+<p>注意：<br>如果你本地没有生成的话，终端上面会显示，<code>No such file or directory</code>。说明你是第一次使用git，如果已经存在的话，则会显示<code>id_rsa</code>和<code>id_rsa.pub</code>。</p>
+<h6 id="获取ssh"><a href="#获取ssh" class="headerlink" title="获取ssh"></a>获取ssh</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;your.email@example.com&quot; -b 4096</span><br></pre></td></tr></table></figure>
+
+<h6 id="配置github的ssh"><a href="#配置github的ssh" class="headerlink" title="配置github的ssh"></a>配置github的ssh</h6><p>登陆<code>github</code>后，点击右上角自己的头像–&gt;点击Your profile–&gt;点击你的博客远程仓库，页面中就能找到ssh。</p>
+<p><img src="source/images/588630-c658dc0c9c467b19.png" alt="Paste_Image.png"></p>
+<h4 id="配置hexo"><a href="#配置hexo" class="headerlink" title="配置hexo"></a>配置hexo</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https:&#x2F;&#x2F;hexo.io&#x2F;docs&#x2F;deployment.html</span><br><span class="line">deploy:</span><br><span class="line">type: git</span><br><span class="line">repo: https:&#x2F;&#x2F;github.com&#x2F;sunjinshuai&#x2F;sunjinshuai.github.com</span><br><span class="line">branch: master</span><br></pre></td></tr></table></figure>
+
+<p>在terminal终端，将当前目录切换到你的本地博客目录，执行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+
+<p>在terminal终端，执行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo generate   &#x2F;&#x2F; 可以简写成hexo g 根据markdown文件生成静态文件</span><br><span class="line">hexo deploy     &#x2F;&#x2F; 或者简写成hexo d 将本地修改，部署到远端</span><br></pre></td></tr></table></figure>
+<p>此时，打开浏览器，访问<a href="https://sunjinshuai.github.io">https://sunjinshuai.github.io</a> ，就可以看到你的博客。</p>
+<h4 id="Hexo安装新主题apollo"><a href="#Hexo安装新主题apollo" class="headerlink" title="Hexo安装新主题apollo"></a>Hexo安装新主题apollo</h4><p>Hexo换皮肤还是比较简单的，既可以自己根据默认的主题来修改，也可以到<a href="https://hexo.io/themes/" target="_blank" rel="noopener">https://hexo.io/themes/</a> 上去找主题。</p>
+<h5 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h5><p>github上的文档给出了详细的安装命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hexo init #blogname#</span><br><span class="line">cd #blogname#</span><br><span class="line">npm install</span><br><span class="line">npm install --save hexo-renderer-jade hexo-generator-feed hexo-generator-sitemap hexo-browsersync hexo-generator-archive</span><br><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;pinggod&#x2F;hexo-theme-apollo.git themes&#x2F;apollo</span><br></pre></td></tr></table></figure>
+
+<h5 id="启用"><a href="#启用" class="headerlink" title="启用"></a>启用</h5><p>安装成功后就可以开始启用主题，主题的启用需要修改_config.yml 的 theme 配置项为 apollo：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># Extensions</span><br><span class="line">## Plugins: https:&#x2F;&#x2F;hexo.io&#x2F;plugins&#x2F;</span><br><span class="line">## Themes: https:&#x2F;&#x2F;hexo.io&#x2F;themes&#x2F;</span><br><span class="line">theme: apollo</span><br><span class="line"></span><br><span class="line"># 在归档页面显示所有文章</span><br><span class="line"># 需要上面安装的 hexo-generator-archive 插件支持</span><br><span class="line">archive_generator:</span><br><span class="line">per_page: 0</span><br><span class="line">yearly: false</span><br><span class="line">monthly: false</span><br><span class="line">daily: false</span><br></pre></td></tr></table></figure>
+
+<h4 id="hexo常用的命令"><a href="#hexo常用的命令" class="headerlink" title="hexo常用的命令"></a>hexo常用的命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">hexo init       &#x2F;&#x2F;在指定目录执行该命令，会将当前目录初始化为hexo站点，生成hexo站点所需的一切文件</span><br><span class="line">hexo new “my new blog title”   &#x2F;&#x2F;新建一篇文章。如果没有设置 layout 的话，默认使用 _config.yml 中的 default_layout 参数代替。如果标题包含空格的话，请使用引号括起来。</span><br><span class="line">hexo clean      &#x2F;&#x2F; 清除缓存，如果对本地文件做了修改，同步到远程验证修改的效果之前，先clean，清除缓存</span><br><span class="line">hexo generate   &#x2F;&#x2F; 可以简写成hexo g 根据markdown文件生成静态文件</span><br><span class="line">hexo server     &#x2F;&#x2F; 或者简写成hexo s 启动本地hexo 服务器，默认localhost:4000可以访问</span><br><span class="line">hexo deploy     &#x2F;&#x2F; 或者简写成hexo d 将本地修改，部署到远端</span><br><span class="line">hexo version    &#x2F;&#x2F; 显示hexo版本</span><br></pre></td></tr></table></figure>
+
+<h4 id="关于HEXO安装失败的解决方法"><a href="#关于HEXO安装失败的解决方法" class="headerlink" title="关于HEXO安装失败的解决方法"></a>关于HEXO安装失败的解决方法</h4><p>目前国内npm源有问题；所以键入如下代码即可安装成功:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g cnpm --registry&#x3D;https:&#x2F;&#x2F;registry.npm.taobao.org</span><br><span class="line">cnpm install hexo-cli -g</span><br></pre></td></tr></table></figure>
+</div></article></div></main><footer><div class="paginator"></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2016/03/05/如何使用hexo搭建个人博客/';
+var disqus_title = '如何使用hexo搭建个人博客';
+var disqus_url = 'https://sunjinshuai.github.io/2016/03/05/如何使用hexo搭建个人博客/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2022 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

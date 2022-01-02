@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> iOS RunTime之Self & Super · 孙金帅的技术博客</title><meta name="description" content="iOS RunTime之Self &amp; Super - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"><meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="孙金帅的技术博客" type="application/atom+xml">
+</head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="https://weibo.com/u/5113807465" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">iOS RunTime之Self & Super</h1><div class="post-info">2016年4月17日</div><div class="post-content"><h4 id="面试题"><a href="#面试题" class="headerlink" title="面试题"></a>面试题</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@implementation Son : Father</span><br><span class="line">- (id)init &#123;</span><br><span class="line">    self &#x3D; [super init];</span><br><span class="line">    if (self) &#123;</span><br><span class="line">        NSLog(@&quot;%@&quot;, NSStringFromClass([self class]));</span><br><span class="line">        NSLog(@&quot;%@&quot;, NSStringFromClass([super class]));</span><br><span class="line">    &#125;</span><br><span class="line">    return self;</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 运行结果：</span><br><span class="line">2016-04-17 14:21:36.060 Test[8566:568584] NSStringFromClass([self class]) &#x3D; Son 2016-04-17 14:21:36.061 Test[8566:568584] NSStringFromClass([super class]) &#x3D; Son</span><br></pre></td></tr></table></figure>
+
+<p><code>self</code>是类的隐藏参数，指向当前调用方法的这个类的实例。而<code>super</code>是一个<code>Magic Keyword</code>， 它本质是一个编译器标示符，和<code>self</code>是指向的同一个消息接受者。上面的demo中不管调用<code>[self class]</code>还是<code>[super class]</code>，最终的接受消息的对象都是当前<code>Son</code>这个对象。而不同的是，<code>super</code>是告诉编译器，调用<code>class</code>这个方法时，要去父类的方法，而不是本类里的。</p>
+<p>当使用<code>self</code>调用方法时，会从当前类的方法列表中开始找，如果没有，就从父类中再找；而当使用<code>super</code>时，则从父类的方法列表中开始找。然后调用父类的这个方法。</p>
+<p>通过<code>clang</code>命令验证：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clang -rewrite-objc test.m</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://upload-images.jianshu.io/upload_images/588630-865511032a51310f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>从上面的代码中，我们可以发现当在调用<code>[self class]</code>时，会转化成<code>objc_msgSend</code>函数。看下函数定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id objc_msgSend(id self, SEL op, ...)</span><br></pre></td></tr></table></figure>
+
+<p>而在调用<code>[super class]</code>时，会转化成<code>objc_msgSendSuper</code>函数。看下函数定义:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id objc_msgSendSuper(struct objc_super *super, SEL op, ...)</span><br></pre></td></tr></table></figure>
+
+<p>查看<code>objc_super</code>结构体发现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">struct objc_super &#123;</span><br><span class="line">  __unsafe_unretained id receiver;</span><br><span class="line">  __unsafe_unretained Class super_class;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>结构体有两个成员：</p>
+<ul>
+<li>第一个成员是<code>receiver</code>, 类似于上面的<code>objc_msgSend</code>函数第一个参数<code>self</code>。</li>
+<li>第二个成员是<code>super_class</code>记录当前类的父类是什么。</li>
+</ul>
+<p>所以，当调用<code>[self class]</code>时，实际先调用的是<code>objc_msgSend</code>函数，第一个参数是<code>Son</code>当前的这个实例，然后在<code>Son</code>这个类里面去找<code>- (Class)class</code>这个方法，没有，去父类<code>Father</code>里找，也没有，最后在 <code>NSObject</code>类中发现这个方法。</p>
+<p><code>objc Runtime</code>开源代码对<code>- (Class)class</code>方法的实现:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (Class)class &#123;</span><br><span class="line">  return object_getClass(self);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而<code>- (Class)class</code>的实现就是返回<code>self</code>的类别，故上述输出结果为<code>Son</code>。</p>
+<p>而当调用<code>[super class]</code>时，会转换成<code>objc_msgSendSuper</code>函数。</p>
+<ul>
+<li>第一步先构造<code>objc_super</code>结构体，结构体第一个成员就是<code>self</code>。第二个成员是<code>- (id)class_getSuperclass(objc_getClass(“Son”))</code> , 实际该函数输出结果为<code>Father</code>。</li>
+<li>第二步是去<code>Father</code>这个类里去找<code>- (Class)class</code>，没有，然后去<code>NSObject</code>类去找，找到了。</li>
+<li>最后内部是使用<code>objc_msgSend(objc_super-&gt;receiver, @selector(class))</code>去调用，此时已经和<code>[self class]</code>调用相同了，故上述输出结果仍然返回<code>Son</code>。</li>
+</ul>
+<h4 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h4><p><a href="http://blog.sunnyxx.com/2014/11/06/runtime-nuts/" target="_blank" rel="noopener">http://blog.sunnyxx.com/2014/11/06/runtime-nuts/</a></p>
+</div></article></div></main><footer><div class="paginator"><a href="/2016/05/18/Mac%E4%B8%8A%E6%9B%B4%E6%96%B0Ruby/" class="prev">上一篇</a><a href="/2016/04/15/%E5%A6%82%E4%BD%95%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%20UIScrollView/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2016/04/17/iOS-RunTime之Self-Super/';
+var disqus_title = 'iOS RunTime之Self &amp; Super';
+var disqus_url = 'https://sunjinshuai.github.io/2016/04/17/iOS-RunTime之Self-Super/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2022 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://sunjinshuai.github.io/"/>
-  <updated>2022-01-02T12:43:20.503Z</updated>
+  <updated>2022-01-09T11:45:12.098Z</updated>
   <id>https://sunjinshuai.github.io/</id>
   
   <author>
@@ -15,6 +15,21 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>浅谈 AutoreleasePool 的实现原理</title>
+    <link href="https://sunjinshuai.github.io/2022/01/09/%E6%B5%85%E8%B0%88-AutoreleasePool-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/"/>
+    <id>https://sunjinshuai.github.io/2022/01/09/%E6%B5%85%E8%B0%88-AutoreleasePool-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</id>
+    <published>2022-01-09T11:45:12.000Z</published>
+    <updated>2022-01-09T11:45:12.098Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>对称加密与非对称加密</title>

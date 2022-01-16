@@ -1,0 +1,53 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 浅谈 HTTPS 的原理详解 · 孙金帅的技术博客</title><meta name="description" content="浅谈 HTTPS 的原理详解 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"><meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="孙金帅的技术博客" type="application/atom+xml">
+</head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="https://weibo.com/u/5113807465" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">浅谈 HTTPS 的原理详解</h1><div class="post-info">2019年9月13日</div><div class="post-content"><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><ul>
+<li><p><code>HTTP</code> 协议（<code>HyperText Transfer Protocol</code>，超文本传输协议）：是客户端浏览器或其他程序与 <code>Web</code> 服务器之间的应用层通信协议 。</p>
+</li>
+<li><p><code>HTTPS</code> 协议（<code>HyperText Transfer Protocol over Secure Socket Layer</code>）：可以理解为 <code>HTTP+SSL/TLS</code>， 即 <code>HTTP</code> 下加入 <code>SSL</code> 层，<code>HTTPS</code> 的安全基础是 <code>SSL</code>，因此加密的详细内容就需要 <code>SSL</code>，用于安全的 <code>HTTP</code> 数据传输。</p>
+</li>
+<li><p><code>SSL</code>（<code>Secure Socket Layer</code>，安全套接字层）：<code>1994</code> 年为 <code>Netscape</code> 所研发，<code>SSL</code> 协议位于 <code>TCP/IP</code> 协议与各种应用层协议之间，为数据通讯提供安全支持。</p>
+</li>
+<li><p><code>TLS</code>（<code>Transport Layer Security</code>，传输层安全）：其前身是 <code>SSL</code>，它最初的几个版本（<code>SSL 1.0</code>、<code>SSL 2.0</code>、<code>SSL 3.0</code>）由网景公司开发，<code>1999</code> 年从 <code>3.1</code> 开始被 <code>IETF</code> 标准化并改名，发展至今已经有 <code>TLS 1.0</code>、<code>TLS 1.1</code>、<code>TLS 1.2</code> 三个版本。<code>SSL3.0</code> 和 <code>TLS1.0</code> 由于存在安全漏洞，已经很少被使用到。<code>TLS 1.3</code> 改动会比较大，目前还在草案阶段，目前使用最广泛的是 <code>TLS 1.1</code>、<code>TLS 1.2</code>。</p>
+</li>
+</ul>
+<h3 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h3><ul>
+<li><code>HTTP</code> 默认工作在 <code>TCP</code> 协议 <code>80</code> 端口，用户访问网站 <code>http://</code> 打头的都是标准 <code>HTTP</code> 服务。</li>
+<li><code>HTTP</code> 协议以明文方式发送内容，不提供任何方式的数据加密，如果攻击者截取了 <code>Web</code> 浏览器和网站服务器之间的传输报文，就可以直接读懂其中的信息，因此，HTTP协议不适合传输一些敏感信息，比如：信用卡号、密码等支付信息。</li>
+<li><code>HTTPS</code> 默认工作在 <code>TCP</code> 协议 <code>443</code> 端口。</li>
+<li><code>HTTPS</code>（<code>HTTP+SSL/TLS</code>）数据传输过程是加密的，安全性较好。</li>
+</ul>
+<p><code>HTTPS</code> 和 <code>HTTP</code> 协议相比提供了</p>
+<ul>
+<li>数据完整性：内容传输经过完整性校验</li>
+<li>数据隐私性：内容经过对称加密，每个连接生成一个唯一的加密密钥</li>
+<li>身份认证：第三方无法伪造服务端（客户端）身份</li>
+</ul>
+<h3 id="TLS-握手流程"><a href="#TLS-握手流程" class="headerlink" title="TLS 握手流程"></a>TLS 握手流程</h3><p><code>HTTPS</code> 在传输数据之前需要客户端与服务端之间进行一次握手，在握手过程中将确立双方加密传输数据的密码信息。<code>TLS/SSL</code> 协议是一套加密传输的协议，使用了非对称加密，对称加密以及 <code>HASH</code> 算法。以 <code>RSA</code> 为例，<code>TLS</code> 握手流程如下：<br><img src="588630-0e87f4003f1e85ff.png" alt="image.png"></p>
+<p><strong>上图中的 <code>CA</code> 证书验证，这一步是可选的，对于安全性要求高的场景会用到，比如，预防中间人攻击。</strong></p>
+<h4 id="第一步-Client-Hello"><a href="#第一步-Client-Hello" class="headerlink" title="第一步 Client Hello"></a>第一步 <code>Client Hello</code></h4><p>客户端向服务端发送 <code>Client Hello</code> 消息，这个消息里包含了一个客户端生成的随机数 <code>Random1</code>、客户端支持的协议版本，会话 ID，密码套件，压缩算法等信息。</p>
+<h4 id="第二步-Server-Hello"><a href="#第二步-Server-Hello" class="headerlink" title="第二步 Server Hello"></a>第二步 <code>Server Hello</code></h4><p>服务端向客户端发送 <code>Server Hello</code> 消息，这个消息会从 <code>Client Hello</code> 传过来的加密套件里确定一份加密套件，这个套件决定了后续加密和生成摘要时具体使用哪些算法，另外还会生成一份随机数 <code>Random2</code>。注意，至此客户端和服务端都拥有了两个随机数 <code>Random1+Random2</code> ，这两个随机数会在后续生成对称秘钥时用到。</p>
+<p><strong>Client 发送一个 ClientHello 消息，Server 必须回应一个 ServerHello 消息或产生一个验证的错误并且使连接失败</strong></p>
+<h5 id="Certificate"><a href="#Certificate" class="headerlink" title="Certificate"></a><code>Certificate</code></h5><p>在 <code>Server Hello</code> 消息之后，服务端将自己的证书下发给客户端，<code>Server</code> 会在 <code>Certificate</code> 消息中发送它自己的证书，<strong>如果它即将被认证</strong>，让客户端验证自己的身份，客户端验证通过后取出证书中的公钥。</p>
+<h4 id="Server-Key-Exchange"><a href="#Server-Key-Exchange" class="headerlink" title="Server Key Exchange"></a><code>Server Key Exchange</code></h4><p>此外，如果需要的话，一个 <code>ServerKeyExchange</code> 消息会被发送，(例如, 如果 <code>Server</code> 没有证书, 或者它的证书只用于签名，<code>RSA</code> 密码套件就不会出现 <code>ServerKeyExchange</code> 消息，如果 <code>Server</code> 被认证过了，如果对于已选择的密码套件来说是合适的话，它可能会要求 <code>Client</code> 发送证书)。如果是 <code>DH</code> 算法，这里发送服务器使用的 <code>DH</code> 参数，<code>RSA</code> 算法不需要这一步；</p>
+<h5 id="Certificate-Request"><a href="#Certificate-Request" class="headerlink" title="Certificate Request"></a><code>Certificate Request</code></h5><p>如果 Server 发送了一个 CertificateRequest 消息，Client 必须发送 Certificate 消息。</p>
+<h5 id="Server-Hello-Done"><a href="#Server-Hello-Done" class="headerlink" title="Server Hello Done"></a><code>Server Hello Done</code></h5><p>Server Hello Done 通知客户端 Server Hello 过程结束。</p>
+<h4 id="第三步"><a href="#第三步" class="headerlink" title="第三步"></a>第三步</h4><p>客户端收到了服务器发来的数据包后，会做这么几件事情：</p>
+<h5 id="Client-Certificate"><a href="#Client-Certificate" class="headerlink" title="Client Certificate"></a><code>Client Certificate</code></h5><p>这是 <code>Client</code> 在收到一个 <code>ServerHelloDone</code> 消息后发送的第一个消息。这个消息只能在 <code>Server</code> 请求一个证书时发送。如果没有合适的证书，<code>Client</code> 必须发送一个不带证书的证书消息。如果 <code>Client</code> 不发送任何证书，<code>Server</code> 可以自行决定是否可以在不验证 <code>Client</code> 的情况下继续握手，<strong>或者回复一个致命 <code>handshake_failure</code> 警报 <code>alert</code> 信息。而且, 如果证书链某些方面不能接受(例如, 它没有被一个知名的可信 <code>CA</code> 签名)，<code>Server</code> 可以自行决定是否继续握手(考虑到 <code>Client</code> 无认证)或发送一个致命的警报 <code>alert</code> 信息。</strong></p>
+<h5 id="Client-Key-Exchange"><a href="#Client-Key-Exchange" class="headerlink" title="Client Key Exchange"></a><code>Client Key Exchange</code></h5><p>这个消息始终由 <code>Client</code> 发送。如果有 <code>Client Certificate</code> 消息的话，<code>Client Key Exchange</code> 紧跟在 <code>Client Certificate</code> 消息之后发送。如果不存在 <code>Client Certificate</code> 消息的话，它必须是在 <code>Client</code> 收到 <code>ServerHelloDone</code> 后发送的第一个消息。客户端根据服务器传来的公钥生成了 <code>PreMaster Key</code>，<code>Client Key Exchange</code> 就是将这个 <code>key</code> 传给服务端。</p>
+<h5 id="Change-Cipher-Spec-Client"><a href="#Change-Cipher-Spec-Client" class="headerlink" title="Change Cipher Spec Client"></a><code>Change Cipher Spec Client</code></h5><p>将刚才的消息使用刚才的 <code>PreMaster Key</code> 进行加密，生成相应的消息校验值，与刚才的消息一同发还给服务器。</p>
+<h4 id="第四步"><a href="#第四步" class="headerlink" title="第四步"></a>第四步</h4><p>服务器接受到客户端发来的消息后，会做这么几件事情：</p>
+<h5 id="Encrypted-Handshake-Message-Client"><a href="#Encrypted-Handshake-Message-Client" class="headerlink" title="Encrypted Handshake Message Client"></a><code>Encrypted Handshake Message Client</code></h5><p>这一步对应的是 <code>Client Finish</code> 消息，使用私钥解密上面第2步中公钥加密的消息，得到客户端产生的随机序列号。使用该随机序列号，对该消息进行加密，验证的到的校验值是否与客户端发来的一致。如果一致则说明消息未被篡改，可以信任。</p>
+<h5 id="Change-Cipher-Spec-Server"><a href="#Change-Cipher-Spec-Server" class="headerlink" title="Change Cipher Spec Server"></a><code>Change Cipher Spec Server</code></h5><p>使用该随机序列号，加上之前第2步中选择的加密算法，加密一段握手消息，发还给客户端。</p>
+<h4 id="第五步"><a href="#第五步" class="headerlink" title="第五步"></a>第五步</h4><p>客户端收到服务器端的消息后，接着做这么几件事情：</p>
+<h5 id="Encrypted-Handshake-Message-Server"><a href="#Encrypted-Handshake-Message-Server" class="headerlink" title="Encrypted Handshake Message Server"></a><code>Encrypted Handshake Message Server</code></h5><p>这一步对应的是 <code>Server Finish</code> 消息，服务端也会将握手过程的消息生成摘要再用秘钥加密，这是服务端发出的第一条加密消息。客户端接收后会用秘钥解密，能解出来说明协商的秘钥是一致的。</p>
+<h4 id="第六步-Application-Data"><a href="#第六步-Application-Data" class="headerlink" title="第六步 Application Data"></a>第六步 <code>Application Data</code></h4><p>握手结束后，客户端和服务器端使用握手阶段产生的随机数以及挑选出来的算法进行对称加解密的传输。</p>
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><p>采用 <code>HTTPS</code> 协议的服务器必须要有自己制作或者 <code>CA</code> 证书，区别就是自己颁发的证书需要客户端验证通过，才可以继续访问，而使用 <code>CA</code> 证书则不会弹出提示页面。这套证书其实就是一对公钥和私钥。公钥给别人加密使用，私钥给自己解密使用。</p>
+<p>客户端收到服务器的回复后，首先客户端会从内置的证书列表中索引，查找服务器下发 <code>CA</code> 证书，如果没有找到，此时就会提示用户该证书是不可信任的。如果查到了对应 <code>CA</code> 证书，则取出 <code>public key</code> 公钥。然后，用 <code>public key</code> 公钥解密得到证书的内容和证书签名，内容包括证书的颁发机构，过期时间等。客户端会先验证证书签名的合法性，签名通过后，会检查证书有效期，证书过期了也会提示用户。这些都通过认证时，客户端就可以安全使用 <code>public key</code> 公钥了。 </p>
+</div></article></div></main><footer><div class="paginator"><a href="/2017/10/06/%E6%B5%85%E8%B0%88-AutoreleasePool-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2019/09/13/浅谈-HTTPS-的原理详解/';
+var disqus_title = '浅谈 HTTPS 的原理详解';
+var disqus_url = 'https://sunjinshuai.github.io/2019/09/13/浅谈-HTTPS-的原理详解/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2022 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

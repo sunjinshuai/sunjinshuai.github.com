@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://sunjinshuai.github.io/"/>
-  <updated>2022-01-16T05:34:29.036Z</updated>
+  <updated>2022-02-09T10:41:02.677Z</updated>
   <id>https://sunjinshuai.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>iOS 渲染流程</title>
+    <link href="https://sunjinshuai.github.io/2022/02/09/iOS-%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B/"/>
+    <id>https://sunjinshuai.github.io/2022/02/09/iOS-%E6%B8%B2%E6%9F%93%E6%B5%81%E7%A8%8B/</id>
+    <published>2022-02-09T10:33:05.000Z</published>
+    <updated>2022-02-09T10:41:02.677Z</updated>
+    
+    <content type="html"><![CDATA[<p>原生界面更新渲染的流程，可以分为以下四步。</p><ul><li>第一步，更新视图树，同步更新图层树。</li><li>第二步，<code>CPU</code> 计算要显示的内容，包括视图创建（设置 <code>Layer</code> 的属性）、布局计算、视图绘制（创建 <code>Layer</code> 的 <code>Backing Image</code>）、图像解码转换。当 <code>runloop</code> 在 <code>BeforeWaiting</code> 和 <code>Exit</code> 时，会通知注册的监听，然后对图层打包，打完包后，将打包数据发送给一个独立负责渲染的进程 <code>Render Server</code>。</li><li>第三步，数据到达 <code>Render Server</code> 后会被反序列化，得到图层树，按照图层树中图层顺序、<code>RGBA</code> 值、图层 <code>frame</code> 过滤图层中被遮挡的部分，过滤后将图层树转成渲染树，渲染树的信息会转给 <code>OpenGL ES/Metal</code>。前面 <code>CPU</code> 所处理的这些事情统称为 <code>Commit Transaction</code>。</li><li>第四步，<code>Render Server</code> 会调用 <code>GPU</code>，<code>GPU</code> 开始进行前面提到的顶点着色器、形状装配、几何着色器、光栅化、片段着色器、测试与混合六个阶段。完成这六个阶段的工作后，再将 <code>CPU</code> 和 <code>GPU</code> 计算后的数据显示在屏幕的每个像素点上。</li></ul><p>整个渲染过程，如下图所示：<br><img src="d4ae58f7b0d09725757dca84ea7a318f.png" alt="image.png"></p><p>如上图所示，<code>CPU</code> 处理完渲染内容会输入到 <code>Render Server</code> 中，经图层树和渲染树的转换，通过 <code>OpenGL</code> 接口提供给 <code>GPU</code>，<code>GPU</code> 处理完后在屏幕上显示。渲染过程中 <code>Commit Trasaction</code> 的布局计算会重载视图 <code>LayoutSubviews</code> 方法，以及执行 <code>addSubview</code> 方法来添加视图。视图绘制会重载视图的 <code>drawRect</code> 方法。这几个方法都是 <code>iOS</code> 开发中常用的。</p><p>移动视图位置、删除视图、隐藏或显示视图、调用 <code>setNeedsDisplay</code> 或 <code>setNeedsDisplayInRect</code> 方法，都会触发界面更新，执行渲染流程。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;原生界面更新渲染的流程，可以分为以下四步。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;第一步，更新视图树，同步更新图层树。&lt;/li&gt;
+&lt;li&gt;第二步，&lt;code&gt;CPU&lt;/code&gt; 计算要显示的内容，包括视图创建（设置 &lt;code&gt;Layer&lt;/code&gt; 的属性）、布局计算、视图绘制（
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>浅谈 HTTPS 的原理详解</title>

@@ -2,7 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://sunjinshuai.github.io/2022/03/20/iOS%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8TestFlight%E8%BF%9B%E8%A1%8CApp-Beta%E7%89%88%E6%B5%8B%E8%AF%95/</loc>
+    <loc>https://sunjinshuai.github.io/2022/03/20/%E7%99%BE%E5%BA%A6%E4%BA%91%E7%9B%98%E7%A0%B4%E8%A7%A3/</loc>
+    
+    <lastmod>2022-03-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://sunjinshuai.github.io/2016/07/25/iOS%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8TestFlight%E8%BF%9B%E8%A1%8CApp-Beta%E7%89%88%E6%B5%8B%E8%AF%95/</loc>
     
     <lastmod>2022-03-20</lastmod>
     

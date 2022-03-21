@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://sunjinshuai.github.io/"/>
-  <updated>2022-03-20T11:20:11.063Z</updated>
+  <updated>2022-03-21T00:21:24.149Z</updated>
   <id>https://sunjinshuai.github.io/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>RunLoop 的应用</title>
+    <link href="https://sunjinshuai.github.io/2022/03/21/RunLoop-%E7%9A%84%E5%BA%94%E7%94%A8/"/>
+    <id>https://sunjinshuai.github.io/2022/03/21/RunLoop-%E7%9A%84%E5%BA%94%E7%94%A8/</id>
+    <published>2022-03-21T00:18:04.000Z</published>
+    <updated>2022-03-21T00:21:24.149Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="ImageView-优化"><a href="#ImageView-优化" class="headerlink" title="ImageView 优化"></a>ImageView 优化</h3><p><code>UITableView</code> 在滚动的时候一个优化点之一就是 <code>UIImageView</code> 的显示，通常需要根据网络去下载图片。所以如果用户快速滚动列表的时候，如果立马下载并显示图片的话，势必会对 <code>UI</code> 的刷新产生影响，直观的表现就是会卡顿，<code>FPS</code> 达不到 <code>60</code>。</p><p>利用 <code>RunLoop</code> 可以实现这个效果，就是给下载并显示图片的方法指定 <code>NSRunLoopMode</code>。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- (void)clickLoadIMage:(UIButton *)sender &#123;</span><br><span class="line">    &#x2F;&#x2F;[self.imageview performSelector:@selector(setImage:) withObject:[UIImage imageNamed:@&quot;test&quot;] afterDelay:2];</span><br><span class="line">    [self performSelector:@selector(downloadAndShowImage) withObject:nil afterDelay:2 inModes:@[NSDefaultRunLoopMode, UITrackingRunLoopMode]];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)downloadAndShowImage &#123;</span><br><span class="line">    self.imageview.image &#x3D; [UIImage imageNamed:@&quot;test&quot;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;ImageView-优化&quot;&gt;&lt;a href=&quot;#ImageView-优化&quot; class=&quot;headerlink&quot; title=&quot;ImageView 优化&quot;&gt;&lt;/a&gt;ImageView 优化&lt;/h3&gt;&lt;p&gt;&lt;code&gt;UITableView&lt;/code&gt; 在滚动的时
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>百度云盘破解</title>

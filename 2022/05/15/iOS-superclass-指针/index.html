@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> iOS superclass 指针 · 孙金帅的技术博客</title><meta name="description" content="iOS superclass 指针 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"><meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="孙金帅的技术博客" type="application/atom+xml">
+</head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="https://weibo.com/u/5113807465" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">iOS superclass 指针</h1><div class="post-info">2022年5月15日</div><div class="post-content"><p><img src="2297f39e-58dd-4194-9aa7-b555bc9839e9.png" alt="image.png"></p>
+<ul>
+<li><code>class</code> 对象的 <code>superclass</code> 指针</li>
+</ul>
+<p>当 <code>Student</code> 的 <code>instance</code>对象要调用 <code>Person</code> 的对象方法时，会先通过 <code>isa</code> 指针找到 <code>Student</code> 的 <code>class</code>，然后通过 <code>superclass</code> 指针找到 <code>Person</code> 的 <code>class</code>，最后找到对象方法的实现进行调用；</p>
+<p><img src="1652613038862.jpg" alt="image.png"></p>
+<ul>
+<li><code>meta-class</code> 对象的 <code>superclass</code> 指针</li>
+</ul>
+<p>当 <code>Student</code> 的 <code>class</code> 要调用 <code>Person</code> 的类方法时，会先通过 <code>isa</code> 指针找到 <code>Student</code> 的 <code>meta-class</code>，然后通过 <code>superclass</code> 指针找到 <code>Person</code> 的 <code>meta-class</code>，最后找到类方法的实现进行调用；</p>
+</div></article></div></main><footer><div class="paginator"><a href="/2022/05/15/iOS-superclass%E5%92%8Cisa-%E6%8C%87%E9%92%88%E6%80%BB%E7%BB%93/" class="prev">上一篇</a><a href="/2022/05/15/iOS-isa-%E6%8C%87%E9%92%88/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+var disqus_identifier = '2022/05/15/iOS-superclass-指针/';
+var disqus_title = 'iOS superclass 指针';
+var disqus_url = 'https://sunjinshuai.github.io/2022/05/15/iOS-superclass-指针/';
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();</script><script id="dsq-count-scr" src="//sunjinshuai.disqus.com/count.js" async></script><div class="copyright"><p>© 2015 - 2022 <a href="https://sunjinshuai.github.io">sunjinshuai</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-65933410-1",'auto');ga('send','pageview');</script></body></html>

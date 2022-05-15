@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://sunjinshuai.github.io/"/>
-  <updated>2022-05-15T07:58:37.014Z</updated>
+  <updated>2022-05-15T11:50:04.724Z</updated>
   <id>https://sunjinshuai.github.io/</id>
   
   <author>
@@ -15,6 +15,79 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>iOS superclass 和 isa 指针总结</title>
+    <link href="https://sunjinshuai.github.io/2022/05/15/iOS-superclass%E5%92%8Cisa-%E6%8C%87%E9%92%88%E6%80%BB%E7%BB%93/"/>
+    <id>https://sunjinshuai.github.io/2022/05/15/iOS-superclass%E5%92%8Cisa-%E6%8C%87%E9%92%88%E6%80%BB%E7%BB%93/</id>
+    <published>2022-05-15T11:25:09.000Z</published>
+    <updated>2022-05-15T11:50:04.724Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="94c23c27-7848-4abb-b0cd-e6c26f963e64.png" alt="image.png"></p><ul><li><code>instance</code> 的 <code>isa</code> 指针指向 <code>class</code>；</li><li><code>class</code> 的 <code>isa</code> 指向 <code>meta-class</code>；</li><li><code>meta-class</code> 的 <code>isa</code> 指针指向基类的 <code>meta-class</code>；</li><li><code>class</code> 的 <code>superclass</code> 指针指向父类的 <code>class</code>；<br>如果没有父类，<code>superclass</code> 指针为 <code>nil</code></li><li><code>meta-class</code> 的 <code>superclass</code> 指针指向父类的 <code>meta-class</code>；</li><li>基类的 <code>meta-class</code> 的 <code>superclass</code> 指针指向基类的 <code>class</code>；</li></ul><p><code>instance</code> 调用对象方法的轨迹<br>通过 <code>isa</code> 指针找到 <code>class</code>，方法不存在，就通过 <code>superclass</code> 指针找父类，如果父类方法不存在，就通过 <code>superclass</code> 指针找根类(也就是 <code>NSObject</code>)，如果根类方法不存在，就会报 <code>unrecognized selector</code> 错误；</p><p><code>class</code> 调用类方法的轨迹<br>通过 <code>isa</code> 指针找 <code>meta-class</code>，方法不存在，就通过 <code>superclass</code> 找父类的 <code>meta-class</code>，如果父类的 <code>meta-class</code> 方法不存在，就通过 <code>superclass</code> 指针找根类(也就是 <code>NSObject</code>)的 <code>meta-class</code>，如果根类的 <code>meta-class</code> 方法不存在，就通过 <code>superclass</code> 找根类的 <code>class</code>，如果根类方法不存在，就会报 <code>unrecognized selector</code> 错误；</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;&lt;img src=&quot;94c23c27-7848-4abb-b0cd-e6c26f963e64.png&quot; alt=&quot;image.png&quot;&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;instance&lt;/code&gt; 的 &lt;code&gt;isa&lt;/code&gt; 指针指向 &lt;code&gt;cla
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>iOS superclass 指针</title>
+    <link href="https://sunjinshuai.github.io/2022/05/15/iOS-superclass-%E6%8C%87%E9%92%88/"/>
+    <id>https://sunjinshuai.github.io/2022/05/15/iOS-superclass-%E6%8C%87%E9%92%88/</id>
+    <published>2022-05-15T08:25:09.000Z</published>
+    <updated>2022-05-15T11:50:03.410Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="2297f39e-58dd-4194-9aa7-b555bc9839e9.png" alt="image.png"></p><ul><li><code>class</code> 对象的 <code>superclass</code> 指针</li></ul><p>当 <code>Student</code> 的 <code>instance</code>对象要调用 <code>Person</code> 的对象方法时，会先通过 <code>isa</code> 指针找到 <code>Student</code> 的 <code>class</code>，然后通过 <code>superclass</code> 指针找到 <code>Person</code> 的 <code>class</code>，最后找到对象方法的实现进行调用；</p><p><img src="1652613038862.jpg" alt="image.png"></p><ul><li><code>meta-class</code> 对象的 <code>superclass</code> 指针</li></ul><p>当 <code>Student</code> 的 <code>class</code> 要调用 <code>Person</code> 的类方法时，会先通过 <code>isa</code> 指针找到 <code>Student</code> 的 <code>meta-class</code>，然后通过 <code>superclass</code> 指针找到 <code>Person</code> 的 <code>meta-class</code>，最后找到类方法的实现进行调用；</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;&lt;img src=&quot;2297f39e-58dd-4194-9aa7-b555bc9839e9.png&quot; alt=&quot;image.png&quot;&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;class&lt;/code&gt; 对象的 &lt;code&gt;superclass&lt;/code&gt; 指针&lt;/li&gt;
+
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>iOS isa 指针</title>
+    <link href="https://sunjinshuai.github.io/2022/05/15/iOS-isa-%E6%8C%87%E9%92%88/"/>
+    <id>https://sunjinshuai.github.io/2022/05/15/iOS-isa-%E6%8C%87%E9%92%88/</id>
+    <published>2022-05-15T08:15:09.000Z</published>
+    <updated>2022-05-15T11:50:07.124Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="6c03c3e0-e575-4136-bc80-f8593db0e0af.png" alt="image.png"></p><ul><li><p>实例对象的 <code>isa</code> 指针<br>实例对象的 <code>isa</code> 指向 <code>class</code>；<br>当调用实例对象方法时，通过实例对象的 <code>isa</code> 找到对应的实例对象 <code>class</code>，最后找到对象方法的实现进行调用；</p></li><li><p>类对象的 <code>isa</code> 指针<br>类对象的 <code>isa</code> 指向 <code>meta-class</code><br>当调用类方法时，通过 <code>class</code> 的 <code>isa</code> 找到 <code>meta-class</code>，最后找到类方法的实现进行调用；</p></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;&lt;img src=&quot;6c03c3e0-e575-4136-bc80-f8593db0e0af.png&quot; alt=&quot;image.png&quot;&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;实例对象的 &lt;code&gt;isa&lt;/code&gt; 指针&lt;br&gt;实例对象的 &lt;code&gt;isa&lt;/code&gt; 
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>objc_getClass、object_getClass 的区别</title>
@@ -338,55 +411,6 @@
       
         &lt;blockquote&gt;
 &lt;p&gt;在 &lt;code&gt;2014 WWDC&lt;/code&gt;中库克用了 &lt;code&gt;20&lt;/code&gt; 秒的时间，简短的 &lt;code&gt;3&lt;/code&gt; 句话，介绍了测试版本的 &lt;code&gt;TestFlight&lt;/code&gt; 服务。&lt;code&gt;TestFligh
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title>iOS RunTime之三：superclass 指针</title>
-    <link href="https://sunjinshuai.github.io/2016/06/11/iOS-RunTime%E4%B9%8B%E4%B8%89%EF%BC%9Asuperclass-%E6%8C%87%E9%92%88/"/>
-    <id>https://sunjinshuai.github.io/2016/06/11/iOS-RunTime%E4%B9%8B%E4%B8%89%EF%BC%9Asuperclass-%E6%8C%87%E9%92%88/</id>
-    <published>2016-06-11T05:06:47.000Z</published>
-    <updated>2022-05-15T11:11:29.977Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="2297f39e-58dd-4194-9aa7-b555bc9839e9.png" alt="image.png"></p><ul><li><code>class</code> 对象的 <code>superclass</code> 指针</li></ul><p>当 <code>Student</code> 的 <code>instance</code>对象要调用 <code>Person</code> 的对象方法时，会先通过 <code>isa</code> 指针找到 <code>Student</code> 的 <code>class</code>，然后通过 <code>superclass</code> 指针找到 <code>Person</code> 的 <code>class</code>，最后找到对象方法的实现进行调用；</p><p><img src="1652613038862.jpg" alt="image.png"></p><ul><li><code>meta-class</code> 对象的 <code>superclass</code> 指针</li></ul><p>当 <code>Student</code> 的 <code>class</code> 要调用 <code>Person</code> 的类方法时，会先通过 <code>isa</code> 指针找到 <code>Student</code> 的 <code>meta-class</code>，然后通过 <code>superclass</code> 指针找到 <code>Person</code> 的 <code>meta-class</code>，最后找到类方法的实现进行调用；</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;&lt;img src=&quot;2297f39e-58dd-4194-9aa7-b555bc9839e9.png&quot; alt=&quot;image.png&quot;&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;class&lt;/code&gt; 对象的 &lt;code&gt;superclass&lt;/code&gt; 指针&lt;/li&gt;
-
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title>iOS RunTime之二：isa 指针</title>
-    <link href="https://sunjinshuai.github.io/2016/06/11/iOS-RunTime%E4%B9%8B%E4%BA%8C%EF%BC%9Aisa-%E6%8C%87%E9%92%88/"/>
-    <id>https://sunjinshuai.github.io/2016/06/11/iOS-RunTime%E4%B9%8B%E4%BA%8C%EF%BC%9Aisa-%E6%8C%87%E9%92%88/</id>
-    <published>2016-06-11T04:56:47.000Z</published>
-    <updated>2022-05-15T10:09:27.329Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="6c03c3e0-e575-4136-bc80-f8593db0e0af.png" alt="image.png"></p><ul><li><p>实例对象的 <code>isa</code> 指针<br>实例对象的 <code>isa</code> 指向 <code>class</code>；<br>当调用实例对象方法时，通过实例对象的 <code>isa</code> 找到对应的实例对象 <code>class</code>，最后找到对象方法的实现进行调用；</p></li><li><p>类对象的 <code>isa</code> 指针<br>类对象的 <code>isa</code> 指向 <code>meta-class</code><br>当调用类方法时，通过 <code>class</code> 的 <code>isa</code> 找到 <code>meta-class</code>，最后找到类方法的实现进行调用；</p></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;&lt;img src=&quot;6c03c3e0-e575-4136-bc80-f8593db0e0af.png&quot; alt=&quot;image.png&quot;&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;实例对象的 &lt;code&gt;isa&lt;/code&gt; 指针&lt;br&gt;实例对象的 &lt;code&gt;isa&lt;/code&gt; 
       
     
     </summary>

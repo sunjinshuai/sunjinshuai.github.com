@@ -1,7 +1,13 @@
 <!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> iOS RunTime之三：superclass 指针 · 孙金帅的技术博客</title><meta name="description" content="iOS RunTime之三：superclass 指针 - sunjinshuai"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://sunjinshuai.github.io/atom.xml" title="孙金帅的技术博客"><meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="孙金帅的技术博客" type="application/atom+xml">
 </head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">BLOG</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="https://weibo.com/u/5113807465" target="_blank" class="nav-list-link">WEIBO</a></li><li class="nav-list-item"><a href="https://github.com/sunjinshuai" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/atom.xml" target="_self" class="nav-list-link">RSS</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">iOS RunTime之三：superclass 指针</h1><div class="post-info">2016年6月11日</div><div class="post-content"><p><img src="2297f39e-58dd-4194-9aa7-b555bc9839e9.png" alt="image.png"></p>
-<p><code>class</code> 对象的 <code>superclass</code> 指针</p>
+<ul>
+<li><code>class</code> 对象的 <code>superclass</code> 指针</li>
+</ul>
 <p>当 <code>Student</code> 的 <code>instance</code>对象要调用 <code>Person</code> 的对象方法时，会先通过 <code>isa</code> 指针找到 <code>Student</code> 的 <code>class</code>，然后通过 <code>superclass</code> 指针找到 <code>Person</code> 的 <code>class</code>，最后找到对象方法的实现进行调用；</p>
+<ul>
+<li><code>meta-class</code> 对象的 <code>superclass</code> 指针</li>
+</ul>
+<p>当 <code>Student</code> 的 <code>class</code> 要调用 <code>Person</code> 的类方法时，会先通过 <code>isa</code> 指针找到 <code>Student</code> 的 <code>meta-class</code>，然后通过 <code>superclass</code> 指针找到 <code>Person</code> 的 <code>meta-class</code>，最后找到类方法的实现进行调用；</p>
 </div></article></div></main><footer><div class="paginator"><a href="/2016/07/25/iOS%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8TestFlight%E8%BF%9B%E8%A1%8CApp-Beta%E7%89%88%E6%B5%8B%E8%AF%95/" class="prev">上一篇</a><a href="/2016/06/11/iOS-RunTime%E4%B9%8B%E4%BA%8C%EF%BC%9Aisa-%E6%8C%87%E9%92%88/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
 var disqus_identifier = '2016/06/11/iOS-RunTime之三：superclass-指针/';
 var disqus_title = 'iOS RunTime之三：superclass 指针';

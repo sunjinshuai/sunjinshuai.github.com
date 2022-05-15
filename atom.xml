@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://sunjinshuai.github.io/"/>
-  <updated>2022-05-15T11:50:04.724Z</updated>
+  <updated>2022-05-15T12:50:49.546Z</updated>
   <id>https://sunjinshuai.github.io/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="https://sunjinshuai.github.io/2022/05/15/iOS-superclass%E5%92%8Cisa-%E6%8C%87%E9%92%88%E6%80%BB%E7%BB%93/"/>
     <id>https://sunjinshuai.github.io/2022/05/15/iOS-superclass%E5%92%8Cisa-%E6%8C%87%E9%92%88%E6%80%BB%E7%BB%93/</id>
     <published>2022-05-15T11:25:09.000Z</published>
-    <updated>2022-05-15T11:50:04.724Z</updated>
+    <updated>2022-05-15T12:50:49.546Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="94c23c27-7848-4abb-b0cd-e6c26f963e64.png" alt="image.png"></p><ul><li><code>instance</code> 的 <code>isa</code> 指针指向 <code>class</code>；</li><li><code>class</code> 的 <code>isa</code> 指向 <code>meta-class</code>；</li><li><code>meta-class</code> 的 <code>isa</code> 指针指向基类的 <code>meta-class</code>；</li><li><code>class</code> 的 <code>superclass</code> 指针指向父类的 <code>class</code>；<br>如果没有父类，<code>superclass</code> 指针为 <code>nil</code></li><li><code>meta-class</code> 的 <code>superclass</code> 指针指向父类的 <code>meta-class</code>；</li><li>基类的 <code>meta-class</code> 的 <code>superclass</code> 指针指向基类的 <code>class</code>；</li></ul><p><code>instance</code> 调用对象方法的轨迹<br>通过 <code>isa</code> 指针找到 <code>class</code>，方法不存在，就通过 <code>superclass</code> 指针找父类，如果父类方法不存在，就通过 <code>superclass</code> 指针找根类(也就是 <code>NSObject</code>)，如果根类方法不存在，就会报 <code>unrecognized selector</code> 错误；</p><p><code>class</code> 调用类方法的轨迹<br>通过 <code>isa</code> 指针找 <code>meta-class</code>，方法不存在，就通过 <code>superclass</code> 找父类的 <code>meta-class</code>，如果父类的 <code>meta-class</code> 方法不存在，就通过 <code>superclass</code> 指针找根类(也就是 <code>NSObject</code>)的 <code>meta-class</code>，如果根类的 <code>meta-class</code> 方法不存在，就通过 <code>superclass</code> 找根类的 <code>class</code>，如果根类方法不存在，就会报 <code>unrecognized selector</code> 错误；</p>]]></content>
+    <content type="html"><![CDATA[<p><img src="94c23c27-7848-4abb-b0cd-e6c26f963e64.png" alt="image.png"></p><ul><li><code>instance</code> 的 <code>isa</code> 指针指向 <code>class</code>；</li><li><code>class</code> 的 <code>isa</code> 指向 <code>meta-class</code>；</li><li><code>meta-class</code> 的 <code>isa</code> 指针指向基类的 <code>meta-class</code>；</li><li><code>class</code> 的 <code>superclass</code> 指针指向父类的 <code>class</code>；<br>如果没有父类，<code>superclass</code> 指针为 <code>nil</code></li><li><code>meta-class</code> 的 <code>superclass</code> 指针指向父类的 <code>meta-class</code>；</li><li>基类的 <code>meta-class</code> 的 <code>superclass</code> 指针指向基类的 <code>class</code>；</li></ul><p><code>instance</code> 调用对象方法的轨迹<br>通过 <code>isa</code> 指针找到 <code>class</code>，方法不存在，就通过 <code>superclass</code> 指针找父类，如果父类方法不存在，就通过 <code>superclass</code> 指针找根类(也就是 <code>NSObject</code>)，如果根类方法不存在，就会报 <code>unrecognized selector</code> 错误；</p><p><code>class</code> 调用类方法的轨迹<br>通过 <code>isa</code> 指针找 <code>meta-class</code>，方法不存在，就通过 <code>superclass</code> 找父类的 <code>meta-class</code>，如果父类的 <code>meta-class</code> 方法不存在，就通过 <code>superclass</code> 指针找根类(也就是 <code>NSObject</code>)的 <code>meta-class</code>，如果根类的 <code>meta-class</code> 方法不存在，就通过 <code>superclass</code> 找根类的 <code>class</code>，如果根类方法不存在，就会报 <code>unrecognized selector</code> 错误；</p><p><img src="36c7dac5-38e7-4086-989b-31d8ce4ba551.png" alt="image.png"></p><p>从 <code>64bit</code> 开始，<code>isa</code> 需要进行一次位运算，才能计算出真实地址；说明，实例对象 <code>isa</code> 指针里面存放的地址值应该是这个类对象的。</p><p><img src="5f0349f5-7cd6-4517-a405-7a8975e8b7cd" alt="image.png"></p>]]></content>
     
     <summary type="html">
     

@@ -10,10 +10,11 @@
 </ul>
 <p><code>instance</code> 调用对象方法的轨迹<br>通过 <code>isa</code> 指针找到 <code>class</code>，方法不存在，就通过 <code>superclass</code> 指针找父类，如果父类方法不存在，就通过 <code>superclass</code> 指针找根类(也就是 <code>NSObject</code>)，如果根类方法不存在，就会报 <code>unrecognized selector</code> 错误；</p>
 <p><code>class</code> 调用类方法的轨迹<br>通过 <code>isa</code> 指针找 <code>meta-class</code>，方法不存在，就通过 <code>superclass</code> 找父类的 <code>meta-class</code>，如果父类的 <code>meta-class</code> 方法不存在，就通过 <code>superclass</code> 指针找根类(也就是 <code>NSObject</code>)的 <code>meta-class</code>，如果根类的 <code>meta-class</code> 方法不存在，就通过 <code>superclass</code> 找根类的 <code>class</code>，如果根类方法不存在，就会报 <code>unrecognized selector</code> 错误；</p>
-<p><img src="36c7dac5-38e7-4086-989b-31d8ce4ba551.png" alt="image.png"></p>
+<p><img src="36c7dac5-38e7-4086-989b-31d8ce4ba551.png" alt="image.png"><br><img src="5f0349f5-7cd6-4517-a405-7a8975e8b7cd.png" alt="image.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">p&#x2F;x (long)person-&gt;isa</span><br><span class="line">p&#x2F;x personClass</span><br></pre></td></tr></table></figure>
+
 <p>从 <code>64bit</code> 开始，<code>isa</code> 需要进行一次位运算，才能计算出真实地址；说明，实例对象 <code>isa</code> 指针里面存放的地址值应该是这个类对象的。</p>
-<p><img src="5f0349f5-7cd6-4517-a405-7a8975e8b7cd" alt="image.png"></p>
-</div></article></div></main><footer><div class="paginator"><a href="/2022/05/15/iOS-superclass-%E6%8C%87%E9%92%88/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">p&#x2F;x (long)person-&gt;isa</span><br><span class="line">p&#x2F;x studentClass-&gt;superclass</span><br></pre></td></tr></table></figure></div></article></div></main><footer><div class="paginator"><a href="/2022/05/15/iOS-superclass-%E6%8C%87%E9%92%88/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
 var disqus_identifier = '2022/05/15/iOS-superclass和isa-指针总结/';
 var disqus_title = 'iOS superclass 和 isa 指针总结';
 var disqus_url = 'https://sunjinshuai.github.io/2022/05/15/iOS-superclass和isa-指针总结/';

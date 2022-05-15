@@ -351,9 +351,9 @@
     <link href="https://sunjinshuai.github.io/2016/06/11/iOS-RunTime%E4%B9%8B%E4%B8%89%EF%BC%9Asuperclass-%E6%8C%87%E9%92%88/"/>
     <id>https://sunjinshuai.github.io/2016/06/11/iOS-RunTime%E4%B9%8B%E4%B8%89%EF%BC%9Asuperclass-%E6%8C%87%E9%92%88/</id>
     <published>2016-06-11T05:06:47.000Z</published>
-    <updated>2022-05-15T10:24:32.912Z</updated>
+    <updated>2022-05-15T11:11:29.977Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="2297f39e-58dd-4194-9aa7-b555bc9839e9.png" alt="image.png"></p><ul><li><code>class</code> 对象的 <code>superclass</code> 指针</li></ul><p>当 <code>Student</code> 的 <code>instance</code>对象要调用 <code>Person</code> 的对象方法时，会先通过 <code>isa</code> 指针找到 <code>Student</code> 的 <code>class</code>，然后通过 <code>superclass</code> 指针找到 <code>Person</code> 的 <code>class</code>，最后找到对象方法的实现进行调用；</p><ul><li><code>meta-class</code> 对象的 <code>superclass</code> 指针</li></ul><p>当 <code>Student</code> 的 <code>class</code> 要调用 <code>Person</code> 的类方法时，会先通过 <code>isa</code> 指针找到 <code>Student</code> 的 <code>meta-class</code>，然后通过 <code>superclass</code> 指针找到 <code>Person</code> 的 <code>meta-class</code>，最后找到类方法的实现进行调用；</p>]]></content>
+    <content type="html"><![CDATA[<p><img src="2297f39e-58dd-4194-9aa7-b555bc9839e9.png" alt="image.png"></p><ul><li><code>class</code> 对象的 <code>superclass</code> 指针</li></ul><p>当 <code>Student</code> 的 <code>instance</code>对象要调用 <code>Person</code> 的对象方法时，会先通过 <code>isa</code> 指针找到 <code>Student</code> 的 <code>class</code>，然后通过 <code>superclass</code> 指针找到 <code>Person</code> 的 <code>class</code>，最后找到对象方法的实现进行调用；</p><p><img src="1652613038862.jpg" alt="image.png"></p><ul><li><code>meta-class</code> 对象的 <code>superclass</code> 指针</li></ul><p>当 <code>Student</code> 的 <code>class</code> 要调用 <code>Person</code> 的类方法时，会先通过 <code>isa</code> 指针找到 <code>Student</code> 的 <code>meta-class</code>，然后通过 <code>superclass</code> 指针找到 <code>Person</code> 的 <code>meta-class</code>，最后找到类方法的实现进行调用；</p>]]></content>
     
     <summary type="html">
     

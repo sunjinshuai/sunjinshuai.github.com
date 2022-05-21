@@ -349,6 +349,28 @@
   </entry>
   
   <entry>
+    <title>浅谈 KVC</title>
+    <link href="https://sunjinshuai.github.io/2018/04/12/%E6%B5%85%E8%B0%88-KVC-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/"/>
+    <id>https://sunjinshuai.github.io/2018/04/12/%E6%B5%85%E8%B0%88-KVC-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</id>
+    <published>2018-04-12T14:37:32.000Z</published>
+    <updated>2022-05-21T12:42:58.769Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p><code>KVC</code> 是 <code>KeyValue Coding</code> 的简称，俗称“键值编码”，遵循 <code>NSKeyValueCoding</code> 协议，它是一种可以直接通过字符串的名字 <code>key</code> 来访问类属性的机制，而不是通过调用 <code>setter</code>、<code>getter</code> 方法访问。</p><p>对于 <code>KVC</code>，<code>Cocoa</code> 自动放入和取出基本数据类型放入 <code>NSNumber</code> 或 <code>NSValue</code> 中，当使用 <code>setValue:ForKey:</code> 或者 <code>valueForKey:</code> 时，它自动将基本数据类型从这些对象中取出，仅 <code>KVC</code> 具有这种自动包装功能，常规方法调用和属性语法不具备该功能。</p><h1 id="setValue-forKey-的实现方式："><a href="#setValue-forKey-的实现方式：" class="headerlink" title="setValue:forKey 的实现方式："></a><code>setValue:forKey</code> 的实现方式：</h1><p><img src="7cf60206-2acb-4640-92b9-611ed55d2662.png" alt="image.png"></p><p>以字符串的形式向对象发送消息，如果成员用 <code>@property</code>，因为 <code>@synthsize</code> 告诉编译器自动生成 <code>set&lt;Key&gt;:</code> 格式的 <code>setter</code> 方法，所以这种情况下会直接搜索到。<br>首先查找以 <code>set&lt;Key&gt;</code> 命名的 <code>setter</code> 方法，如果没有找到查找以 <code>_set&lt;Key&gt;</code> 命名的方法；如果上面的方法没有找到，如果类方法 <code>accessInstanceVariablesDirectly</code> 返回 <code>YES</code>，那么将在对象内部查找名为 <code>_&lt;key&gt;</code>、<code>_is&lt;Key&gt;</code>、<code>&lt;key&gt;</code>、<code>is&lt;key&gt;</code> 的实例变量。如果找到则设置成员的值，如果没有查找调用 <code>setValue:forUndefinedKey:</code>。</p><h1 id="valueForKey-的实现方式："><a href="#valueForKey-的实现方式：" class="headerlink" title="valueForKey: 的实现方式："></a><code>valueForKey:</code> 的实现方式：</h1><p><img src="846ae0ee-7b6e-4a21-848e-605644f7c3e7.png" alt="image.png"></p><ul><li>首先查找以 <code>get&lt;Key&gt;</code>、<code>&lt;key&gt;</code>、<code>is&lt;Key&gt;</code> 命名的 <code>getter</code> 方法，找到直接调用。</li><li>如果上面的 <code>getter</code> 没有找到，则会查找 <code>countOf&lt;Key&gt;</code>、<code>objectIn&lt;Key&gt;AtIndex:</code>、<code>&lt;Key&gt;AtIndexes</code> 格式的方法，找到就会调用 <code>countOf&lt;Key&gt;</code>、<code>objectIn&lt;Key&gt;AtIndex:</code>、<code>&lt;Key&gt;AtIndexes</code> 方法，还有一个可选的 <code>get&lt;Key&gt;:range:</code> 方法。</li><li>若是还没查到，那么查找 <code>countOf&lt;Key&gt;</code>、<code>enumeratorOf&lt;Key&gt;</code>、<code>memberOf&lt;Key&gt;:</code> 格式的方法，如果找到就调用 <code>countOf&lt;Key&gt;</code>、<code>enumeratorOf&lt;Key&gt;</code>、<code>memberOf&lt;Key&gt;:</code> 方法。</li><li>若是还没查到，那么如果类方法 accessInstanceVariablesDirectly 返回 YES，那么将在对象内部查找名为 <code>_&lt;key&gt;</code>、<code>_is&lt;Key&gt;</code>、<code>&lt;key&gt;</code>、<code>is&lt;key&gt;</code> 的实例变量。</li><li>再没查到，调用 <code>valueForUndefinedKey:</code>。</li></ul><p>综上，<strong>使用 KVC 访问属性的代价比直接使用存取方法性能开销要大</strong>。</p><h1 id="值的正确性核查"><a href="#值的正确性核查" class="headerlink" title="值的正确性核查"></a>值的正确性核查</h1><p>KVC 提供属性值确认的 API，它可以用来检查 set 的值是否正确、为不正确的值做一个替换值或者拒绝设置新值并返回错误原因。</p><p>实现核查方法，为如下格式：<code>validate&lt;Key&gt;:error:</code></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">- (BOOL)validateName:(id *)ioValue error:(NSError **)outError &#123;</span><br><span class="line">    &#x2F;&#x2F; The name must not be nil, and must be at least two characters long.</span><br><span class="line">    if ((*ioValue &#x3D;&#x3D; nil) || ([(NSString *)*ioValue length] &lt; 2]) &#123;</span><br><span class="line">        if (outError !&#x3D; NULL) &#123;</span><br><span class="line">            NSString *errorString &#x3D; NSLocalizedStringFromTable(</span><br><span class="line">                    @&quot;A Person&#39;s name must be at least two characters long&quot;, @&quot;Person&quot;,</span><br><span class="line">                    @&quot;validation: too short name error&quot;);</span><br><span class="line">            NSDictionary *userInfoDict &#x3D;</span><br><span class="line">                [NSDictionary dictionaryWithObject:errorString</span><br><span class="line">                                            forKey:NSLocalizedDescriptionKey];</span><br><span class="line">            *outError &#x3D; [[[NSError alloc] initWithDomain:PERSON_ERROR_DOMAIN</span><br><span class="line">                                                    code:PERSON_INVALID_NAME_CODE</span><br><span class="line">                                                userInfo:userInfoDict] autorelease];</span><br><span class="line">        &#125;</span><br><span class="line">        return NO;</span><br><span class="line">    &#125;</span><br><span class="line">    return YES;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>调用核查方法：<br><code>validateValue:forKey:error:</code>，默认实现会搜索 <code>validate&lt;Key&gt;:error:</code>格式的核查方法，找到则调用，未找到默认返回 <code>YES</code>。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h1&gt;&lt;p&gt;&lt;code&gt;KVC&lt;/code&gt; 是 &lt;code&gt;KeyValue Coding&lt;/code&gt; 的简称，俗称“键值编码”，遵循 &lt;code&gt;
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
     <title>浅谈 AutoreleasePool 的实现原理</title>
     <link href="https://sunjinshuai.github.io/2017/10/06/%E6%B5%85%E8%B0%88-AutoreleasePool-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/"/>
     <id>https://sunjinshuai.github.io/2017/10/06/%E6%B5%85%E8%B0%88-AutoreleasePool-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</id>
@@ -456,28 +478,6 @@
       
         &lt;blockquote&gt;
 &lt;p&gt;在 &lt;code&gt;2014 WWDC&lt;/code&gt;中库克用了 &lt;code&gt;20&lt;/code&gt; 秒的时间，简短的 &lt;code&gt;3&lt;/code&gt; 句话，介绍了测试版本的 &lt;code&gt;TestFlight&lt;/code&gt; 服务。&lt;code&gt;TestFligh
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title>iOS RunTime之一：简介</title>
-    <link href="https://sunjinshuai.github.io/2016/06/10/iOS-RunTime%E4%B9%8B%E4%B8%80%EF%BC%9A%E7%AE%80%E4%BB%8B/"/>
-    <id>https://sunjinshuai.github.io/2016/06/10/iOS-RunTime%E4%B9%8B%E4%B8%80%EF%BC%9A%E7%AE%80%E4%BB%8B/</id>
-    <published>2016-06-10T14:56:47.000Z</published>
-    <updated>2022-05-15T09:56:26.943Z</updated>
-    
-    <content type="html"><![CDATA[<p><code>Objective-C</code> 语言是一门动态语言，它将很多静态语言在编译和链接时期做的事放到了运行时来处理。<br><code>Objective-C</code> 是基于 <code>C</code> 语言加入了面向对象特性和消息转发机制的动态语言，这意味着它不仅需要一个编译器，还需要 <code>Runtime</code> 系统来动态创建类和对象，执行编译的代码，进行消息发送和转发。<br><code>Objective-C</code> 的 <code>Runtime</code> 其实是一个 <code>Runtime</code> 库，它基本上是用 <code>C</code> 和汇编写的，这个库使得 <code>C</code> 语言有了面向对象的能力。</p><p>下面通过分析 <a href="[https://github.com/iOS-Strikers/Runtime-723](https://github.com/iOS-Strikers/Runtime-723)">Apple开源的Runtime代码</a> 来深入理解 <code>Objective-C</code> 的 <code>Runtime</code> 机制。</p><p>初学 <code>Objective-C</code> 时，</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[object doSomething]</span><br></pre></td></tr></table></figure><p>当成一个简单的方法调用，而无视了<strong>消息发送</strong>这句话的深刻含义，后来对 <code>Runtime</code> 的理解慢慢增加了，逐渐明白了<strong>消息发送</strong>的含义。</p><p>借助 <code>clang</code> 编译器，当执行 <code>[object doSomething]</code> 会被编译器转化为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">clang -rewrite-objc xxx.m</span><br><span class="line">SEL doSomethingSel &#x3D; @selector(doSomething);</span><br><span class="line">objc_msgSend(object, doSomethingSel);</span><br></pre></td></tr></table></figure><p>打开 <code>objc_msgSend</code>，需要设置一下类型检查参数；<br><img src="588630-7c9f38bb73276434.png" alt="image.png"><br>无参数，则为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objc_msgSend(receiver, selector)</span><br></pre></td></tr></table></figure><p>如果消息含有参数，则为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objc_msgSend(receiver, selector, arg1, arg2, ...)</span><br></pre></td></tr></table></figure><p>如果消息的接收者能够找到对应的 <code>selector</code>，那么就相当于直接执行了接收者这个对象的特定方法；否则，消息要么被转发，或是临时向接收者动态添加这个 <code>selector</code> 对应的实现内容，要么就干脆玩完崩溃掉。</p><p>现在可以看出 <code>[object doSomething]</code> 不是一个简简单单的方法调用，因为这只是在编译阶段确定了要向接收者发送 <code>doSomething</code> 这条消息，而 <code>receive</code> 将要如何响应这条消息，那就要看运行时发生的情况来决定了。</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;&lt;code&gt;Objective-C&lt;/code&gt; 语言是一门动态语言，它将很多静态语言在编译和链接时期做的事放到了运行时来处理。&lt;br&gt;&lt;code&gt;Objective-C&lt;/code&gt; 是基于 &lt;code&gt;C&lt;/code&gt; 语言加入了面向对象特性和消息转发机制的动态语言，这
       
     
     </summary>

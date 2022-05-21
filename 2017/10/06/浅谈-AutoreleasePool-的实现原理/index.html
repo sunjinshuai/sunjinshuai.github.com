@@ -57,7 +57,7 @@
 <p><code>pop</code> 函数的入参就是 <code>push</code> 函数的返回值，也就是<code>POOL_SENTINEL</code> 的内存地址。根据这个内存地址找到所在的 <code>AutoreleasePoolPage</code> 然后使用 <code>objc_release</code> 释放 <code>POOL_SENTINEL</code> 指针之前的对象。</p>
 <p>总结：<br>每调用一次 <code>push</code> 操作就会创建一个新的 <code>autoreleasepool</code>，然后往 <code>AutoreleasePoolPage</code> 中插入一个 <code>POOL_SENTINEL</code>，并且返回插入的 <code>POOL_SENTINEL</code> 的内存地址.<br>在执行 <code>pop</code> 操作的时候传入 <code>POOL_SENTINEL</code>，根据传入的哨兵对象地址找到哨兵对象所处的 <code>page</code><br>在当前AutoreleasePoolPage中，然后使用 <code>objc_release</code> 释放 <code>POOL_SENTINEL</code> 指针之前的对象，并把 <code>id next</code> 指针到正确位置。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.jianshu.com/p/32265cbb2a26" target="_blank" rel="noopener">自动释放池的前世今生 —- 深入解析 Autoreleasepool</a></p>
-</div></article></div></main><footer><div class="paginator"><a href="/2018/05/09/CocoaPods-%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/" class="prev">上一篇</a><a href="/2017/04/07/Object-C%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
+</div></article></div></main><footer><div class="paginator"><a href="/2018/04/12/%E6%B5%85%E8%B0%88-KVC-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="prev">上一篇</a><a href="/2017/04/07/Object-C%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
 var disqus_identifier = '2017/10/06/浅谈-AutoreleasePool-的实现原理/';
 var disqus_title = '浅谈 AutoreleasePool 的实现原理';
 var disqus_url = 'https://sunjinshuai.github.io/2017/10/06/浅谈-AutoreleasePool-的实现原理/';

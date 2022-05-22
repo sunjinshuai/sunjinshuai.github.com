@@ -6,9 +6,7 @@
 <h1 id="valueForKey-的实现方式："><a href="#valueForKey-的实现方式：" class="headerlink" title="valueForKey: 的实现方式："></a><code>valueForKey:</code> 的实现方式：</h1><p><img src="846ae0ee-7b6e-4a21-848e-605644f7c3e7.png" alt="image.png"></p>
 <ul>
 <li>首先查找以 <code>get&lt;Key&gt;</code>、<code>&lt;key&gt;</code>、<code>is&lt;Key&gt;</code>、<code>_Key</code> 的顺序查找方法，找到直接调用。</li>
-<li>如果上面的 <code>getter</code> 没有找到，则会查找 <code>countOf&lt;Key&gt;</code>、<code>objectIn&lt;Key&gt;AtIndex:</code>、<code>&lt;Key&gt;AtIndexes</code> 格式的方法，找到就会调用 <code>countOf&lt;Key&gt;</code>、<code>objectIn&lt;Key&gt;AtIndex:</code>、<code>&lt;Key&gt;AtIndexes</code> 方法，还有一个可选的 <code>get&lt;Key&gt;:range:</code> 方法。</li>
-<li>若是还没查到，那么查找 <code>countOf&lt;Key&gt;</code>、<code>enumeratorOf&lt;Key&gt;</code>、<code>memberOf&lt;Key&gt;:</code> 格式的方法，如果找到就调用 <code>countOf&lt;Key&gt;</code>、<code>enumeratorOf&lt;Key&gt;</code>、<code>memberOf&lt;Key&gt;:</code> 方法。</li>
-<li>若是还没查到，那么如果类方法 accessInstanceVariablesDirectly 返回 YES，那么将在对象内部查找名为 <code>_&lt;key&gt;</code>、<code>_is&lt;Key&gt;</code>、<code>&lt;key&gt;</code>、<code>is&lt;key&gt;</code> 的实例变量。</li>
+<li>若是还没查到，那么如果类方法 <code>accessInstanceVariablesDirectly</code> 返回 <code>YES</code>，那么将在对象内部查找名为 <code>_&lt;key&gt;</code>、<code>_is&lt;Key&gt;</code>、<code>&lt;key&gt;</code>、<code>is&lt;key&gt;</code> 的实例变量。</li>
 <li>再没查到，调用 <code>valueForUndefinedKey:</code>。</li>
 </ul>
 <p>综上，<strong>使用 KVC 访问属性的代价比直接使用存取方法性能开销要大</strong>。</p>

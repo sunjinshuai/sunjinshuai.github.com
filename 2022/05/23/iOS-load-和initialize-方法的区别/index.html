@@ -11,7 +11,12 @@
 <p><img src="588630-0bdb3567814e7f69.png" alt="image.png"></p>
 <p>结果发现：</p>
 <p><code>+load</code> 方法会在 <code>runtime</code> 加载类、分类时调用；<br>每个类、分类的 <code>+load</code> 方法，在程序运行过程中只调用一次；</p>
-<p>调用顺序<br>先调用类的 <code>+load</code> 方法，<strong>类先于分类调用</strong>。<br>按照编译先后顺序调用（先编译，先调用），<strong>文件的加载顺序靠前的类优先调用</strong>。<br>调用子类的 <code>+load</code> 方法之前会先调用父类的 <code>+load</code> 方法，即<strong>父类先于子类调用</strong>，当子类未实现 <code>+load</code> 方法时，不会调用父类 <code>+load</code> 方法。<br>再调用分类的 <code>+load</code> 方法；<br>按照编译先后顺序调用（先编译，先调用），<strong>文件的加载顺序靠前的分类优先调用</strong>。</p>
+<h4 id="调用顺序"><a href="#调用顺序" class="headerlink" title="调用顺序"></a>调用顺序</h4><p>1、先调用类的 <code>+load</code> 方法，<strong>类先于分类调用</strong>。</p>
+<ul>
+<li>按照编译先后顺序调用（先编译，先调用），<strong>文件的加载顺序靠前的类优先调用</strong>。</li>
+<li>调用子类的 <code>+load</code> 方法之前会先调用父类的 <code>+load</code> 方法，即<strong>父类先于子类调用</strong>。<br>2、再调用分类的 <code>+load</code> 方法；</li>
+<li>按照编译先后顺序调用（先编译，先调用），<strong>文件的加载顺序靠前的分类优先调用</strong>。</li>
+</ul>
 <h4 id="load方法如何加载到内存中"><a href="#load方法如何加载到内存中" class="headerlink" title="load方法如何加载到内存中"></a><code>load</code>方法如何加载到内存中</h4><p>使用 <code>Xcode</code> 添加一个符号断点 <code>+[Parent load]</code>：</p>
 <p><img src="588630-fc3a92e363d99516.png" alt="image.png"></p>
 <p>注意：<br>注意这里 <code>+</code> 和 <code>[</code> 之间没有空格</p>
@@ -57,7 +62,7 @@
 <p>其中 <code>call_class_loads</code> 会从一个待加载的类列表 <code>loadable_classes</code> 中寻找对应的类，然后通过对应的 <code>SEL</code> ，找到 <code>IMP</code> 的实现并执行。</p>
 <h4 id="load-方法的应用"><a href="#load-方法的应用" class="headerlink" title="load 方法的应用"></a>load 方法的应用</h4><p>由于调用 <code>+load</code> 方法运行时间过早，环境很不安全，我们应该尽量减少 <code>+load</code> 方法的逻辑。另一个原因是load方法是线程安全的，它内部使用了锁，所以我们应该避免线程阻塞在 <code>+load</code> 方法中。不过在这个时间点，所有的 <code>framework</code> 都已经加载到了运行时中，所以调用 <code>framework</code> 中的方法都是安全的。</p>
 <h2 id="Initialize"><a href="#Initialize" class="headerlink" title="Initialize"></a>Initialize</h2><p><code>+initialize</code> 方法会在类第一次接收到消息时调用。</p>
-<h4 id="调用顺序"><a href="#调用顺序" class="headerlink" title="调用顺序"></a>调用顺序</h4><p>先调用父类的 <code>+initialize</code> 方法，再调用子类的 <code>+initialize</code> 方法；<br>(先初始化父类，再初始化子类，每个类只会初始化1次)</p>
+<h4 id="调用顺序-1"><a href="#调用顺序-1" class="headerlink" title="调用顺序"></a>调用顺序</h4><p>先调用父类的 <code>+initialize</code> 方法，再调用子类的 <code>+initialize</code> 方法；<br>(先初始化父类，再初始化子类，每个类只会初始化1次)</p>
 <h4 id="For-Example"><a href="#For-Example" class="headerlink" title="For Example"></a>For Example</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#import &lt;Foundation&#x2F;Foundation.h&gt;</span><br><span class="line"></span><br><span class="line">@interface Person : NSObject @end</span><br><span class="line"></span><br><span class="line">@implementation Person</span><br><span class="line"></span><br><span class="line">+ (void)initialize &#123;</span><br><span class="line">    NSLog(@&quot;Person initialize&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">int main(int argc, const char * argv[]) &#123;</span><br><span class="line">    @autoreleasepool &#123; &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>程序运行之后控制台没有任何输出；</p>

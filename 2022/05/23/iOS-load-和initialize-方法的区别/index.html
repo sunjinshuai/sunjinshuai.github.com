@@ -116,7 +116,7 @@
 <h4 id="Initialize-方法的应用"><a href="#Initialize-方法的应用" class="headerlink" title="Initialize 方法的应用"></a>Initialize 方法的应用</h4><p>由于 <code>initialize</code> 作用也非常局限，一般我们只会在 <code>initialize</code> 方法中进行一些常量的初始化。</p>
 <h4 id="initialize-和-load-的很大区别是"><a href="#initialize-和-load-的很大区别是" class="headerlink" title="+initialize 和 +load 的很大区别是"></a>+initialize 和 +load 的很大区别是</h4><p><code>+initialize</code> 和 <code>+load</code> 的很大区别是，<code>+initialize</code> 是通过 <code>objc_msgSend</code> 进行调用的，所以有以下特点：</p>
 <ul>
-<li>如果子类没有实现 <code>+initialize</code>，会调用父类的 <code>+initialize</code>（所以父类的 <code>+initialize</code> 可能会被调用多次）。</li>
+<li>如果子类没有实现 <code>+initialize</code>，会调用父类的 <code>+initialize</code>（<strong>注意父类的 <code>+initialize</code> 方法可能会被调用多次，不代表父类初始化多次</strong>）。</li>
 <li>如果分类实现了 <code>+initialize</code>，就覆盖类本身的 <code>+initialize</code> 调用。</li>
 </ul>
 </div></article></div></main><footer><div class="paginator"><a href="/2022/05/22/%E6%B5%85%E8%B0%88-Category-%E7%9A%84%E6%9C%AC%E8%B4%A8%E4%BB%A5%E5%8F%8A%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';

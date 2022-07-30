@@ -22,6 +22,14 @@
 <li><code>block</code> 作为 <code>GCD API</code> 的方法参数时；</li>
 </ul>
 <p>在 <code>ARC</code> 的环境下，为了解决栈块在其变量作用域结束之后被废弃（释放）的问题，我们需要把 <code>block</code> <code>copy</code> 到堆中，延长其生命周期。大多数情况下编译器会恰当地进行判断是否有需要将 <code>block</code> 从栈复制到堆，如果有，自动生成将 <code>block</code> 从栈上复制到堆上的代码。 <code>block</code> 的复制操作执行的是 <code>copy</code> 实例方法。<code>block</code> 只要调用了 <code>copy</code> 方法，栈块就会变成堆块。</p>
+<h4 id="对象类型的-auto-变量"><a href="#对象类型的-auto-变量" class="headerlink" title="对象类型的 auto 变量"></a>对象类型的 auto 变量</h4><ul>
+<li><p>当 <code>block</code> 内部访问了对象类型的 <code>auto</code> 变量时<br>如果 <code>block</code> 是在栈上，将不会对 <code>auto</code> 变量产生强引用；</p>
+</li>
+<li><p>如果 <code>block</code> 被拷贝到堆上<br>会调用 <code>block</code> 内部的 <code>copy</code> 函数<br><code>copy</code> 函数内部会调用 <code>_Block_object_assign</code> 函数<br><code>_Block_object_assign</code> 函数会根据 <code>auto</code> 变量的修饰符（<code>__strong</code>、 <code>__weak</code>、 <code>__unsafe_unretained</code>）做出相应的操作，形成强引用（<code>retain</code>）或者弱引用；</p>
+</li>
+<li><p>如果 <code>block</code> 从堆上移除<br>会调用 <code>block</code> 内部的 <code>dispose</code> 函数<br><code>dispose</code> 函数内部会调用 <code>_Block_object_dispose</code> 函数<br><code>_Block_object_dispose</code> 函数会自动释放引用的 <code>auto</code> 变量（<code>release</code>）；</p>
+</li>
+</ul>
 </div></article></div></main><footer><div class="paginator"><a href="/2022/05/31/Block-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
 var disqus_identifier = '2022/07/30/Block-的类型/';
 var disqus_title = 'Block 的类型';

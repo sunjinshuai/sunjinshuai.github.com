@@ -77,6 +77,17 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_Block_object_dispose((void*)src-&gt;p, 3&#x2F;*BLOCK_FIELD_IS_OBJECT*&#x2F;);</span><br></pre></td></tr></table></figure>
 
 <p>不同点<br>没有使用 <code>__block</code> 修饰的变量(<code>object</code> 和 <code>weadObj</code>)则根据他们本身被 <code>block</code> 捕获的指针类型对他们进行强引用或弱引用，而一旦使用 <code>__block</code> 修饰的变量，<code>__main_block_impl_0</code> 结构体内一律使用强指针引用生成的结构体。</p>
+<h4 id="forwarding-指针"><a href="#forwarding-指针" class="headerlink" title="__forwarding 指针"></a>__forwarding 指针</h4><p><img src="1659864868467.jpg" alt="图示"><br>上面提到过 <code>__forwarding</code> 指针指向的是结构体自己。当使用变量的时候，通过结构体找到 <code>__forwarding</code> 指针，在通过 <code>__forwarding</code> 指针找到相应的变量。这样设计的目的是为了方便内存管理。通过上面对 <code>__block</code> 变量的内存管理分析我们知道，<code>block</code> 被复制到堆上时，会将 <code>block</code> 中引用的变量也复制到堆中。</p>
+<p>当在 <code>block</code> 中修改 <code>__block</code> 修饰的变量时，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">static void __main_block_func_0(struct __main_block_impl_0 *__cself) &#123;</span><br><span class="line">  __Block_byref_age_0 *age &#x3D; __cself-&gt;age; &#x2F;&#x2F; bound by ref</span><br><span class="line">            (age-&gt;__forwarding-&gt;age) &#x3D; 20;</span><br><span class="line">            NSLog((NSString *)&amp;__NSConstantStringImpl__var_folders_jm_dztwxsdn7bvbz__xj2vlp8980000gn_T_main_b05610_mi_0,(age-&gt;__forwarding-&gt;age));</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过源码可以知道，当修改 <code>__block</code> 修饰的变量时，是根据变量生成的结构体这里是 <code>__Block_byref_age_0</code> 找到其中 <code>__forwarding</code> 指针，<code>__forwarding</code> 指针指向的是结构体自己因此可以找到 <code>age</code> 变量进行修改。</p>
+<p>当 <code>block</code> 在栈中时，<code>__Block_byref_age_0</code> 结构体内的 <code>__forwarding</code> 指针指向结构体自己。</p>
+<p>而当 <code>block</code> 被复制到堆中时，栈中的 <code>__Block_byref_age_0</code> 结构体也会被复制到堆中一份，而此时栈中的 <code>__Block_byref_age_0</code> 结构体中的 <code>__forwarding</code> 指针指向的就是堆中的 <code>__Block_byref_age_0</code> 结构体，堆中 <code>__Block_byref_age_0</code> 结构体内的 <code>__forwarding</code> 指针依然指向自己。</p>
+<p>此时当对 <code>age</code> 进行修改时，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 栈中的age</span><br><span class="line">__Block_byref_age_0 *age &#x3D; __cself-&gt;age; &#x2F;&#x2F; bound by ref</span><br><span class="line">&#x2F;&#x2F; age-&gt;__forwarding获取堆中的age结构体</span><br><span class="line">&#x2F;&#x2F; age-&gt;__forwarding-&gt;age 修改堆中age结构体的age变量</span><br><span class="line">(age-&gt;__forwarding-&gt;age) &#x3D; 20;</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>__forwarding</code> 指针巧妙的将修改的变量赋值在堆中的 <code>__Block_byref_age_0</code>中。</p>
 </div></article></div></main><footer><div class="paginator"><a href="/2022/05/31/Block-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="next">下一篇</a></div><div id="disqus_thread"></div><script>var disqus_shortname = 'sunjinshuai';
 var disqus_identifier = '2022/07/30/Block-的类型/';
 var disqus_title = 'Block 的内存管理';
